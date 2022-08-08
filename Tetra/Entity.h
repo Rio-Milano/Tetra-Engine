@@ -18,6 +18,8 @@ struct Mesh
 	GLuint m_numberOfElements;
 	GLuint m_textureID;
 	GLuint m_programID;
+	GLuint m_drawType;
+	GLuint m_triangleCount;
 };
 
 struct Transform

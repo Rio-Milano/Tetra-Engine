@@ -39,7 +39,7 @@ namespace Helper_
 		void LoadTexture(const std::string& textureFileLocation, TextureAttributes& textureAttributes);
 		void GenerateTextureBuffer(GLuint& textureBuffer, TextureAttributes& textureAttributes);
 
-		void GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, std::vector<GLuint>& elements, const std::string& textureLocation);
+		void GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, const std::string& textureLocation, const GLuint& drawType, const std::vector<GLuint>& elements = std::vector<GLuint>{});
 	};
 
 	namespace Status_

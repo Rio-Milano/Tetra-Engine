@@ -5,14 +5,6 @@
 #include<vector>
 
 
-void Renderer::LoadMeshes()
-{
-
-
-	std::cout << "\n\n\n\n\n\n";
-	Helper_::Status_::DisplayUsefulInfo();
-}
-
 void Renderer::CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
 	//create window
@@ -27,27 +19,51 @@ void Renderer::InitRenderer()
 	glViewport(0, 0, winWidth, winHeight);
 
 	CreateShaders();
+
+	glEnable(GL_DEPTH_TEST);
+
+	m_projection = glm::perspective(glm::radians(m_fov), static_cast<float>(winWidth) / static_cast<float>(winHeight), 0.1f, 100.0f);
 }
 
 void Renderer::RenderMesh(const Mesh& mesh)
 {
+	glUseProgram(mesh.m_programID);
+
 	glBindVertexArray(mesh.m_VAO);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mesh.m_textureID);
 
-	glUseProgram(mesh.m_programID);
+	switch (mesh.m_drawType)
+	{
+	case 0:
+		glDrawElements(GL_TRIANGLES, mesh.m_numberOfElements, GL_UNSIGNED_INT, 0);
+		break;
+	case 1:
+		glDrawArrays(GL_TRIANGLES,  0, mesh.m_triangleCount);
+		break;
+	default:
+		break;
+	}
 
-	glDrawElements(GL_TRIANGLES, mesh.m_numberOfElements, GL_UNSIGNED_INT, 0);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }
 
+void Renderer::SetProjectionViewMatrix(const glm::mat4& viewMatrix, const GLuint& programID)
+{
+	glUseProgram(programID);
+
+	glm::mat4 prespective_x_view = m_projection * viewMatrix;
+
+	glUniformMatrix4fv(glGetUniformLocation(programID, "Projection_X_View"), 1, GL_FALSE, glm::value_ptr(prespective_x_view));
+}
+
 void Renderer::StartRendering()
 {
 	glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::EndRendering()

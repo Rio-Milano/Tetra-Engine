@@ -14,6 +14,7 @@ public:
 	Engine() = default;;
 	~Engine() = default;
 
+	void InitializeEntities();
 	void Run();
 
 private:

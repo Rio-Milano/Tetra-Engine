@@ -139,10 +139,12 @@ void Helper_::Mesh_::GenerateTextureBuffer(GLuint& textureBuffer, TextureAttribu
 
 }
 
-void Helper_::Mesh_::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, std::vector<GLuint>& elements, const std::string& textureLocation)
+void Helper_::Mesh_::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, const std::string& textureLocation, const GLuint& drawType, const std::vector<GLuint>& elements)
 {
 	mesh.m_VAO = StartVAO();
 	mesh.m_numberOfElements = elements.size();
+	mesh.m_drawType = drawType;
+	mesh.m_triangleCount = static_cast<GLuint>(positions.size());
 
 	//Positions
 	CreateBuffer(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), positions.data(), GL_STATIC_DRAW);
@@ -155,7 +157,7 @@ void Helper_::Mesh_::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions,
 	CreateBuffer(GL_ARRAY_BUFFER, textureCords.size() * sizeof(glm::vec2), textureCords.data(), GL_STATIC_DRAW);
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
 
-	CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * elements.size(), elements.data(), GL_STATIC_DRAW);
+	CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * elements.size(), (void*)elements.data(), GL_STATIC_DRAW);
 
 	EndVAO();
 }

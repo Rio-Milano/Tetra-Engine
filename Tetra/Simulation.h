@@ -13,7 +13,7 @@ public:
 
 	void InitSimulation(GLFWwindow* window);
 	void Update(GLFWwindow* window);
-	void UpdateEntity(Entity* entity);
+	void UpdateEntity(Entity& entity);
 
 private:
 	static void UpdateViewportWhenWindowSizeChanged(GLFWwindow* window, int windowWidth, int windowHeight);

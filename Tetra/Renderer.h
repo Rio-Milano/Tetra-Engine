@@ -18,9 +18,9 @@ public:
 
 	void CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
 	void InitRenderer();
-	void LoadMeshes();
 
 	void RenderMesh(const Mesh& mesh);
+	void SetProjectionViewMatrix(const glm::mat4& viewMatrix, const GLuint& programID);
 	void StartRendering();
 	void EndRendering();
 
@@ -31,7 +31,12 @@ private:
 	void CreateShaders();
 	
 	Window m_window;
-	glm::vec4 m_clearColor{0.2f, 0.5f, 0.1f, 1.0f};
+
+	glm::mat4 m_projection;
+	float m_fov{90.0f};
+
+	//http://www.rgbtool.com
+	glm::vec4 m_clearColor{ 0.1495f, 0.2913f, 0.65f, 1.0f};
 };
 
 #endif

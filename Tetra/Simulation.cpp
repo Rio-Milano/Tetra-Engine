@@ -13,9 +13,9 @@ void Simulation::Update(GLFWwindow* window)
 	glfwPollEvents();
 }
 
-void Simulation::UpdateEntity(Entity* entity)
+void Simulation::UpdateEntity(Entity& entity)
 {
-	entity->Update();
+	entity.Update();
 }
 
 
