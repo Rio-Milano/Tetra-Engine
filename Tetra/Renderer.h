@@ -9,20 +9,29 @@
 #include"Helper.h"
 #include"Window.h"
 
+struct Mesh;
 class Renderer
 {
 public:
-	Renderer(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
+	Renderer() = default;
 	~Renderer() = default;
 
-	void Render();
+	void CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
+	void InitRenderer();
+	void LoadMeshes();
+
+	void RenderMesh(const Mesh& mesh);
+	void StartRendering();
+	void EndRendering();
+
 	Window& GetWindow();
+	void SetClearColor(const glm::vec4& clearColor);
 
 private:
-	void Set_GL_Context();
+	void CreateShaders();
 	
 	Window m_window;
-	Helper_::Mesh_::Mesh m_mesh;
+	glm::vec4 m_clearColor{0.2f, 0.5f, 0.1f, 1.0f};
 };
 
 #endif

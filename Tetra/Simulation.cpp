@@ -1,6 +1,8 @@
 #include "Simulation.h"
+#include"Entity.h"
 
-Simulation::Simulation(GLFWwindow* window)
+
+void Simulation::InitSimulation(GLFWwindow* window)
 {
 	glfwSetFramebufferSizeCallback(window, UpdateViewportWhenWindowSizeChanged);
 }
@@ -9,6 +11,11 @@ void Simulation::Update(GLFWwindow* window)
 {
 	ProcessInput(window);
 	glfwPollEvents();
+}
+
+void Simulation::UpdateEntity(Entity* entity)
+{
+	entity->Update();
 }
 
 

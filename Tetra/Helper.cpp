@@ -141,8 +141,8 @@ void Helper_::Mesh_::GenerateTextureBuffer(GLuint& textureBuffer, TextureAttribu
 
 void Helper_::Mesh_::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, std::vector<GLuint>& elements, const std::string& textureLocation)
 {
-	mesh.VAO = StartVAO();
-	mesh.numberOfElements = elements.size();
+	mesh.m_VAO = StartVAO();
+	mesh.m_numberOfElements = elements.size();
 
 	//Positions
 	CreateBuffer(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), positions.data(), GL_STATIC_DRAW);
@@ -150,7 +150,7 @@ void Helper_::Mesh_::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions,
 	//Texture
 	TextureAttributes textureAttribs;
 	LoadTexture(textureLocation, textureAttribs);
-	GenerateTextureBuffer(mesh.textureID, textureAttribs);
+	GenerateTextureBuffer(mesh.m_textureID, textureAttribs);
 
 	CreateBuffer(GL_ARRAY_BUFFER, textureCords.size() * sizeof(glm::vec2), textureCords.data(), GL_STATIC_DRAW);
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
@@ -160,19 +160,6 @@ void Helper_::Mesh_::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions,
 	EndVAO();
 }
 
-void Helper_::Mesh_::DrawMesh(const Mesh& mesh)
-{
-	glBindVertexArray(mesh.VAO);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.textureID);
-
-	glDrawElements(GL_TRIANGLES, mesh.numberOfElements, GL_UNSIGNED_INT, 0);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
-
-}
 
 void Helper_::Status_::DisplayUsefulInfo()
 {

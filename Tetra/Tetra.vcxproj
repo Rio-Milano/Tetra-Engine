@@ -153,10 +153,12 @@
   <ItemGroup>
     <ClInclude Include="..\external_libaries\include\STB_ImageLoader\stb_image.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Program_Shader_Managment.h" />
     <ClInclude Include="Simulation.h" />
+    <ClInclude Include="TestEntity.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

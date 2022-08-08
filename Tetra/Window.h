@@ -8,14 +8,15 @@
 class Window
 {
 public:
-	Window() = default;
+	Window();
 	~Window();
 
 	bool CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
 	GLFWwindow* GetWindowPtr();
 
 private:
-	
+	void Set_GL_Context();
+
 	GLFWwindow* m_renderWindow{ nullptr };
 };
 

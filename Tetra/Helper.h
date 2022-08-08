@@ -3,6 +3,7 @@
 
 #include"STB_ImageLoader/stb_image.h"
 #include"glmIncludes.h"
+#include"Entity.h"
 
 #include<glad/glad.h>
 #include<string>
@@ -20,19 +21,7 @@ namespace Helper_
 
 	namespace Mesh_
 	{
-		struct Mesh
-		{
-			~Mesh()
-			{
 
-				//delete resources??
-				glDeleteVertexArrays(1, &VAO);
-			}
-
-			GLuint VAO;
-			GLuint numberOfElements;
-			GLuint textureID;
-		};
 		struct TextureAttributes
 		{
 			~TextureAttributes() { stbi_image_free(texturePtr); };
@@ -51,7 +40,6 @@ namespace Helper_
 		void GenerateTextureBuffer(GLuint& textureBuffer, TextureAttributes& textureAttributes);
 
 		void GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, std::vector<GLuint>& elements, const std::string& textureLocation);
-		void DrawMesh(const Mesh& mesh);
 	};
 
 	namespace Status_
