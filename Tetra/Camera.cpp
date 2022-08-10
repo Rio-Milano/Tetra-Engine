@@ -1,67 +1,5 @@
 #include "Camera.h"
 
-
-//
-//
-//
-//
-//
-//
-//float
-//lastMouseX{ 400.0f },
-//lastMouseY{ 300.0f };
-//
-//
-//void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-//{
-//	lastMouseX = xpos;
-//	lastMouseY = ypos;
-//}
-//
-//float fov{ 90.0f };
-//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-//{
-//	fov = yoffset;
-//}
-//float elapsedTime;
-//float dt;
-//#include"Camera.h"
-//Camera cam(90.0f, glm::vec2(400.f, 300.f), 400.f / 300.f, 5.0f, 0.1f, glm::vec3(0.0f, 0.0f, 3.0f));
-//void Renderer::SetProjectionViewMatrix(const glm::mat4& viewMatrix, const GLuint& programID, GLFWwindow* window)
-//{
-//	glfwSetScrollCallback(window, scroll_callback);
-//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//	glfwSetCursorPosCallback(window, mouse_callback);
-//
-//	dt = glfwGetTime() - elapsedTime;
-//	elapsedTime = glfwGetTime();
-//
-//	glUseProgram(programID);
-//
-//	Direction d;
-//	const float cameraVelocity = 4.0f * dt;
-//	if (glfwGetKey(window, GLFW_KEY_W))
-//		d = Direction::FORWARD;
-//	if (glfwGetKey(window, GLFW_KEY_S))
-//		d = Direction::BACKWARD;
-//	if (glfwGetKey(window, GLFW_KEY_A))
-//		d = Direction::LEFT;
-//	if (glfwGetKey(window, GLFW_KEY_D))
-//		d = Direction::RIGHT;
-//	cam.Update(dt, fov, lastMouseX, lastMouseY, d);
-//
-//
-//	glUniformMatrix4fv(glGetUniformLocation(programID, "Projection_X_View"), 1, GL_FALSE, glm::value_ptr(cam.GetPerspectiveViewMat4()));
-//}
-//
-//
-//
-//
-//
-
-
-
-
 Camera::Camera
 (
 	const float& fov, 
@@ -155,10 +93,10 @@ void Camera::MouseInput(const float& dt, const int& mouseX, const int& mouseY)
 	else if (mf_pitch < -89.f)
 		mf_pitch = -89.f;
 
-	if (mf_yaw < -360.f)
+	/*if (mf_yaw < -360.f)
 		mf_yaw = -360.f;
 	else if (mf_yaw > 360.f)
-		mf_yaw = 360.f;
+		mf_yaw = 360.f;*/
 
 
 

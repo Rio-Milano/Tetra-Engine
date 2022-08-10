@@ -5,7 +5,7 @@
 #include<glad/glad.h>
 
 #include"Program_Shader_Managment.h"
-#define Program_Shader_Managment Program_Shader_Managment::GetInstance()
+#define ShaderManager ShaderManager::GetInstance()
 
 struct Mesh
 {

@@ -2,30 +2,29 @@
 #include<fstream>
 #include<iostream>
 
-Program_Shader_Managment& Program_Shader_Managment::GetInstance()
+ShaderManager& ShaderManager::GetInstance()
 {
-	static Program_Shader_Managment instance;
+	static ShaderManager instance;
 	return instance;
 }
 
 
 
-void Program_Shader_Managment::AddProgram(const std::string& programName, const GLuint& programID)
+void ShaderManager::AddShader(const std::string& programName, const Shader& shader)
 {
 	if (m_programNameProgramIDMap.find(programName) != m_programNameProgramIDMap.end())
 	{
 		std::cout << "Error: Program :" << programName << " already exists.";
 		return;
 	}
-	m_programNameProgramIDMap[programName] = programID;
+	m_programNameProgramIDMap[programName] = shader;
 }
 
-const GLuint& Program_Shader_Managment::GetProgramID(const std::string& programName)
+
+const Shader& ShaderManager::GetShader(const std::string& programName)
 {
 	if (m_programNameProgramIDMap.find(programName) == m_programNameProgramIDMap.end())
-	{
 		std::cout << "Error :" << programName << " does not exist.\n";
-		return 0;
-	}
+	
 	return m_programNameProgramIDMap[programName];
 }

@@ -9,7 +9,6 @@ class TestEntity: public Entity, public Transform, public Mesh
 public:
 	TestEntity()
 	{
-		m_programID = Program_Shader_Managment.GetProgramID("main");
 
 		std::vector<glm::vec3> positions
 		{
@@ -103,7 +102,7 @@ public:
 		//m_transform = glm::scale(m_transform, glm::vec3(0.9f, 0.9f, 0.9f));
 
 
-		GLint worldMatLoc{ glGetUniformLocation(m_programID, "worldMat") };
+		GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat")};
 		glUniformMatrix4fv(worldMatLoc, 1, GL_FALSE, glm::value_ptr(m_transform));
 	}
 

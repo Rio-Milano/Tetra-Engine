@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include"TestEntity.h"
 #include"Program_Shader_Managment.h"
-#define Program_Shader_Managment Program_Shader_Managment::GetInstance()
+#define ShaderManager ShaderManager::GetInstance()
 
 #include<glad/glad.h>//must be in this order as glad includes headders that glfw needs, glad version 3.3
 #include<GLFW/glfw3.h>
@@ -37,7 +37,7 @@ void Engine::Run()
 
 		m_renderer.StartRendering();
 
-		m_renderer.SetProjectionViewMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f)), Program_Shader_Managment.GetProgramID("main"), m_renderer.GetWindow().GetWindowPtr());
+		m_renderer.SetProjectionViewMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f)), m_renderer.GetWindow().GetWindowPtr());
 
 		for (const std::shared_ptr<Entity>& entity : m_entities)
 		{

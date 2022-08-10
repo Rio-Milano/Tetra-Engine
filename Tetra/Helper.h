@@ -13,11 +13,6 @@
 
 namespace Helper_
 {
-	namespace Shaders_
-	{
-		const GLuint CreateShader(const GLenum& shaderType, const std::string& shaderFileLocation);
-		const GLuint CreateProgram(const GLuint& vertexShaderID, const GLuint& fragmentShaderID);
-	};
 
 	namespace Mesh_
 	{

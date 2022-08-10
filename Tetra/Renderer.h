@@ -8,6 +8,7 @@
 
 #include"Helper.h"
 #include"Window.h"
+#include"Shader.h"
 
 struct Mesh;
 class Renderer
@@ -22,7 +23,7 @@ public:
 	void InitRenderer();
 
 	void RenderMesh(const Mesh& mesh);
-	void SetProjectionViewMatrix(const glm::mat4& viewMatrix, const GLuint& programID, GLFWwindow* window);
+	void SetProjectionViewMatrix(const glm::mat4& viewMatrix, GLFWwindow* window);
 	void StartRendering();
 	void EndRendering();
 
@@ -33,7 +34,6 @@ private:
 	void CreateShaders();
 	
 	Window m_window;
-
 
 	//http://www.rgbtool.com
 	glm::vec4 m_clearColor{ 0.1495f, 0.2913f, 0.65f, 1.0f};
