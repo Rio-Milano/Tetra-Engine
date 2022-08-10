@@ -37,7 +37,7 @@ void Engine::Run()
 
 		m_renderer.StartRendering();
 
-		m_renderer.SetProjectionViewMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f)), Program_Shader_Managment.GetProgramID("main"));
+		m_renderer.SetProjectionViewMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f)), Program_Shader_Managment.GetProgramID("main"), m_renderer.GetWindow().GetWindowPtr());
 
 		for (const std::shared_ptr<Entity>& entity : m_entities)
 		{

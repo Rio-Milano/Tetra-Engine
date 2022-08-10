@@ -13,6 +13,8 @@ struct Mesh;
 class Renderer
 {
 public:
+	friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 	Renderer() = default;
 	~Renderer() = default;
 
@@ -20,7 +22,7 @@ public:
 	void InitRenderer();
 
 	void RenderMesh(const Mesh& mesh);
-	void SetProjectionViewMatrix(const glm::mat4& viewMatrix, const GLuint& programID);
+	void SetProjectionViewMatrix(const glm::mat4& viewMatrix, const GLuint& programID, GLFWwindow* window);
 	void StartRendering();
 	void EndRendering();
 
@@ -32,8 +34,6 @@ private:
 	
 	Window m_window;
 
-	glm::mat4 m_projection;
-	float m_fov{90.0f};
 
 	//http://www.rgbtool.com
 	glm::vec4 m_clearColor{ 0.1495f, 0.2913f, 0.65f, 1.0f};
