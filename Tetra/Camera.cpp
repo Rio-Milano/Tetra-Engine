@@ -1,32 +1,37 @@
 #include "Camera.h"
 
-Camera::Camera
+#include"InputManager.h"
+#define InputManager InputManager::GetInstance()
+
+
+void Camera::Initialize
 (
-	const float& fov, 
+	const float& fov,
 	const glm::vec2& centreOfViewPort,
-	const float& aspectRatio, 
-	const float& cameraSpeed, 
-	const float& mouseSensitivity, 
-	const glm::vec3& cameraPosition
+	const float& aspectRatio,
+	const float& cameraSpeed,
+	const float& mouseSensitivity,
+	const glm::vec3& cameraPosition,
+	GLFWwindow* windowPtr
 )
-	:
-		mf_fov(fov),
-		mf_aspect_ratio(aspectRatio),
-		mf_cameraSpeed(cameraSpeed),
-		mf_mouseSensitivity(mouseSensitivity),
-		mv3_position(cameraPosition),
-		mf_previousMouseX(centreOfViewPort.x),
-		mf_previousMouseY(centreOfViewPort.y)
 {
+	mf_fov = fov;
+	mf_aspect_ratio = aspectRatio;
+	mf_cameraSpeed = cameraSpeed;
+	mf_mouseSensitivity = mouseSensitivity;
+	mv3_position = cameraPosition;
+	m_windowPtr = windowPtr;
+
+	glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Camera::Update(const float& dt, const float& fovZoom, const int& mouseX, const int& mouseY, const Direction& movementDirection)
+void Camera::Update(const float& dt)
 {
 	//changes fov of prespective matrix
-	UpdateFOV(fovZoom);
+	UpdateFOV();
 
 	//updates pitch and yaw values
-	MouseInput(dt, mouseX, mouseY);
+	MouseInput(dt);
 
 	//calculate forward vector using new pitch and yaw and to calculate right vector later
 	UpdateForwardVector();
@@ -35,7 +40,7 @@ void Camera::Update(const float& dt, const float& fovZoom, const int& mouseX, co
 	UpdateRightVector();
 
 	//process all user input
-	KeyboardInput(dt, movementDirection);
+	KeyboardInput(dt);
 
 	ComputeViewMatrix();
 }
@@ -55,9 +60,11 @@ void Camera::ComputeViewMatrix()
 {
 	mm4_viewMat = glm::lookAt(mv3_position, mv3_position + mv3_forward, mv3_up);
 }
-void Camera::UpdateFOV(const float& fovZoom)
+void Camera::UpdateFOV()
 {
-	mf_fov -=fovZoom;
+	mf_fov -= InputManager.m_mouseScrollY;
+	InputManager.m_mouseScrollY = 0;
+
 	if (mf_fov < 1.0f)
 		mf_fov = 1.0f;
 	else if (mf_fov > 90.0f)
@@ -66,15 +73,18 @@ void Camera::UpdateFOV(const float& fovZoom)
 }
 
 
-void Camera::MouseInput(const float& dt, const int& mouseX, const int& mouseY)
+void Camera::MouseInput(const float& dt)
 {
+
+	float 
+		mouseX = InputManager.m_currentMousePosition.x,
+		mouseY = InputManager.m_currentMousePosition.y,
+
 	//calculate amount mouse moved on xy plane
-	float
+
 		lf_mouseXOffset{ mouseX - mf_previousMouseX },
 		lf_mouseYOffset{ mf_previousMouseY - mouseY };
 
-	
-	//update previous mouse position
 	mf_previousMouseX = mouseX;
 	mf_previousMouseY = mouseY;
 
@@ -117,27 +127,21 @@ void Camera::UpdateRightVector()
 	mv3_right = glm::normalize(glm::cross(mv3_forward, mv3_up));
 }
 
-void Camera::KeyboardInput(const float& dt, const Direction& movementDirection)
+void Camera::KeyboardInput(const float& dt)
 {
-	if (movementDirection == Direction::FORWARD)
-	{
+
+	if (glfwGetKey(m_windowPtr, GLFW_KEY_W) == GLFW_PRESS)
 		mv3_position += mv3_forward * mf_cameraSpeed * dt;
-	}
 
-	if (movementDirection == Direction::BACKWARD)
-	{
+	if (glfwGetKey(m_windowPtr, GLFW_KEY_S) == GLFW_PRESS)
 		mv3_position -= mv3_forward * mf_cameraSpeed * dt;
-	}
 
-	if (movementDirection == Direction::LEFT)
-	{
+	if (glfwGetKey(m_windowPtr, GLFW_KEY_A) == GLFW_PRESS)
 		mv3_position -= mv3_right * mf_cameraSpeed * dt;
-	}
 
-	if (movementDirection == Direction::RIGHT)
-	{
+	if (glfwGetKey(m_windowPtr, GLFW_KEY_D) == GLFW_PRESS)
 		mv3_position += mv3_right * mf_cameraSpeed * dt;
-	}
+
 }
 
 

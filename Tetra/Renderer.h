@@ -9,18 +9,19 @@
 #include"Helper.h"
 #include"Window.h"
 #include"Shader.h"
+#include"Camera.h"
 
 struct Mesh;
 class Renderer
 {
 public:
-	friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 	Renderer() = default;
 	~Renderer() = default;
 
 	void CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
 	void InitRenderer();
+	static void UpdateViewportWhenWindowSizeChanged(GLFWwindow* window, int windowWidth, int windowHeight);
 
 	void RenderMesh(const Mesh& mesh);
 	void SetProjectionViewMatrix(const glm::mat4& viewMatrix, GLFWwindow* window);
@@ -34,7 +35,7 @@ private:
 	void CreateShaders();
 	
 	Window m_window;
-
+	Camera cam;
 	//http://www.rgbtool.com
 	glm::vec4 m_clearColor{ 0.1495f, 0.2913f, 0.65f, 1.0f};
 };

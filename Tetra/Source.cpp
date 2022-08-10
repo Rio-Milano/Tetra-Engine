@@ -1,13 +1,10 @@
-
-#include"Engine.h"
-
-#include<iostream>
+#include"Application.h"
+#include"SandBoxLayer.h"
 
 int main()
 {
-	Engine engine;
-
-	engine.Run();
-	
+	Application application;
+	application.PushLayer(std::make_shared<SandBoxLayer>());
+	application.Run();
 	return 0;
 };

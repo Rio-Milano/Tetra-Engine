@@ -32,6 +32,8 @@ class Renderer;
 class Entity
 {
 public:
+	virtual void Init() = 0;
+
 	virtual void Update() = 0;
 	virtual void Render(Renderer& renderer) = 0;
 };

@@ -13,6 +13,7 @@ public:
 
 	bool CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
 	GLFWwindow* GetWindowPtr();
+	void UpdateWindow();
 
 private:
 	void Set_GL_Context();

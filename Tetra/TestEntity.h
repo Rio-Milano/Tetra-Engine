@@ -7,47 +7,46 @@
 class TestEntity: public Entity, public Transform, public Mesh
 {
 public:
-	TestEntity()
-	{
-
+	TestEntity() = default;
+	void Init() override final {
 		std::vector<glm::vec3> positions
 		{
-			glm::vec3( - 0.5f, -0.5f, -0.5f),
+			glm::vec3(-0.5f, -0.5f, -0.5f),
 			glm::vec3(0.5f, -0.5f, -0.5f),
 			glm::vec3(0.5f, 0.5f, -0.5f),
 			glm::vec3(0.5f, 0.5f, -0.5f),
-			glm::vec3(- 0.5f, 0.5f, -0.5f), 
-			glm::vec3(-0.5f, -0.5f, -0.5f), 
+			glm::vec3(-0.5f, 0.5f, -0.5f),
+			glm::vec3(-0.5f, -0.5f, -0.5f),
 			glm::vec3(-0.5f, -0.5f, 0.5f),
-			glm::vec3(0.5f, -0.5f, 0.5f) , 
-			glm::vec3(0.5f, 0.5f, 0.5f), 
-			glm::vec3(0.5f, 0.5f, 0.5f), 
-			glm::vec3(-0.5f, 0.5f, 0.5f),
-			glm::vec3(-0.5f, -0.5f, 0.5f), 
-			glm::vec3(-0.5f, 0.5f, 0.5f),
-			glm::vec3(-0.5f, 0.5f, -0.5f), 
-			glm::vec3(-0.5f, -0.5f, -0.5f),
-			glm::vec3(-0.5f, -0.5f, -0.5f),
-			glm::vec3(-0.5f, -0.5f, 0.5f), 
-			glm::vec3(-0.5f, 0.5f, 0.5f), 
+			glm::vec3(0.5f, -0.5f, 0.5f) ,
 			glm::vec3(0.5f, 0.5f, 0.5f),
-			glm::vec3(0.5f, 0.5f, -0.5f), 
-			glm::vec3(0.5f, -0.5f, -0.5f), 
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(-0.5f, 0.5f, 0.5f),
+			glm::vec3(-0.5f, -0.5f, 0.5f),
+			glm::vec3(-0.5f, 0.5f, 0.5f),
+			glm::vec3(-0.5f, 0.5f, -0.5f),
+			glm::vec3(-0.5f, -0.5f, -0.5f),
+			glm::vec3(-0.5f, -0.5f, -0.5f),
+			glm::vec3(-0.5f, -0.5f, 0.5f),
+			glm::vec3(-0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f, 0.5f, -0.5f),
 			glm::vec3(0.5f, -0.5f, -0.5f),
-			glm::vec3(0.5f, -0.5f, 0.5f), 
-			glm::vec3(0.5f, 0.5f, 0.5f), 
-			glm::vec3(-0.5f, -0.5f, -0.5f), 
-			glm::vec3(0.5f, -0.5f, -0.5f), 
-			glm::vec3(0.5f, -0.5f, 0.5f), 
-			glm::vec3(0.5f, -0.5f, 0.5f), 
-			glm::vec3(-0.5f, -0.5f, 0.5f), 
-			glm::vec3(-0.5f, -0.5f, -0.5f), 
-			glm::vec3(-0.5f, 0.5f, -0.5f), 
-			glm::vec3(0.5f, 0.5f, -0.5f), 
-			glm::vec3(0.5f, 0.5f, 0.5f), 
+			glm::vec3(0.5f, -0.5f, -0.5f),
+			glm::vec3(0.5f, -0.5f, 0.5f),
 			glm::vec3(0.5f, 0.5f, 0.5f),
-			glm::vec3(-0.5f, 0.5f, 0.5f), 
-			glm::vec3(-0.5f, 0.5f, -0.5f), 
+			glm::vec3(-0.5f, -0.5f, -0.5f),
+			glm::vec3(0.5f, -0.5f, -0.5f),
+			glm::vec3(0.5f, -0.5f, 0.5f),
+			glm::vec3(0.5f, -0.5f, 0.5f),
+			glm::vec3(-0.5f, -0.5f, 0.5f),
+			glm::vec3(-0.5f, -0.5f, -0.5f),
+			glm::vec3(-0.5f, 0.5f, -0.5f),
+			glm::vec3(0.5f, 0.5f, -0.5f),
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(-0.5f, 0.5f, 0.5f),
+			glm::vec3(-0.5f, 0.5f, -0.5f),
 		};
 
 		std::vector<glm::vec2> textureCords
@@ -92,7 +91,9 @@ public:
 		};
 
 		Helper_::Mesh_::GenerateMesh(*this, positions, textureCords, "Data/Images/Bricks.jpg", 1);
+		m_programID = ShaderManager.GetShader("main").GetID();
 	}
+
 
 	void Update() override final
 	{

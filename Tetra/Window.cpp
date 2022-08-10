@@ -40,6 +40,14 @@ GLFWwindow* Window::GetWindowPtr()
 	return m_renderWindow;
 }
 
+void Window::UpdateWindow()
+{
+	glfwPollEvents();
+
+	if (glfwGetKey(m_renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(m_renderWindow, true);
+}
+
 void Window::Set_GL_Context()
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);//set major version to 3

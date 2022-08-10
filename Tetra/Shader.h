@@ -14,6 +14,7 @@ public:
 
 	void Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 	void Use()const;
+	void Delete();
 
 	const GLuint& GetID()const;
 

@@ -4,21 +4,25 @@
 #include<iostream>
 #include<vector>
 
-
 void Renderer::CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
 	//create window
 	m_window.CreateWindow(renderWindowWidth, renderWindowHeight, renderWindowName);
 }
 
+void Renderer::UpdateViewportWhenWindowSizeChanged(GLFWwindow* window, int windowWidth, int windowHeight)
+{
+	glViewport(0, 0, windowWidth, windowHeight);
+}
+
 void Renderer::InitRenderer()
 {
 	int winWidth, winHeight;
 	glfwGetWindowSize(m_window.GetWindowPtr(), &winWidth, &winHeight);
-
 	glViewport(0, 0, winWidth, winHeight);
 
-	CreateShaders();
+	glfwSetFramebufferSizeCallback(m_window.GetWindowPtr(), UpdateViewportWhenWindowSizeChanged);
+
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -52,50 +56,20 @@ void Renderer::RenderMesh(const Mesh& mesh)
 
 
 
-float
-lastMouseX{ 400.0f },
-lastMouseY{ 300.0f };
-
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	lastMouseX = xpos;
-	lastMouseY = ypos;
-}
 
 float elapsedTime;
 float dt;
-float fov{ 0 };
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	fov += yoffset;
-}
-#include"Camera.h"
-Camera cam(90.0f, glm::vec2(400.f, 300.f), 400.f / 300.f, 5.0f, .1f, glm::vec3(0.0f, 0.0f, 3.0f));
+
+
 void Renderer::SetProjectionViewMatrix(const glm::mat4& viewMatrix, GLFWwindow* window)
 {
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPosCallback(window, mouse_callback);
-
 	dt = glfwGetTime() - elapsedTime;
 	elapsedTime = glfwGetTime();
 
+
+	cam.Update(dt);
+
 	ShaderManager.GetShader("main").Use();
-
-	Direction d{Direction::NONE};
-	const float cameraVelocity = 4.0f * dt;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		d = Direction::FORWARD;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		d = Direction::BACKWARD;
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		d = Direction::LEFT;
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		d = Direction::RIGHT;
-	cam.Update(dt, fov, lastMouseX, lastMouseY, d);
-
-	fov = 0;
 	glUniformMatrix4fv(glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "Projection_X_View"), 1, GL_FALSE, glm::value_ptr(cam.GetPerspectiveViewMat4()));
 }
 
@@ -126,5 +100,4 @@ void Renderer::CreateShaders()
 	Shader shader;
 	shader.Create("Data/Shaders/vertexShader.vert", "Data/Shaders/fragmentShader.frag");
 	ShaderManager.AddShader("main", shader);
-
 }

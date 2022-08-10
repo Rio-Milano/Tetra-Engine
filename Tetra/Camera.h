@@ -17,17 +17,20 @@ enum Direction
 class Camera
 {
 public:
-	explicit Camera
+	Camera() = default;
+
+	void Initialize
 	(
 		const float& fov,
 		const glm::vec2& centreOfViewPort,
 		const float& aspectRatio,
 		const float& cameraSpeed,
 		const float& mouseSensitivity,
-		const glm::vec3& cameraPosition
+		const glm::vec3& cameraPosition,
+		GLFWwindow* windowPtr
 	);
 
-	void Update(const float& dt, const float& fovZoom, const int& mouseX, const int& mouseY, const Direction& movementDirection);
+	void Update(const float& dt);
 	glm::mat4 GetPerspectiveViewMat4()const;
 	
 
@@ -61,13 +64,15 @@ private:
 	bool
 		mb_usePrespectiveProjection;
 
+	GLFWwindow* m_windowPtr;
+
 
 	void ComputePrespectiveMatrix();
 	void ComputeViewMatrix();
 
-	void UpdateFOV(const float& fovZoom);
-	void KeyboardInput(const float& dt, const Direction& movementDirection);
-	void MouseInput(const float& dt, const int& mouseX, const int& mouseY);
+	void UpdateFOV();
+	void KeyboardInput(const float& dt);
+	void MouseInput(const float& dt);
 	void UpdateForwardVector();
 	void UpdateRightVector();
 
