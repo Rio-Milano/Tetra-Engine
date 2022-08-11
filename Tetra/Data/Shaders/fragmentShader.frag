@@ -9,9 +9,5 @@ uniform sampler2D textureSampler;
 
 void main()
 {
-	vec2 texCord = textureCord;
-	texCord.x = -texCord.x +1.0;//invert over yaxis
-	
-
-	fragColor = texture(textureSampler, texCord);
+	fragColor = texture(textureSampler, textureCord);
 }

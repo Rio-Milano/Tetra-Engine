@@ -41,7 +41,7 @@ void Renderer::RenderMesh(const Mesh& mesh)
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.GetNumberOfElements()), GL_UNSIGNED_INT, 0);
 		break;
 	case 1:
-		glDrawArrays(GL_TRIANGLES,  0, mesh.GetTriangleCount());
+		glDrawArrays(GL_TRIANGLES,  0, mesh.GetVertexCount());
 		break;
 	default:
 		break;

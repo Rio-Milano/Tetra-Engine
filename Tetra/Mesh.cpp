@@ -10,7 +10,7 @@ void Mesh::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vect
 	m_VAO = StartVAO();
 	m_numberOfElements = elements.size();
 	m_drawType = drawType;
-	m_triangleCount = static_cast<GLuint>(positions.size());
+	m_vertexCount = static_cast<GLuint>(positions.size());
 
 	CreateBuffer(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), positions.data(), GL_STATIC_DRAW);
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
@@ -50,9 +50,9 @@ const GLsizei& Mesh::GetNumberOfElements() const
 	return static_cast<GLsizei>(m_numberOfElements);
 }
 
-const GLsizei& Mesh::GetTriangleCount() const
+const GLsizei& Mesh::GetVertexCount() const
 {
-	return static_cast<GLsizei>(GL_TRIANGLE_STRIP_ADJACENCY);
+	return static_cast<GLsizei>(m_vertexCount);
 }
 
 const GLuint& Mesh::GetProgramID() const

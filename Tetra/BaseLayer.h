@@ -23,14 +23,12 @@ protected:
 	virtual void End() {};
 
 	Renderer m_renderer;
-	Shader m_shader;
 	Camera m_camera;
 
 private:
 	void CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName);
 	void DestroyLayer();
 	void BaseUpdate(const float& dt);
-	void UpdateShader();
 
 	void InitGLAD();
 	void CreateShader();

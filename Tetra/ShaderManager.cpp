@@ -28,3 +28,24 @@ const Shader& ShaderManager::GetShader(const std::string& programName)
 	
 	return m_programNameProgramIDMap[programName];
 }
+
+void ShaderManager::UpdateAllShaders(const glm::mat4& projection_x_view_mat)
+{
+	for (std::map<std::string, Shader>::iterator i = m_programNameProgramIDMap.begin(); i != m_programNameProgramIDMap.end(); i++)
+	{
+		Shader& shader = i->second;
+
+		GLuint projection_view_mat_location = glGetUniformLocation(shader.GetID(), "Projection_X_View");
+
+		shader.Use();
+		glUniformMatrix4fv(projection_view_mat_location, 1, GL_FALSE, glm::value_ptr(projection_x_view_mat));
+	}
+}
+
+void ShaderManager::DeleteAllShaders()
+{
+	for (std::map<std::string, Shader>::iterator i = m_programNameProgramIDMap.begin(); i != m_programNameProgramIDMap.end(); i++)
+	{
+		i->second.Delete();
+	}
+}

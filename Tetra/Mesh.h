@@ -20,7 +20,7 @@ public:
 	const GLuint& GetVAO()const;
 	const GLenum& GetDrawType()const;
 	const GLsizei& GetNumberOfElements()const;
-	const GLsizei& GetTriangleCount()const;
+	const GLsizei& GetVertexCount()const;
 
 	void SetProgramID(const GLuint& programID);
 	void SetTextureID(const GLuint& textureID);
@@ -40,7 +40,7 @@ private:
 	
 	size_t
 		m_numberOfElements,
-		m_triangleCount;;
+		m_vertexCount;;
 };
 
 #endif

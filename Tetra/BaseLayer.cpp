@@ -18,23 +18,16 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 
 void BaseLayer::DestroyLayer()
 {
-	m_shader.Delete();
+	ShaderManager.DeleteAllShaders();
 }
 
 void BaseLayer::BaseUpdate(const float& dt)
 {
 	m_renderer.GetWindow().UpdateWindow();
 	m_camera.Update(dt);
-	UpdateShader();
+	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveViewMat4());
 	Update(dt);
 
-}
-
-void BaseLayer::UpdateShader()
-{
-	m_shader.Use();
-	GLuint projection_x_view_mat4_loc = glGetUniformLocation(m_shader.GetID(), "Projection_X_View");
-	glUniformMatrix4fv(projection_x_view_mat4_loc, 1, GL_FALSE, glm::value_ptr(m_camera.GetPerspectiveViewMat4()));
 }
 
 void BaseLayer::InitGLAD()
@@ -47,6 +40,7 @@ void BaseLayer::InitGLAD()
 
 void BaseLayer::CreateShader()
 {
-	m_shader.Create("Data/Shaders/vertexShader.vert", "Data/Shaders/fragmentShader.frag");
-	ShaderManager.AddShader("main", m_shader);
+	Shader shader;
+	shader.Create("Data/Shaders/vertexShader.vert", "Data/Shaders/fragmentShader.frag");
+	ShaderManager.AddShader("main", shader);
 }
