@@ -1,7 +1,13 @@
 #include "SandBoxLayer.h"
 
+#include"TextureManager.h"
+#define TextureManager TextureManager::GetInstance()
+
 void SandBoxLayer::Start()
 {
+	Texture bricks;
+	bricks.InitializeTexture("Data/Images/Bricks.jpg");
+	TextureManager.AddTexture("Bricks", bricks);
 
 	m_entity.Init();
 }

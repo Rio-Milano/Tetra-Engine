@@ -4,23 +4,9 @@
 #include"glmIncludes.h"
 #include<glad/glad.h>
 
-#include"Program_Shader_Managment.h"
+#include"ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 
-struct Mesh
-{
-	~Mesh()
-	{
-		//delete resources like buffers/how to do??
-		glDeleteVertexArrays(1, &m_VAO);
-	}
-	GLuint m_VAO;
-	GLuint m_numberOfElements;
-	GLuint m_textureID;
-	GLuint m_programID;
-	GLuint m_drawType;
-	GLuint m_triangleCount;
-};
 
 struct Transform
 {

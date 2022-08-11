@@ -1,6 +1,5 @@
 #include "Renderer.h"
 #include"Entity.h"
-
 #include<iostream>
 #include<vector>
 
@@ -29,20 +28,20 @@ void Renderer::InitRenderer()
 
 void Renderer::RenderMesh(const Mesh& mesh)
 {
-	glUseProgram(mesh.m_programID);
+	glUseProgram(mesh.GetProgramID());
 
-	glBindVertexArray(mesh.m_VAO);
+	glBindVertexArray(mesh.GetVAO());
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.m_textureID);
+	glBindTexture(GL_TEXTURE_2D, mesh.GetTextureID());
 
-	switch (mesh.m_drawType)
+	switch (mesh.GetDrawType())
 	{
 	case 0:
-		glDrawElements(GL_TRIANGLES, mesh.m_numberOfElements, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.GetNumberOfElements()), GL_UNSIGNED_INT, 0);
 		break;
 	case 1:
-		glDrawArrays(GL_TRIANGLES,  0, mesh.m_triangleCount);
+		glDrawArrays(GL_TRIANGLES,  0, mesh.GetTriangleCount());
 		break;
 	default:
 		break;
@@ -57,21 +56,7 @@ void Renderer::RenderMesh(const Mesh& mesh)
 
 
 
-float elapsedTime;
-float dt;
 
-
-void Renderer::SetProjectionViewMatrix(const glm::mat4& viewMatrix, GLFWwindow* window)
-{
-	dt = glfwGetTime() - elapsedTime;
-	elapsedTime = glfwGetTime();
-
-
-	cam.Update(dt);
-
-	ShaderManager.GetShader("main").Use();
-	glUniformMatrix4fv(glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "Projection_X_View"), 1, GL_FALSE, glm::value_ptr(cam.GetPerspectiveViewMat4()));
-}
 
 void Renderer::StartRendering()
 {

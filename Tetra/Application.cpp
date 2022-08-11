@@ -9,6 +9,7 @@ void Application::PushLayer(const std::shared_ptr<BaseLayer>& newLayer)
 
 void Application::Run()
 {
+
 	if (m_baseLayer)
 	{
 		m_baseLayer->CreateLayer(glm::vec<2, int>(800, 600), "Tetra");
@@ -19,7 +20,7 @@ void Application::Run()
 		while (!glfwWindowShouldClose(m_baseLayer->m_renderer.GetWindow().GetWindowPtr()))
 		{
 			float 
-				glTime = glfwGetTime(),
+				glTime = static_cast<float>(glfwGetTime()),
 				dt = glTime - elapsedTime;
 			elapsedTime = glTime;
 

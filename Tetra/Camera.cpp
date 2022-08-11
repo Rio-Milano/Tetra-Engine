@@ -1,8 +1,8 @@
 #include "Camera.h"
-
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
 
+#include<iostream>
 
 void Camera::Initialize
 (
@@ -21,8 +21,11 @@ void Camera::Initialize
 	mf_mouseSensitivity = mouseSensitivity;
 	mv3_position = cameraPosition;
 	m_windowPtr = windowPtr;
+	mf_previousMouseX = centreOfViewPort.x;
+	mf_previousMouseY = centreOfViewPort.y;
 
 	glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	std::cout << "FPS camera enabled!\n";
 }
 
 void Camera::Update(const float& dt)
@@ -58,6 +61,9 @@ void Camera::ComputePrespectiveMatrix()
 
 void Camera::ComputeViewMatrix()
 {
+	if(m_fpsCamera)
+		mv3_position.y = 0;//mimics a fps camera
+	
 	mm4_viewMat = glm::lookAt(mv3_position, mv3_position + mv3_forward, mv3_up);
 }
 void Camera::UpdateFOV()
@@ -75,38 +81,46 @@ void Camera::UpdateFOV()
 
 void Camera::MouseInput(const float& dt)
 {
-
-	float 
+	float
 		mouseX = InputManager.m_currentMousePosition.x,
-		mouseY = InputManager.m_currentMousePosition.y,
+		mouseY = InputManager.m_currentMousePosition.y;
 
-	//calculate amount mouse moved on xy plane
+	if (InputManager.m_firstMouseEvent)
+	{
+		if (!InputManager.m_seccondMouseEvent)
+		{
+			mf_previousMouseX = mouseX;
+			mf_previousMouseY = mouseY;
+		}
+		//calculate amount mouse moved on xy plane
+		float
+			lf_mouseXOffset{ mouseX - mf_previousMouseX },
+			lf_mouseYOffset{ mf_previousMouseY - mouseY };
 
-		lf_mouseXOffset{ mouseX - mf_previousMouseX },
-		lf_mouseYOffset{ mf_previousMouseY - mouseY };
+		mf_previousMouseX = mouseX;
+		mf_previousMouseY = mouseY;
 
-	mf_previousMouseX = mouseX;
-	mf_previousMouseY = mouseY;
+		//apply sensitivity of mouse to displacement
+		lf_mouseXOffset *= mf_mouseSensitivity;
+		lf_mouseYOffset *= mf_mouseSensitivity;
 
-	//apply sensitivity of mouse to displacement
-	lf_mouseXOffset *= mf_mouseSensitivity;
-	lf_mouseYOffset *= mf_mouseSensitivity;
+		//add displacement to pitch and yaw respectively
+		mf_pitch += lf_mouseYOffset;
+		mf_yaw += lf_mouseXOffset;
 
-	//add displacement to pitch and yaw respectively
-	mf_pitch += lf_mouseYOffset;
-	mf_yaw += lf_mouseXOffset;
+		//constrain pitch and yaw to range
+		if (mf_pitch > 89.f)
+			mf_pitch = 89.f;
 
-	//constrain pitch and yaw to range
-	if (mf_pitch > 89.f)
-		mf_pitch = 89.f;
+		else if (mf_pitch < -89.f)
+			mf_pitch = -89.f;
 
-	else if (mf_pitch < -89.f)
-		mf_pitch = -89.f;
+		/*if (mf_yaw < -360.f)
+			mf_yaw = -360.f;
+		else if (mf_yaw > 360.f)
+			mf_yaw = 360.f;*/
+	}
 
-	/*if (mf_yaw < -360.f)
-		mf_yaw = -360.f;
-	else if (mf_yaw > 360.f)
-		mf_yaw = 360.f;*/
 
 
 

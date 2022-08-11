@@ -44,7 +44,7 @@ private:
 
 		//View
 		mf_pitch,
-		mf_yaw{-90.f},
+		mf_yaw{-89.f},
 		mf_cameraSpeed,
 		mf_mouseSensitivity,
 		mf_previousMouseX,
@@ -62,7 +62,7 @@ private:
 		mm4_projectionMat;
 
 	bool
-		mb_usePrespectiveProjection;
+		m_fpsCamera{ true };
 
 	GLFWwindow* m_windowPtr;
 

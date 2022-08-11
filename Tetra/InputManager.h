@@ -15,6 +15,9 @@ public:
 		m_currentMousePosition;
 	float
 		m_mouseScrollY;
+	bool
+		m_firstMouseEvent = false,
+		m_seccondMouseEvent = false;
 
 private: 
 	InputManager() = default;
