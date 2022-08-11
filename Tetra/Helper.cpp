@@ -2,7 +2,7 @@
 
 
 
-void Helper::Status_::DisplayUsefulInfo()
+void Helper::Status::DisplayUsefulInfo()
 {
 	int maxAttribs;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
