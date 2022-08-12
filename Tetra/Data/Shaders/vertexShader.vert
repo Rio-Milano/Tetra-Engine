@@ -14,8 +14,8 @@ uniform mat4 Projection_X_View;
 void main()
 {
 	textureCord = inTextureCord;
-	normal = inNormal;
-	position = inPos;
+	normal =  mat3(worldMat) * inNormal;
+	position = (worldMat * vec4(inPos, 1)).xyz;
 
 	gl_Position = Projection_X_View * worldMat * vec4(inPos, 1.0);
 }
