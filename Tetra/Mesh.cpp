@@ -5,7 +5,7 @@
 
 
 
-void Mesh::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements)
+void Mesh::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& textureCords, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements)
 {
 	m_VAO = StartVAO();
 	m_numberOfElements = elements.size();
@@ -19,6 +19,9 @@ void Mesh::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vect
 
 	CreateBuffer(GL_ARRAY_BUFFER, textureCords.size() * sizeof(glm::vec2), textureCords.data(), GL_STATIC_DRAW);
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+
+	CreateBuffer(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
+	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 
 	CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * elements.size(), (void*)elements.data(), GL_STATIC_DRAW);
 

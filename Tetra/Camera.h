@@ -62,7 +62,7 @@ private:
 		mm4_projectionMat;
 
 	bool
-		m_fpsCamera{ true };
+		m_fpsCamera{ false };
 
 	GLFWwindow* m_windowPtr;
 

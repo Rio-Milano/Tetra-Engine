@@ -13,7 +13,7 @@ public:
 	Mesh() = default;	
 	~Mesh() = default;
 
-	void GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec2>& textureCords, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements = std::vector<GLuint>{});
+	void GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& textureCords, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements = std::vector<GLuint>{});
 
 	const GLuint& GetProgramID()const;
 	const GLuint& GetTextureID()const;
