@@ -64,9 +64,9 @@ uniform sampler2D textureSampler;
 uniform Light lights [NUMBER_OF_LIGHTS];
 
 
-//==================
-
-
+/*
+FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS 
+*/
 vec3 CalculateDirectionalLight(int i, vec3 normal)
 {
 	vec3 lightColor = lights[i].color * lights[i].intensity;
@@ -76,12 +76,12 @@ vec3 CalculateDirectionalLight(int i, vec3 normal)
 
 	return lightColor * angularIntensity;
 };
-
+//
 vec3 CalculateAmbientLight(int i)
 {
 	return lights[i].color * lights[i].intensity;
 };
-
+//
 vec3 CalculatePointLight(int i, vec3 normal)
 {
 	vec3 lightColor = lights[i].color * lights[i].intensity;
@@ -91,15 +91,19 @@ vec3 CalculatePointLight(int i, vec3 normal)
 
 	return lightColor * angularIntensity;
 };
-
+//
 vec3 CalculateSpotLight(int i)
 {
 	return vec3(0);
 };
 
+
+
+
+
 void main()
 {
-	vec3 normal = normalize(varying_normal);
+	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
 	vec3 totalRecivedLight;
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)

@@ -6,15 +6,20 @@
 void SandBoxLayer::Start()
 {
 	Texture bricks;
-	bricks.InitializeTexture("Data/Images/Bricks.jpg");
+	bricks.InitializeTexture("Data/Images/Container.jpg");
 	TextureManager.AddTexture("Bricks", bricks);
 
 	m_entity.Init();
 	
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
 	m_lightManager.SetAmbientLight(glm::vec3(0.87f, 0.5075f, 0.f), .1f);
-	m_lightManager.SetPointLight(glm::vec3(1.f, 1.f, 1.f), glm::vec3(.0f, 1.f, 0.f), 1.f);
-	m_lightManager.SetDirectionalLight(glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.87f, 0.5075f, 0.f), 1.f);
+
+	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 4.f), glm::vec3(.0f, 1.f, 0.f), .6f);
+	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -4.f), glm::vec3(0.0f, 1.f, 0.f), .6f); 
+	m_lightManager.SetPointLight(glm::vec3(-4.f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.f), .6f);
+	m_lightManager.SetPointLight(glm::vec3(4.f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.f), .6f);
+
+	m_lightManager.SetDirectionalLight(glm::vec3(-1.f, -1.f, 0.f), glm::vec3(0.87f, 0.5075f, 0.f), .3f);
 }
 
 void SandBoxLayer::Update(float dt)

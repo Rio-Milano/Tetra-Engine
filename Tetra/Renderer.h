@@ -36,7 +36,7 @@ private:
 	
 	Window m_window;
 	//http://www.rgbtool.com
-	glm::vec4 m_clearColor{ 0.1495f, 0.2913f, 0.65f, 1.0f};
+	glm::vec4 m_clearColor{ 0.f, 0.f, 0.f, 1.f};
 };
 
 #endif
