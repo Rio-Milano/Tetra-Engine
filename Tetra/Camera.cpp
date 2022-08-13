@@ -53,6 +53,15 @@ glm::mat4 Camera::GetPerspectiveViewMat4() const
 	return mm4_projectionMat * mm4_viewMat;
 }
 
+const glm::vec3& Camera::GetPosition() const
+{
+	return mv3_position;
+}
+
+const glm::vec3& Camera::GetForwardVector() const
+{
+	return mv3_forward;
+}
 
 void Camera::ComputePrespectiveMatrix()
 {

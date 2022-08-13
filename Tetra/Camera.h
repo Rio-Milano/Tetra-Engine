@@ -32,7 +32,9 @@ public:
 
 	void Update(const float& dt);
 	glm::mat4 GetPerspectiveViewMat4()const;
-	
+	const glm::vec3& GetPosition()const;
+	const glm::vec3& GetForwardVector()const;
+
 
 private:
 	float

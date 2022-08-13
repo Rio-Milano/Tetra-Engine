@@ -25,7 +25,7 @@ void BaseLayer::BaseUpdate(const float& dt)
 {
 	m_renderer.GetWindow().UpdateWindow();
 	m_camera.Update(dt);
-	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveViewMat4());
+	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveViewMat4(), m_camera.GetPosition());
 	Update(dt);
 
 }

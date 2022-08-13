@@ -14,14 +14,13 @@ void SandBoxLayer::Start()
 	m_lightManager.Initialize();
 
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
-	m_lightManager.SetAmbientLight(glm::vec3(0.87f, 0.5075f, 0.f), .1f);
+	
+	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(1.f), .4f);
+	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(1.f), .4f);
+	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(1.f), .4f);
+	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .4f);
 
-	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(.0f, 1.f, 0.f), .6f);
-	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(0.0f, 1.f, 0.f), .6f); 
-	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.f), .6f);
-	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.f), .6f);
-
-	m_lightManager.SetDirectionalLight(glm::vec3(-1.f, -1.f, 0.f), glm::vec3(1.0f), .3f);
+	//m_lightManager.SetDirectionalLight(glm::vec3(-1.f, -1.f, 0.f), glm::vec3(1.0f), 0.5f);
 }
 
 void SandBoxLayer::Update(float dt)
@@ -33,11 +32,12 @@ void SandBoxLayer::Update(float dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	m_entity.Update();
+	m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(0.97f, 1.f, 0.12f), .7f, 5);
+	m_lightManager.UpdateShader();
 }
 
 void SandBoxLayer::Render()
 {
-	m_lightManager.UpdateShader();
 
 	m_lightManager.DrawLights(m_renderer);
 	m_entity.Render(m_renderer);

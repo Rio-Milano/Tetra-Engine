@@ -19,7 +19,7 @@ public:
 	void AddShader(const std::string& programName, const Shader& shader);
 	Shader& GetShader(const std::string& programName);
 
-	void UpdateAllShaders(const glm::mat4& projection_x_view_mat);
+	void UpdateAllShaders(const glm::mat4& projection_x_view_mat, glm::vec3 cameraPosition);
 	void DeleteAllShaders();
 
 private:

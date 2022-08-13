@@ -136,14 +136,13 @@ public:
 
 		GenerateMesh(positions, "Bricks", 1, {}, normals, textureCords);
 		SetProgramID(ShaderManager.GetShader("main").GetID());
-		m_transform = glm::scale(m_transform, glm::vec3(3.0f, 3.0f, 3.0f));
+		//m_transform = glm::scale(m_transform, glm::vec3(6.0f, 6.0f, 6.0f));
 
 	}
 
 
 	void Update() override final
 	{
-		m_transform = glm::rotate(m_transform, glm::radians(sin(1.f)), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
 		GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat")};
@@ -152,9 +151,33 @@ public:
 
 	void Render(Renderer& renderer) override final
 	{
-		renderer.RenderMesh(*this);
+		for (int i = 0; i < cubePositions.size(); i++)
+		{
+			glm::mat4 trans(1.0f);
+			trans = glm::translate(trans, cubePositions[i]);
+			trans = glm::rotate(trans, glm::radians(sin(1.f)), glm::vec3(1.0f, 1.0f, 1.0f));
+			GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat") };
+			ShaderManager.GetShader("main").Use();
+			glUniformMatrix4fv(worldMatLoc, 1, GL_FALSE, glm::value_ptr(trans));
+			renderer.RenderMesh(*this);
+
+
+		}
 	}
 
+	private:
+		std::vector<glm::vec3> cubePositions = {
+												glm::vec3(0.0f, 0.0f, 0.0f),
+												glm::vec3(2.0f, 5.0f, -15.0f),
+												glm::vec3(-1.5f, -2.2f, -2.5f),
+												glm::vec3(-3.8f, -2.0f, -12.3f),
+												glm::vec3(2.4f, -0.4f, -3.5f),
+												glm::vec3(-1.7f, 3.0f, -7.5f),
+												glm::vec3(1.3f, -2.0f, -2.5f),
+												glm::vec3(1.5f, 2.0f, -2.5f),
+												glm::vec3(1.5f, 0.2f, -1.5f),
+												glm::vec3(-1.3f, 1.0f, -1.5f)
+												};
 };
 
 #endif

@@ -30,8 +30,11 @@ struct Light
 		color,
 		direction;
 	
-	float intensity;
-	
+	float 
+		intensity,
+		range,
+		cutOffAngle;
+
 	uint type;
 
 	bool inUse;
@@ -62,40 +65,19 @@ MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO
 */
 uniform sampler2D textureSampler;
 uniform Light lights [NUMBER_OF_LIGHTS];
-
+uniform vec3 cameraPosition;
+uniform float ambientIntensity;
 
 /*
 FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS 
 */
-vec3 CalculateDirectionalLight(int i, vec3 normal)
-{
-	vec3 lightColor = lights[i].color * lights[i].intensity;
+float CalculateAttenuation(int i);
+float CalculateDiffuse(vec3 dirToLight, vec3 normal);
+float CalculateSpecular(int i, vec3 normal);
 
-	vec3 inverseLightDirection = normalize(-lights[i].direction);
-	float angularIntensity = max(dot(inverseLightDirection, normal), 0.0);
-
-	return lightColor * angularIntensity;
-};
-//
-vec3 CalculateAmbientLight(int i)
-{
-	return lights[i].color * lights[i].intensity;
-};
-//
-vec3 CalculatePointLight(int i, vec3 normal)
-{
-	vec3 lightColor = lights[i].color * lights[i].intensity;
-	
-	vec3 dirToLight = normalize(lights[i].position - varying_position);
-	float angularIntensity = max(dot(dirToLight, normal), 0.0);
-
-	return lightColor * angularIntensity;
-};
-//
-vec3 CalculateSpotLight(int i)
-{
-	return vec3(0);
-};
+vec3 CalculateDirectionalLight(int i, vec3 normal);
+vec3 CalculatePointLight(int i, vec3 normal);
+vec3 CalculateSpotLight(int i, vec3 normal);
 
 
 
@@ -114,20 +96,16 @@ void main()
 
 		switch(lights[i].type)
 		{
-			case 0U://AMBIENT
-				totalRecivedLight += CalculateAmbientLight(i);
-				break;
-
-			case 1U://DIRECTIONAL
+			case 0U://DIRECTIONAL
 				totalRecivedLight += CalculateDirectionalLight(i, normal);
 				break;
 
-			case 2U://POINT
+			case 1U://POINT
 				totalRecivedLight += CalculatePointLight(i, normal);
 				break;
 
-			case 3U://SPOT
-				totalRecivedLight += CalculateSpotLight(i);
+			case 2U://SPOT
+				totalRecivedLight  += CalculateSpotLight(i, normal);
 				break;
 			default:
 				break;
@@ -139,3 +117,79 @@ void main()
 	fragColor = vec4(totalRecivedLight, 1.0) * textureColor;
 
 }
+
+float CalculateAttenuation(int i)
+{
+	float distanceToLight = distance(lights[i].position, varying_position);//find distance between light position and surface position
+	return 1.0 - smoothstep(0, lights[i].range, distanceToLight);//use hermite interpolation to get a strength of light basssed on distance
+}
+
+
+
+float CalculateDiffuse(vec3 dirToLight, vec3 normal)
+{
+	return max(dot(dirToLight, normal), 0.0);//calculate a positive angle between a vector and surface normal to find access to light
+}
+
+
+
+float CalculateSpecular(int i, vec3 normal)
+{
+	vec3 dirToCamera = normalize(cameraPosition - varying_position);//Surface -> Eye
+	vec3 dirToLight = normalize(lights[i].position - varying_position);//Surface -> Light
+
+	vec3 reflected = reflect(-dirToLight, normal);//reflect Surface->Light over surface normal
+
+	float shinyness = 30.0;//would come from a specular map 
+
+	return pow(CalculateDiffuse(dirToCamera, reflected), shinyness);//specular calculation
+}
+
+
+
+vec3 CalculateDirectionalLight(int i, vec3 normal)
+{
+	vec3 lightColor = lights[i].color * lights[i].intensity; // calculate overall light color
+	vec3 inverseLightDirection = normalize(-lights[i].direction);//get vector pointing towards directional light
+	
+	float diffuse = CalculateDiffuse(inverseLightDirection, normal);//find angle netween surface normal and inverse directional light
+	float specular = CalculateSpecular(i, normal);//calculate specular
+
+	return (ambientIntensity + diffuse + specular) * lightColor;//calculate the final light color
+};
+
+
+
+vec3 CalculatePointLight(int i, vec3 normal)
+{
+	vec3 lightColor = lights[i].color * lights[i].intensity;//calculate overall light color
+	vec3 dirToLight = normalize(lights[i].position - varying_position);//get vector from surface to light
+	
+	float attenuation = CalculateAttenuation(i);//calculate light fall off
+	float diffuse = CalculateDiffuse(dirToLight, normal) * attenuation;//calculate light reaching surface and apply fall off
+	float specular = CalculateSpecular(i, normal) * attenuation;//calculate specular on surface and apply fall off
+
+	return (ambientIntensity + diffuse + specular) * lightColor;//final calculation
+};
+
+vec3 CalculateSpotLight(int i, vec3 normal)
+{
+	vec3 lightColor = lights[i].color * lights[i].intensity;//overall light color
+
+	vec3 dirToLight = normalize(lights[i].position - varying_position);//vector from surface to light
+	
+	float angleBetweenSpotDirectionAndCutOff = dot(-dirToLight, normalize(lights[i].direction));//calculate angle of fragment from light direction
+	
+	if(angleBetweenSpotDirectionAndCutOff > lights[i].cutOffAngle)//if the angle of the fragment is inside of the cutoff (radius/cone area) 
+	{
+		float attenuation = CalculateAttenuation(i);//calculte light fall off
+
+		float diffuse = CalculateDiffuse(dirToLight, normal) * attenuation;//calculate reachable light and apply fall off
+		float specular = CalculateSpecular(i, normal)* attenuation;//calculate reachable specular and apply fall off
+
+		//final calculation
+		return (ambientIntensity + diffuse + specular) * lightColor;
+	}
+	return vec3(0.0);
+
+};
