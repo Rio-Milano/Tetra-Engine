@@ -16,6 +16,11 @@ public:
 	void Use()const;
 	void Delete();
 
+	void SetUniform3fv(const GLuint& location, float* data);
+	void SetUniform1f(const GLuint& location, const float& data);
+	void SetUniform1ui(const GLuint& location, const unsigned int& data);
+	void SetUniform1b(const GLuint& location, const bool& data);
+
 	const GLuint& GetID()const;
 
 private:

@@ -66,6 +66,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -116,13 +119,16 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\Shaders\fragment_shader.vs.txt" />
     <Text Include="Data\Shaders\vertex_shader.vs.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Shaders\vertexShader.vert" />
-    <None Include="Data\Shaders\fragmentShader.frag" />
+    <None Include="Data\Shaders\defaultVertexShader.vert" />
+    <None Include="Data\Shaders\defaultFragmentShader.frag" />
   </ItemGroup>
 </Project>

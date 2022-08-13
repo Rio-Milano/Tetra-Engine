@@ -22,7 +22,6 @@ void Renderer::InitRenderer()
 
 	glfwSetFramebufferSizeCallback(m_window.GetWindowPtr(), UpdateViewportWhenWindowSizeChanged);
 
-
 	glEnable(GL_DEPTH_TEST);
 }
 

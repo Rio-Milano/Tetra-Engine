@@ -21,7 +21,7 @@ void ShaderManager::AddShader(const std::string& programName, const Shader& shad
 }
 
 
-const Shader& ShaderManager::GetShader(const std::string& programName)
+Shader& ShaderManager::GetShader(const std::string& programName)
 {
 	if (m_programNameProgramIDMap.find(programName) == m_programNameProgramIDMap.end())
 		std::cout << "Error :" << programName << " does not exist.\n";

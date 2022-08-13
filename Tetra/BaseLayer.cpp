@@ -41,6 +41,6 @@ void BaseLayer::InitGLAD()
 void BaseLayer::CreateShader()
 {
 	Shader shader;
-	shader.Create("Data/Shaders/vertexShader.vert", "Data/Shaders/fragmentShader.frag");
+	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag");
 	ShaderManager.AddShader("main", shader);
 }

@@ -3,6 +3,8 @@
 
 #include"BaseLayer.h"
 #include"TestEntity.h"
+#include"LightManager.h"
+
 class SandBoxLayer : public BaseLayer
 {
 public:
@@ -12,6 +14,7 @@ public:
 	void End() override final;
 
 private:
+	LightManager m_lightManager;
 	TestEntity m_entity;
 };
 

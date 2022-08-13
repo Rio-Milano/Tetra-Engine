@@ -147,6 +147,7 @@
     <ClCompile Include="glmIncludes.h" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LightManager.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderManager.h" />
@@ -180,8 +182,8 @@
     <Text Include="Data\Shaders\vertex_shader.vs.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Shaders\fragmentShader.frag" />
-    <None Include="Data\Shaders\vertexShader.vert" />
+    <None Include="Data\Shaders\defaultFragmentShader.frag" />
+    <None Include="Data\Shaders\defaultVertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,7 +17,7 @@ public:
 	static ShaderManager& GetInstance();
 
 	void AddShader(const std::string& programName, const Shader& shader);
-	const Shader& GetShader(const std::string& programName);
+	Shader& GetShader(const std::string& programName);
 
 	void UpdateAllShaders(const glm::mat4& projection_x_view_mat);
 	void DeleteAllShaders();
