@@ -130,5 +130,7 @@
   <ItemGroup>
     <None Include="Data\Shaders\defaultVertexShader.vert" />
     <None Include="Data\Shaders\defaultFragmentShader.frag" />
+    <None Include="Data\Shaders\lightCubeVertexShader.vert" />
+    <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
   </ItemGroup>
 </Project>

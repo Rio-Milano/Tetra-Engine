@@ -13,7 +13,7 @@ public:
 	Mesh() = default;	
 	~Mesh() = default;
 
-	void GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& textureCords, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements = std::vector<GLuint>{});
+	void GenerateMesh(std::vector<glm::vec3>& positions, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements = std::vector<GLuint>{}, const std::vector<glm::vec3>& normals = std::vector<glm::vec3>{}, const std::vector<glm::vec2>& textureCords = std::vector<glm::vec2>{});
 
 	const GLuint& GetProgramID()const;
 	const GLuint& GetTextureID()const;
@@ -21,9 +21,11 @@ public:
 	const GLenum& GetDrawType()const;
 	const GLsizei& GetNumberOfElements()const;
 	const GLsizei& GetVertexCount()const;
+	const bool& GetHasTexture()const;
 
 	void SetProgramID(const GLuint& programID);
 	void SetTextureID(const GLuint& textureID);
+	void SetHasTexture(const bool& option);
 
 
 private:
@@ -40,7 +42,9 @@ private:
 	
 	size_t
 		m_numberOfElements,
-		m_vertexCount;;
+		m_vertexCount;
+
+	bool m_hasBoundTexture{ true };
 };
 
 #endif

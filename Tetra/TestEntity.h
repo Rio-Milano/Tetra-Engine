@@ -134,18 +134,16 @@ public:
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		};
 
-		GenerateMesh(*this, positions, normals, textureCords,"Bricks", 1);
+		GenerateMesh(positions, "Bricks", 1, {}, normals, textureCords);
 		SetProgramID(ShaderManager.GetShader("main").GetID());
-		//m_transform = glm::translate(m_transform, glm::vec3(0.f, 0.f, -10.f));
+		m_transform = glm::scale(m_transform, glm::vec3(3.0f, 3.0f, 3.0f));
+
 	}
 
 
 	void Update() override final
 	{
-		//m_transform = glm::mat4(1.0f);
-		//m_transform = glm::translate(m_transform, glm::vec3(0.25f, 0.25f, 0.0f));
-		m_transform = glm::rotate(m_transform, glm::radians(sin(1.f)), glm::vec3(1.0f, 0.0f, 0.0f));
-		//m_transform = glm::scale(m_transform, glm::vec3(2.f, 2.f, 2.f));
+		m_transform = glm::rotate(m_transform, glm::radians(sin(1.f)), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
 		GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat")};

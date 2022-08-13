@@ -3,7 +3,7 @@
 
 #include<string>
 #include<glad/glad.h>
-
+#include"glmIncludes.h"
 
 
 class Shader
@@ -20,6 +20,9 @@ public:
 	void SetUniform1f(const GLuint& location, const float& data);
 	void SetUniform1ui(const GLuint& location, const unsigned int& data);
 	void SetUniform1b(const GLuint& location, const bool& data);
+	void SetUniformMat4f(const GLuint location, const glm::mat4& mat4);
+
+	GLuint GetLocation(const std::string& string) const;
 
 	const GLuint& GetID()const;
 

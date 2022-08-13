@@ -5,7 +5,7 @@
 
 
 
-void Mesh::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& textureCords, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements)
+void Mesh::GenerateMesh(std::vector<glm::vec3>& positions, const std::string& textureName, const GLuint& drawType, const std::vector<GLuint>& elements, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& textureCords)
 {
 	m_VAO = StartVAO();
 	m_numberOfElements = elements.size();
@@ -15,15 +15,23 @@ void Mesh::GenerateMesh(Mesh& mesh, std::vector<glm::vec3>& positions, std::vect
 	CreateBuffer(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), positions.data(), GL_STATIC_DRAW);
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 
-	m_textureID = TextureManager.GetTexture(textureName).GetTextureAttributes().textureID;
+	if(textureName.size())
+		m_textureID = TextureManager.GetTexture(textureName).GetTextureAttributes().textureID;
 
-	CreateBuffer(GL_ARRAY_BUFFER, textureCords.size() * sizeof(glm::vec2), textureCords.data(), GL_STATIC_DRAW);
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+	if (textureCords.size())
+	{
+		CreateBuffer(GL_ARRAY_BUFFER, textureCords.size() * sizeof(glm::vec2), (void*)textureCords.data(), GL_STATIC_DRAW);
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+	}
 
-	CreateBuffer(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, 2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	if (normals.size())
+	{
+		CreateBuffer(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), (void*)normals.data(), GL_STATIC_DRAW);
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, 2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	}
 
-	CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * elements.size(), (void*)elements.data(), GL_STATIC_DRAW);
+	if(elements.size())
+		CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * elements.size(), (void*)elements.data(), GL_STATIC_DRAW);
 
 	EndVAO();
 }
@@ -36,6 +44,11 @@ void Mesh::SetProgramID(const GLuint& programID)
 void Mesh::SetTextureID(const GLuint& textureID)
 {
 	m_textureID = textureID;
+}
+
+void Mesh::SetHasTexture(const bool& option)
+{
+	m_hasBoundTexture = option;
 }
 
 const GLuint& Mesh::GetVAO() const
@@ -56,6 +69,11 @@ const GLsizei& Mesh::GetNumberOfElements() const
 const GLsizei& Mesh::GetVertexCount() const
 {
 	return static_cast<GLsizei>(m_vertexCount);
+}
+
+const bool& Mesh::GetHasTexture() const
+{
+	return m_hasBoundTexture;
 }
 
 const GLuint& Mesh::GetProgramID() const

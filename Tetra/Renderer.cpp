@@ -31,8 +31,11 @@ void Renderer::RenderMesh(const Mesh& mesh)
 
 	glBindVertexArray(mesh.GetVAO());
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.GetTextureID());
+	if (mesh.GetHasTexture())
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mesh.GetTextureID());
+	}
 
 	switch (mesh.GetDrawType())
 	{

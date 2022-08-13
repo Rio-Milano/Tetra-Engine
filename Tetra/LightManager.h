@@ -10,6 +10,10 @@
 
 #include"Shader.h"
 #include"glmIncludes.h"
+#include"Mesh.h"
+#include"ShaderManager.h"
+#define ShaderManager ShaderManager::GetInstance()
+#include"Renderer.h"
 
 enum class LightType
 {
@@ -34,9 +38,48 @@ class LightManager
 {
 public:
 
-	LightManager()
+	LightManager() = default;
+
+	void Initialize()
 	{
 		m_lights.resize(NUMBER_OF_LIGHTS);
+
+		std::vector<glm::vec3> positions =
+		{
+			glm::vec3(-0.5f,0.5f,-0.5f),
+			glm::vec3(-0.5f,0.5f,0.5f),
+			glm::vec3(0.5f,0.5f,-0.5f),
+			glm::vec3(0.5f,0.5f,0.5f),
+
+			glm::vec3(-0.5f,-0.5f,-0.5f),
+			glm::vec3(-0.5f,-0.5f,0.5f),
+			glm::vec3(0.5f,-0.5f,-0.5f),
+			glm::vec3(0.5f,-0.5f,0.5f)
+		};
+
+		std::vector<unsigned int> elements
+		{
+			0,1,2,
+			1,2,3,
+			4,5,6,
+			5,6,7,
+			0,1,5,
+			0,4,5,
+			2,3,7,
+			2,6,7,
+			0,2,6,
+			0,4,6,
+			1,5,7,
+			1,3,7
+		};
+
+		Shader cubeShader;
+		cubeShader.Create("Data/Shaders/lightCubeVertexShader.vert", "Data/Shaders/lightCubeFragmentShader.frag");
+		ShaderManager.AddShader("lightCubeShader", cubeShader);
+
+
+		m_meshForLight.GenerateMesh(positions, "", 0, elements);
+		m_meshForLight.SetProgramID(cubeShader.GetID());
 	}
 
 	void SetShaderID(Shader* shader)
@@ -109,64 +152,65 @@ public:
 		{
 			std::string prefix = "lights[" + std::to_string(i) + "].";
 			
-			GLuint lightPosLoc = glGetUniformLocation(shaderID, std::string(prefix + "position").c_str());
-			GLuint lightColorLoc = glGetUniformLocation(shaderID, std::string(prefix + "color").c_str());
-			GLuint lightIntensityLoc = glGetUniformLocation(shaderID, std::string(prefix + "intensity").c_str());
-			GLuint lightTypeLoc = glGetUniformLocation(shaderID, std::string(prefix + "type").c_str());
-			GLuint lightInUseLoc = glGetUniformLocation(shaderID, std::string(prefix + "inUse").c_str());
-			GLuint lightDirLoc = glGetUniformLocation(shaderID, std::string(prefix + "direction").c_str());
-
+			GLuint lightPosLoc =  m_shader->GetLocation(prefix + "position");
+			GLuint lightColorLoc = m_shader->GetLocation(prefix + "color");
+			GLuint lightIntensityLoc = m_shader->GetLocation(prefix + "intensity");
+			GLuint lightTypeLoc = m_shader->GetLocation(prefix + "type");
+			GLuint lightInUseLoc = m_shader->GetLocation(prefix + "inUse");
+			GLuint lightDirLoc = m_shader->GetLocation(prefix + "direction");
 
 			Light& light = m_lights[i];
 
-			switch (light.m_lightType)
-			{
-				case LightType::Ambient:
-					m_shader->SetUniform3fv(lightColorLoc, &light.m_lightColor.x);
-					m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
-					m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
-					m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
-
-					break;
-
-				case LightType::Directional:
-					m_shader->SetUniform3fv(lightColorLoc, &light.m_lightColor.x);
-					m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
-					m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
-					m_shader->SetUniform3fv(lightDirLoc, &light.m_direction.x);
-					m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
-					break;
-
-				case LightType::Point:
-					m_shader->SetUniform3fv(lightPosLoc, &light.m_position.x);
-					m_shader->SetUniform3fv(lightColorLoc, &light.m_lightColor.x);
-					m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
-					m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
-					m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
-					break;
-
-				case LightType::Spot:
-					break;
-
-				default:
-					std::cout << "LightType not recognised!\n;";
-					break;
-			}
-
-			/*
-			
+			m_shader->SetUniform3fv(lightColorLoc, &light.m_lightColor.x);
+			m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
+			m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
+			m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
+			m_shader->SetUniform3fv(lightDirLoc, &light.m_direction.x);
 			m_shader->SetUniform3fv(lightPosLoc, &light.m_position.x);
 
-			m_shader->SetUniform3fv(lightColorLoc, &light.m_lightColor.x);
+			//switch (light.m_lightType)
+			//{
+			//	case LightType::Ambient:
+			//		break;
 
-			m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
+			//	case LightType::Directional:
+			//		break;
 
-			m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
+			//	case LightType::Point:
+			//		break;
 
-			m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
+			//	case LightType::Spot:
+			//		break;
 
-			*/
+			//	default:
+			//		std::cout << "LightType not recognised!\n;";
+			//		break;
+			//}
 
+		}
+	}
+
+	void DrawLights(Renderer& renderer)
+	{
+		for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
+		{
+			if (m_lights[i].m_inUse)
+			{
+				if (m_lights[i].m_lightType == LightType::Point)
+				{
+					Shader& shader = ShaderManager.GetShader("lightCubeShader");
+
+					glm::mat4 transform(1.0f);
+					transform = glm::translate(transform, m_lights[i].m_position);
+					transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+
+					shader.SetUniformMat4f(shader.GetLocation("world"), transform);
+
+					shader.SetUniform3fv(shader.GetLocation("cubeColor"), &m_lights[i].m_lightColor.x);
+
+					renderer.RenderMesh(m_meshForLight);
+				}
+			}
 		}
 	}
 
@@ -182,6 +226,7 @@ private:
 		return -1;
 	};
 
+	Mesh m_meshForLight;
 	Shader* m_shader{nullptr};
 	std::vector<Light> m_lights;
 };

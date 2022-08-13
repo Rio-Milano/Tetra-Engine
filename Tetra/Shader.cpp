@@ -75,6 +75,17 @@ void Shader::SetUniform1b(const GLuint& location, const bool& data)
 	glUniform1i(location, static_cast<int>(data));
 }
 
+void Shader::SetUniformMat4f(const GLuint location, const glm::mat4& mat4)
+{
+	Use();
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
+}
+
+GLuint Shader::GetLocation(const std::string& string) const
+{
+	return glGetUniformLocation(m_programID, string.c_str());
+}
+
 const GLuint& Shader::GetID() const
 {
 	return m_programID;
