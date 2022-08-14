@@ -34,6 +34,7 @@ public:
 	glm::mat4 GetPerspectiveViewMat4()const;
 	const glm::vec3& GetPosition()const;
 	const glm::vec3& GetForwardVector()const;
+	const bool& GetUsingCamera()const;
 
 
 private:
@@ -64,7 +65,8 @@ private:
 		mm4_projectionMat;
 
 	bool
-		m_fpsCamera{ false };
+		m_fpsCamera{ false },
+		m_usingCamera{true};
 
 	GLFWwindow* m_windowPtr;
 

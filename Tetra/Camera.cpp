@@ -24,12 +24,36 @@ void Camera::Initialize
 	mf_previousMouseX = centreOfViewPort.x;
 	mf_previousMouseY = centreOfViewPort.y;
 
-	glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	std::cout << "FPS camera enabled!\n";
+	if(m_fpsCamera)
+		std::cout << "FPS camera enabled!\n";
+
+	glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Camera::Update(const float& dt)
 {
+	if (m_usingCamera)
+	{
+		if (glfwGetKey(m_windowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			m_usingCamera = false;
+			return;
+		}
+	}
+	else
+	{
+		if (glfwGetKey(m_windowPtr, GLFW_KEY_F) == GLFW_PRESS)
+		{
+			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			InputManager.m_firstMouseEvent = false;
+			InputManager.m_seccondMouseEvent = false;
+			m_usingCamera = true;
+		}
+		else
+			return;
+	}
+
 	//changes fov of prespective matrix
 	UpdateFOV();
 
@@ -61,6 +85,11 @@ const glm::vec3& Camera::GetPosition() const
 const glm::vec3& Camera::GetForwardVector() const
 {
 	return mv3_forward;
+}
+
+const bool& Camera::GetUsingCamera() const
+{
+	return m_usingCamera;
 }
 
 void Camera::ComputePrespectiveMatrix()

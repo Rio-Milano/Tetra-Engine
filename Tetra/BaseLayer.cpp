@@ -8,18 +8,17 @@
 #include "external_libaries/include/imGUI/imgui_impl_glfw.h"
 #include "external_libaries/include/imGUI/imgui_impl_opengl3.h"
 
-
 #include"Helper.h"
 void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName)
 {
 	m_renderer.CreateWindow(windowSize.x, windowSize.y, windowName);
-	InitializeImGui();
 	InitGLAD();
 	m_renderer.InitRenderer();
 	InputManager.InitializeInputManager(m_renderer.GetWindow().GetWindowPtr());
 	CreateShader();
 	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 4.0f), m_renderer.GetWindow().GetWindowPtr());
 	Helper::Status::DisplayUsefulInfo();
+	InitializeImGui();
 }
 
 void BaseLayer::InitializeImGui()
@@ -43,7 +42,8 @@ void BaseLayer::DestroyLayer()
 void BaseLayer::BaseRender()
 {
 	Render();
-	BaseimGUI();
+	if(!m_camera.GetUsingCamera())
+		BaseimGUI();
 }
 
 void BaseLayer::BaseUpdate(const float& dt)

@@ -1,2 +1,9 @@
-﻿  SandBoxLayer.cpp
+﻿  Application.cpp
+  BaseLayer.cpp
+  Camera.cpp
+  Renderer.cpp
+  SandBoxLayer.cpp
+  Source.cpp
+  Window.cpp
+  Generating Code...
   Tetra.vcxproj -> C:\Users\riomi\source\repos\Tetra\x64\Debug\Tetra.exe
