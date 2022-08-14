@@ -143,10 +143,7 @@ public:
 
 	void Update() override final
 	{
-
-
-		GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat")};
-		glUniformMatrix4fv(worldMatLoc, 1, GL_FALSE, glm::value_ptr(m_transform));
+		m_transform = glm::rotate(m_transform, glm::radians(sin(1.f)), glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 
 	void Render(Renderer& renderer) override final
@@ -155,7 +152,7 @@ public:
 		{
 			glm::mat4 trans(1.0f);
 			trans = glm::translate(trans, cubePositions[i]);
-			trans = glm::rotate(trans, glm::radians(sin(1.f)), glm::vec3(1.0f, 1.0f, 1.0f));
+			trans *= m_transform;
 			GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat") };
 			ShaderManager.GetShader("main").Use();
 			glUniformMatrix4fv(worldMatLoc, 1, GL_FALSE, glm::value_ptr(trans));

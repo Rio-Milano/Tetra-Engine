@@ -1,7 +1,8 @@
 #include "SandBoxLayer.h"
-
 #include"TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
+
+#include "external_libaries/include/imGUI/imgui.h"
 
 void SandBoxLayer::Start()
 {
@@ -25,10 +26,10 @@ void SandBoxLayer::Start()
 
 void SandBoxLayer::Update(float dt)
 {
-	if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_0) == GLFW_PRESS)
+	if (m_wireframeMode)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_9) == GLFW_PRESS)
+	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	m_entity.Update();
@@ -45,4 +46,13 @@ void SandBoxLayer::Render()
 
 void SandBoxLayer::End()
 {
+}
+
+void SandBoxLayer::ImGUI()
+{
+	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+	ImGui::Text("This is some useful text.");
+
+	ImGui::End();
 }

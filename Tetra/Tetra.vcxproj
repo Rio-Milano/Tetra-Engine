@@ -114,11 +114,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\riomi\source\repos\Tetra\Tetra\external_libaries\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\riomi\source\repos\Tetra\Tetra\external_libaries\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,6 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\riomi\source\repos\Tetra\Tetra\external_libaries\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,13 +139,21 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\riomi\source\repos\Tetra\Tetra\external_libaries\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\external_libaries\include\STB_ImageLoader\stb_image.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BaseLayer.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui_demo.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui_draw.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui_impl_glfw.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui_tables.cpp" />
+    <ClCompile Include="external_libaries\include\imGUI\imgui_widgets.cpp" />
+    <ClCompile Include="external_libaries\include\STB_ImageLoader\stb_image.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="glmIncludes.h" />
     <ClCompile Include="Helper.cpp" />
@@ -159,11 +170,20 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\external_libaries\include\STB_ImageLoader\stb_image.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BaseLayer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imconfig.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imgui.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imgui_impl_glfw.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imgui_impl_opengl3.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imgui_internal.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imstb_rectpack.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imstb_textedit.h" />
+    <ClInclude Include="external_libaries\include\imGUI\imstb_truetype.h" />
+    <ClInclude Include="external_libaries\include\STB_ImageLoader\stb_image.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LightManager.h" />

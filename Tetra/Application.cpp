@@ -28,7 +28,7 @@ void Application::Run()
 			m_baseLayer->BaseUpdate(dt);
 
 			m_baseLayer->m_renderer.StartRendering();
-			m_baseLayer->Render();
+			m_baseLayer->BaseRender();
 			m_baseLayer->m_renderer.EndRendering();
 		}
 		m_baseLayer->End();

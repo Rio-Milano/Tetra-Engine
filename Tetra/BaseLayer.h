@@ -19,6 +19,7 @@ class BaseLayer
 protected:
 	virtual void Start() {};
 	virtual void Update(float dt) {};
+	virtual void ImGUI() {};
 	virtual void Render() {};
 	virtual void End() {};
 
@@ -27,9 +28,11 @@ protected:
 
 private:
 	void CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName);
+	void InitializeImGui();
 	void DestroyLayer();
+	void BaseRender();
 	void BaseUpdate(const float& dt);
-
+	void BaseimGUI();
 	void InitGLAD();
 	void CreateShader();
 

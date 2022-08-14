@@ -4,10 +4,16 @@
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
 
+#include "external_libaries/include/imGUI/imgui.h"
+#include "external_libaries/include/imGUI/imgui_impl_glfw.h"
+#include "external_libaries/include/imGUI/imgui_impl_opengl3.h"
+
+
 #include"Helper.h"
 void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName)
 {
 	m_renderer.CreateWindow(windowSize.x, windowSize.y, windowName);
+	InitializeImGui();
 	InitGLAD();
 	m_renderer.InitRenderer();
 	InputManager.InitializeInputManager(m_renderer.GetWindow().GetWindowPtr());
@@ -16,9 +22,28 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	Helper::Status::DisplayUsefulInfo();
 }
 
+void BaseLayer::InitializeImGui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(m_renderer.GetWindow().GetWindowPtr(), true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+}
+
 void BaseLayer::DestroyLayer()
 {
 	ShaderManager.DeleteAllShaders();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void BaseLayer::BaseRender()
+{
+	Render();
+	BaseimGUI();
 }
 
 void BaseLayer::BaseUpdate(const float& dt)
@@ -28,6 +53,18 @@ void BaseLayer::BaseUpdate(const float& dt)
 	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveViewMat4(), m_camera.GetPosition());
 	Update(dt);
 
+}
+
+void BaseLayer::BaseimGUI()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGUI();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void BaseLayer::InitGLAD()
