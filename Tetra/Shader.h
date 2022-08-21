@@ -21,6 +21,7 @@ public:
 	void SetUniform1ui(const GLuint& location, const unsigned int& data);
 	void SetUniform1b(const GLuint& location, const bool& data);
 	void SetUniformMat4f(const GLuint location, const glm::mat4& mat4);
+	void SetUniformMat3f(const GLuint location, const glm::mat3& mat3);
 
 	GLuint GetLocation(const std::string& string) const;
 

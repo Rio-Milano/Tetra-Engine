@@ -38,7 +38,7 @@ void LightManager::Initialize()
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 
 	m_meshForLight.GenerateMesh(positions, "", 0, elements);
-	m_meshForLight.SetProgramID(cubeShader.GetID());
+	m_meshForLight.SetProgramName("lightCubeShader");
 }
 
 void LightManager::SetShaderID(Shader* shader)
@@ -227,7 +227,7 @@ void LightManager::DrawLights(Renderer& renderer)
 
 				shader.SetUniform3fv(shader.GetLocation("cubeColor"), &overallLightColor.x);
 
-				renderer.RenderMesh(m_meshForLight);
+				renderer.RenderMesh(m_meshForLight, transform);
 			}
 		}
 	}

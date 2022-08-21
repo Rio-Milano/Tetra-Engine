@@ -36,9 +36,9 @@ void Mesh::GenerateMesh(std::vector<glm::vec3>& positions, const std::string& te
 	EndVAO();
 }
 
-void Mesh::SetProgramID(const GLuint& programID)
+void Mesh::SetProgramName(const std::string& programName)
 {
-	m_programID = programID;
+	m_programName = programName;
 }
 
 void Mesh::SetTextureID(const GLuint& textureID)
@@ -76,9 +76,9 @@ const bool& Mesh::GetHasTexture() const
 	return m_hasBoundTexture;
 }
 
-const GLuint& Mesh::GetProgramID() const
+const std::string& Mesh::GetProgramName() const
 {
-	return m_programID;
+	return m_programName;
 }
 
 const GLuint& Mesh::GetTextureID() const

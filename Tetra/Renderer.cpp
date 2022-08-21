@@ -3,6 +3,9 @@
 #include<iostream>
 #include<vector>
 
+#include"ShaderManager.h"
+#define ShaderManager ShaderManager::GetInstance()
+
 void Renderer::CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
 	//create window
@@ -25,10 +28,18 @@ void Renderer::InitRenderer()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Renderer::RenderMesh(const Mesh& mesh)
+void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 {
-	glUseProgram(mesh.GetProgramID());
+	//set uniforms
+	Shader& shader = ShaderManager.GetShader(mesh.GetProgramName());
+	
+	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
+	
+	glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(worldMat))); 
+	shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
 
+	//get ready to render
+	shader.Use();
 	glBindVertexArray(mesh.GetVAO());
 
 	if (mesh.GetHasTexture())

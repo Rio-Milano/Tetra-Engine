@@ -135,7 +135,7 @@ public:
 		};
 
 		GenerateMesh(positions, "Bricks", 1, {}, normals, textureCords);
-		SetProgramID(ShaderManager.GetShader("main").GetID());
+		SetProgramName("main");
 		//m_transform = glm::scale(m_transform, glm::vec3(6.0f, 6.0f, 6.0f));
 
 	}
@@ -153,10 +153,8 @@ public:
 			glm::mat4 trans(1.0f);
 			trans = glm::translate(trans, cubePositions[i]);
 			trans *= m_transform;
-			GLint worldMatLoc{ glGetUniformLocation(ShaderManager.GetShader("main").GetID(), "worldMat") };
-			ShaderManager.GetShader("main").Use();
-			glUniformMatrix4fv(worldMatLoc, 1, GL_FALSE, glm::value_ptr(trans));
-			renderer.RenderMesh(*this);
+			
+			renderer.RenderMesh(*this, trans);
 
 
 		}
