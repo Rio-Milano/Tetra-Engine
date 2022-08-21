@@ -141,9 +141,9 @@ public:
 	}
 
 
-	void Update() override final
+	void Update(const float& dt) override final
 	{
-		m_transform = glm::rotate(m_transform, glm::radians(sin(1.f)), glm::vec3(1.0f, 1.0f, 1.0f));
+		m_transform = glm::rotate(m_transform, glm::radians(30.f) * dt, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 
 	void Render(Renderer& renderer) override final

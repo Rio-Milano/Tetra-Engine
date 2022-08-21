@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include<GLFW/glfw3.h>
+class XInput_Wrapper;
 
 #include"glmIncludes.h"
 
@@ -18,6 +19,7 @@ class Camera
 {
 public:
 	Camera() = default;
+	~Camera();
 
 	void Initialize
 	(
@@ -67,6 +69,8 @@ private:
 	bool
 		m_fpsCamera{ false },
 		m_usingCamera{true};
+
+	XInput_Wrapper* controller;
 
 	GLFWwindow* m_windowPtr;
 

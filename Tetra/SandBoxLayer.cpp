@@ -16,13 +16,15 @@ void SandBoxLayer::Start()
 
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
 	
-	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(1.f), .4f);
-	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(1.f), .4f);
-	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(1.f), .4f);
-	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .4f);
+	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(1.f), .4f);//0
+	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(1.f), .4f);//1
+	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(1.f), .4f);//2
+	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .4f);//3
 
-	//m_lightManager.SetDirectionalLight(glm::vec3(-1.f, -1.f, 0.f), glm::vec3(1.0f), 0.5f);
+	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 1.f, 0);//4
 }
+
+
 
 void SandBoxLayer::Update(float dt)
 {
@@ -33,8 +35,27 @@ void SandBoxLayer::Update(float dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-	m_entity.Update();
+	m_entity.Update(dt);
 	m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(0.97f, 1.f, 0.12f), .7f, 5);
+	
+
+	/*Light& light = m_lightManager.GetLight(4);
+	static float theta = 0;
+	static const float vx = 1.f;
+
+	if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_LEFT) == GLFW_PRESS)
+		theta -= vx * dt;
+
+	if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+		theta += vx * dt;
+
+	if (theta < -1.f)
+		theta = -1.f;
+	else if (theta > 1.f)
+		theta = 1.f;
+
+	light.m_direction.x = theta;*/
+
 	m_lightManager.UpdateShader();
 }
 

@@ -1,9 +1,12 @@
 #include "Camera.h"
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
-
 #include<iostream>
-
+#include"XInput_Wrapper.h"
+Camera::~Camera()
+{
+	delete controller;
+};
 void Camera::Initialize
 (
 	const float& fov,
@@ -28,13 +31,17 @@ void Camera::Initialize
 		std::cout << "FPS camera enabled!\n";
 
 	glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	controller = new XInput_Wrapper;
 }
 
 void Camera::Update(const float& dt)
 {
+	controller->Update();
+
 	if (m_usingCamera)
 	{
-		if (glfwGetKey(m_windowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		if (glfwGetKey(m_windowPtr, GLFW_KEY_U) == GLFW_PRESS)
 		{
 			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			m_usingCamera = false;
@@ -60,6 +67,10 @@ void Camera::Update(const float& dt)
 	//updates pitch and yaw values
 	MouseInput(dt);
 
+	auto controller0 = controller->GetController(0);
+	mf_pitch += controller0->GetRightStickY() * 2.f;
+	mf_yaw += controller0->GetRightStickX() * 2.f;
+
 	//calculate forward vector using new pitch and yaw and to calculate right vector later
 	UpdateForwardVector();
 
@@ -68,6 +79,8 @@ void Camera::Update(const float& dt)
 
 	//process all user input
 	KeyboardInput(dt);
+
+	mv3_position += (mv3_forward * controller0->GetLeftStickY() + mv3_right * controller0->GetLeftStickX()) * mf_cameraSpeed * dt;
 
 	ComputeViewMatrix();
 }
@@ -119,6 +132,7 @@ void Camera::UpdateFOV()
 
 void Camera::MouseInput(const float& dt)
 {
+
 	float
 		mouseX = InputManager.m_currentMousePosition.x,
 		mouseY = InputManager.m_currentMousePosition.y;
@@ -142,12 +156,15 @@ void Camera::MouseInput(const float& dt)
 		lf_mouseXOffset *= mf_mouseSensitivity;
 		lf_mouseYOffset *= mf_mouseSensitivity;
 
+
 		//add displacement to pitch and yaw respectively
 		mf_pitch += lf_mouseYOffset;
 		mf_yaw += lf_mouseXOffset;
 
+	
+
 		//constrain pitch and yaw to range
-		if (mf_pitch > 89.f)
+		if (mf_pitch > 89.f)	
 			mf_pitch = 89.f;
 
 		else if (mf_pitch < -89.f)

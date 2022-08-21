@@ -47,13 +47,14 @@ public:
 
 
 	
-	void SetDirectionalLight(const glm::vec3& direction, const glm::vec3& color, const float& intensity);
+	void SetDirectionalLight(const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1);
 
 	
 	void SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1, float cutOffAngle = static_cast<float>(cos(glm::radians(22.5f))), const float& range = 40.f);
 
-	void SetPointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity, const float& range = { 40.f });
+	void SetPointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity, const float& range = { 40.f }, int index = -1);
 
+	Light& GetLight(const int& index);
 
 	void UpdateShader();
 

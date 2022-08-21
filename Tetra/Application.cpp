@@ -12,7 +12,7 @@ void Application::Run()
 
 	if (m_baseLayer)
 	{
-		m_baseLayer->CreateLayer(glm::vec<2, int>(800, 600), "Tetra");
+		m_baseLayer->CreateLayer(glm::vec<2, int>(1920, 1080), "Tetra");
 		m_baseLayer->Start();
 
 		float elapsedTime = 0.f;

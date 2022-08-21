@@ -96,6 +96,9 @@
     <ClCompile Include="external_libaries\include\imGUI\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="XInput_Wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -174,6 +177,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="external_libaries\include\imGUI\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XInput_Wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

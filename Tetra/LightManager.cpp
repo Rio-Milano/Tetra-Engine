@@ -48,17 +48,25 @@ void LightManager::SetShaderID(Shader* shader)
 	m_shader->SetUniform1f(ambientIntensityLoc, 0.05f);
 }
 
-void LightManager::SetDirectionalLight(const glm::vec3& direction, const glm::vec3& color, const float& intensity)
+void LightManager::SetDirectionalLight(const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index)
 {
-	int freeLightIndex = GetFreeLight();
-
-	if (freeLightIndex == -1)
+	//if no index set
+	if (index == -1)
 	{
-		std::cout << "No lights avaliable!\n";
-		return;
+		//get new index
+		int freeLightIndex = GetFreeLight();
+
+		//new index is unavaliable
+		if (freeLightIndex == -1)
+		{
+			std::cout << "No lights avaliable!\n";
+			return;
+		}
+
+		index = freeLightIndex;
 	}
 
-	Light& light = m_lights[freeLightIndex];
+	Light& light = m_lights[index];
 
 	light.m_inUse = true;
 	light.m_lightColor = color;
@@ -97,14 +105,25 @@ void LightManager::SetSpotLight(const glm::vec3& position, const glm::vec3& dire
 	light.m_lightType = LightType::Spot;
 }
 
-void LightManager::SetPointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity, const float& range)
+void LightManager::SetPointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity, const float& range, int index)
 {
-	int freeLightIndex = GetFreeLight();
+	//if no index set
+	if (index == -1)
+	{
+		//get new index
+		int freeLightIndex = GetFreeLight();
 
-	if (freeLightIndex == -1)
-		std::cout << "No lights avaliable!\n";
+		//new index is unavaliable
+		if (freeLightIndex == -1)
+		{
+			std::cout << "No lights avaliable!\n";
+			return;
+		}
 
-	Light& light = m_lights[freeLightIndex];
+		index = freeLightIndex;
+	}
+
+	Light& light = m_lights[index];
 
 	light.m_inUse = true;
 	light.m_position = position;
@@ -112,6 +131,17 @@ void LightManager::SetPointLight(const glm::vec3& position, const glm::vec3& col
 	light.m_lightIntensity = intensity;
 	light.m_range = range;
 	light.m_lightType = LightType::Point;
+}
+
+Light& LightManager::GetLight(const int& index)
+{
+	static Light instance;
+	if (index >= NUMBER_OF_LIGHTS)
+	{
+		std::cout << "Light index is invalid!\n";
+		return instance;
+	}
+	return m_lights[index];
 }
 
 void LightManager::UpdateShader()

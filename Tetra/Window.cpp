@@ -19,7 +19,7 @@ Window::~Window()
 
 bool Window::CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
-	m_renderWindow = glfwCreateWindow(renderWindowWidth, renderWindowHeight, renderWindowName.c_str(), 0, 0);
+	m_renderWindow = glfwCreateWindow(renderWindowWidth, renderWindowHeight, renderWindowName.c_str(), glfwGetPrimaryMonitor(), 0);
 
 	if (!m_renderWindow)
 	{
@@ -44,8 +44,8 @@ void Window::UpdateWindow()
 {
 	glfwPollEvents();
 
-	//if (glfwGetKey(m_renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		//glfwSetWindowShouldClose(m_renderWindow, true);
+	if (glfwGetKey(m_renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(m_renderWindow, true);
 }
 
 void Window::Set_GL_Context()
