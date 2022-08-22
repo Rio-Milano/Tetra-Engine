@@ -267,12 +267,11 @@ vec3 CalculateSpotLight(int i, vec3 normal)
 		
 		//calculate the angle between theta and outer cutoff angle which gives how far along theta is past of before the outer angle then divide it by epsilon
 		
-		float I = (theta - lights[i].outerCutOffAngle) / epsilon;
+		float I = smoothstep(0.0, 1.0, (theta - lights[i].outerCutOffAngle) / epsilon);
 		//if fragment is inbetween the inner and outer cutoff I should be 0->1
 		//if fragment is inside inner cutoff I would be > 1
 		//if fragment is outside outer cutoff I is < 1
-		//so we clamp I
-		I = clamp(I, 0.0, 1.0);
+		//hermite will clamp but smoother
 
 		diffuse *= I;
 		specular *= I;
