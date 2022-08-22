@@ -19,13 +19,13 @@ const Texture::TextureAttributes& Texture::GetTextureAttributes() const
 	return m_textureAttributes;
 }
 
-void Texture::InitializeTexture(const std::string& textureFileLocation)
+void Texture::InitializeTexture(const std::string& textureFileLocation, const ImageType& imageType)
 {
 	LoadTexture(textureFileLocation);
-	GenerateTextureBuffer();
+	GenerateTextureBuffer(imageType);
 }
 
-void Texture::GenerateTextureBuffer()
+void Texture::GenerateTextureBuffer(const ImageType& imageType)
 {
 	int&
 		texWidth{ m_textureAttributes.width },
@@ -43,7 +43,22 @@ void Texture::GenerateTextureBuffer()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, texturePtr);
+	GLenum imageType_EN;
+
+	switch (imageType)
+	{
+	case ImageType::png:
+		imageType_EN = GL_RGBA;
+		break;
+	case ImageType::jpg:
+		imageType_EN = GL_RGB;
+		break;
+	default:
+		std::cout << "Image type not recognized\n";
+		return;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, imageType_EN, GL_UNSIGNED_BYTE, texturePtr);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 

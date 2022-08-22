@@ -6,12 +6,13 @@
 
 void SandBoxLayer::Start()
 {
-	Texture bricks;
-	bricks.InitializeTexture("Data/Images/Container.jpg");
-	TextureManager.AddTexture("Bricks", bricks);
-	Texture bricks2;
-	bricks2.InitializeTexture("Data/Images/Container_Spec.jpg");
-	TextureManager.AddTexture("Bricks2", bricks2);
+	Texture t1;
+	t1.InitializeTexture("Data/Images/Box.png", ImageType::png);
+	TextureManager.AddTexture("Box", t1);
+
+	Texture t2;
+	t2.InitializeTexture("Data/Images/BoxSpec.png", ImageType::png);
+	TextureManager.AddTexture("BoxSpec", t2);
 
 	m_entity.Init();
 	
