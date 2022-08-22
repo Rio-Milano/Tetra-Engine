@@ -2,10 +2,10 @@
 
 #include"TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
+#include<iostream>
 
 
-
-void Mesh::GenerateMesh(std::vector<glm::vec3>& positions, const std::string& textureName, const std::string& specularName, const GLuint& drawType, const std::vector<GLuint>& elements, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& textureCords)
+void Mesh::GenerateMesh(std::vector<glm::vec3>& positions, const std::string& textureName, const std::string& specularName, const std::string& emissionName, const GLuint& drawType, const std::vector<GLuint>& elements, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& textureCords)
 {
 	m_VAO = StartVAO();
 	m_numberOfElements = elements.size();
@@ -28,6 +28,12 @@ void Mesh::GenerateMesh(std::vector<glm::vec3>& positions, const std::string& te
 	{
 		m_hasBoundSpecular = true;
 		m_specularID = TextureManager.GetTexture(specularName).GetTextureAttributes().textureID;
+	}
+
+	if (emissionName.size())
+	{
+		m_hasBoundEmission = true;
+		m_emissionID = TextureManager.GetTexture(emissionName).GetTextureAttributes().textureID;
 	}
 
 	if (normals.size())
@@ -63,14 +69,14 @@ const GLenum& Mesh::GetDrawType() const
 	return m_drawType;
 }
 
-const GLsizei& Mesh::GetNumberOfElements() const
+const size_t& Mesh::GetNumberOfElements() const
 {
-	return static_cast<GLsizei>(m_numberOfElements);
+	return m_numberOfElements;
 }
 
-const GLsizei& Mesh::GetVertexCount() const
+const size_t& Mesh::GetVertexCount() const
 {
-	return static_cast<GLsizei>(m_vertexCount);
+	return m_vertexCount;
 }
 
 const bool& Mesh::GetHasTexture() const

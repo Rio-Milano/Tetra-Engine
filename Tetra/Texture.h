@@ -19,7 +19,7 @@ public:
 		int width{ 0 }, height{ 0 }, channels{ 0 };
 		unsigned char* texturePtr{ nullptr };
 
-		GLuint textureID;
+		GLuint textureID{0};
 	};
 	
 	const TextureAttributes& GetTextureAttributes()const;

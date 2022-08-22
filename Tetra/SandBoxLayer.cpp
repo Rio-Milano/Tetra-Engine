@@ -14,18 +14,19 @@ void SandBoxLayer::Start()
 	t2.InitializeTexture("Data/Images/BoxSpec.png", ImageType::png);
 	TextureManager.AddTexture("BoxSpec", t2);
 
+	Texture t3;
+	t3.InitializeTexture("Data/Images/BoxEmission.png", ImageType::png);
+	TextureManager.AddTexture("BoxEmission", t3);
+
 	m_entity.Init();
 	
 	m_lightManager.Initialize();
 
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
 	
-	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(1.f), .4f);//0
-	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(1.f), .4f);//1
-	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(1.f), .4f);//2
-	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .4f);//3
+	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .3f);//3
 
-	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 0);//4
+	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.1f);//4
 }
 
 

@@ -45,13 +45,15 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), mesh.m_defaultSpecularColor);
 	shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), mesh.m_ambientIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
-	
+	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), mesh.emissionRange);
+
 	if (mesh.m_hasBoundTexture)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mesh.m_textureID);
 		shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
 		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
+
 	}
 	else
 	{
@@ -69,6 +71,18 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	{
 		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
 	}
+
+	if (mesh.m_hasBoundEmission)
+	{
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, mesh.m_emissionID);
+		shader.SetUniform1i(shader.GetLocation("material.emissionMap"), 2);
+		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), true);
+	}
+	else
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
+	}
 	
 	glBindVertexArray(mesh.GetVAO());
 
@@ -78,13 +92,13 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.GetNumberOfElements()), GL_UNSIGNED_INT, 0);
 		break;
 	case 1:
-		glDrawArrays(GL_TRIANGLES,  0, mesh.GetVertexCount());
+		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(mesh.GetVertexCount()));
 		break;
 	default:
 		break;
 	}
 
-
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }

@@ -1,8 +1,9 @@
+#include"XInput_Wrapper.h"
+
 #include "Camera.h"
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
 #include<iostream>
-#include"XInput_Wrapper.h"
 Camera::~Camera()
 {
 	delete controller;
@@ -67,7 +68,7 @@ void Camera::Update(const float& dt)
 	//updates pitch and yaw values
 	MouseInput(dt);
 
-	auto controller0 = controller->GetController(0);
+	std::shared_ptr<Controller> controller0 = controller->GetController(0);
 	mf_pitch += controller0->GetRightStickY() * 2.f;
 	mf_yaw += controller0->GetRightStickX() * 2.f;
 
@@ -183,7 +184,7 @@ void Camera::MouseInput(const float& dt)
 
 void Camera::UpdateForwardVector()
 {
-	glm::vec3 direction;
+	glm::vec3 direction(0.0f);
 	direction.x = cos(glm::radians(mf_yaw)) * cos(glm::radians(mf_pitch));
 	direction.y = sin(glm::radians(mf_pitch));
 	direction.z = sin(glm::radians(mf_yaw)) * cos(glm::radians(mf_pitch));

@@ -6,7 +6,6 @@ void Application::PushLayer(const std::shared_ptr<BaseLayer>& newLayer)
 {
 	m_baseLayer = newLayer;
 }
-
 void Application::Run()
 {
 

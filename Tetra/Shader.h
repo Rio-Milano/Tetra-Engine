@@ -4,7 +4,6 @@
 #include<string>
 #include<glad/glad.h>
 #include"glmIncludes.h"
-#include <Windows.h>
 
 
 class Shader

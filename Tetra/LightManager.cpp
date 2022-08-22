@@ -37,7 +37,7 @@ void LightManager::Initialize()
 	cubeShader.Create("Data/Shaders/lightCubeVertexShader.vert", "Data/Shaders/lightCubeFragmentShader.frag");
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 
-	m_meshForLight.GenerateMesh(positions, "", "", 0, elements);
+	m_meshForLight.GenerateMesh(positions, "", "", "", 0, elements);
 	m_meshForLight.SetProgramName("lightCubeShader");
 }
 

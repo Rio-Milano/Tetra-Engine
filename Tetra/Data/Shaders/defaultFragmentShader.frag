@@ -57,6 +57,10 @@ struct Material
 	bool hasSpecularMap;
 	vec3 defaultSpecularColor;
 
+	sampler2D emissionMap;
+	bool hasEmissionMap;
+	float emissionRange;
+
 	float ambientIntensity;
 	float specularIntensity;
 
@@ -94,7 +98,7 @@ vec3 CalculateSpotLight(int i, vec3 normal);
 
 vec3 GetFragmentDiffuse();
 vec3 GetFragmentSpecular();
-
+vec3 GetFragmentEmission();
 
 
 
@@ -128,10 +132,27 @@ void main()
 
 	};
 
-	FragColor = vec4(finalColor, 1.0);
+	float distanceToEmission = distance(cameraPosition, varying_position);
+	float attenation =  1.0 - smoothstep(0, material.emissionRange, distanceToEmission);
+
+	vec3 emissionColor =  GetFragmentEmission() * attenation;
+
+	if(dot(emissionColor, emissionColor) > 0.0)
+		FragColor = vec4(emissionColor, 1.0);
+	else
+		FragColor = vec4(finalColor, 1.0);
 
 }
 
+
+
+vec3 GetFragmentDiffuse()
+{
+	if(material.hasDiffuseMap)
+		return texture(material.diffuseMap, varying_textureCord).xyz;
+	else
+		return material.defaultDiffuseColor;
+};
 
 vec3 GetFragmentSpecular()
 {
@@ -146,14 +167,14 @@ vec3 GetFragmentSpecular()
 	}
 };
 
-
-vec3 GetFragmentDiffuse()
+vec3 GetFragmentEmission()
 {
-	if(material.hasDiffuseMap)
-		return texture(material.diffuseMap, varying_textureCord).xyz;
-	else
-		return material.defaultDiffuseColor;
-};
+	if(material.hasEmissionMap)
+		return texture(material.emissionMap, varying_textureCord).xyz;
+	else	
+		return vec3(0.0);
+}
+
 
 float CalculateAttenuation(int i)
 {
@@ -213,7 +234,7 @@ vec3 CalculatePointLight(int i, vec3 normal)
 	vec3 dirToLight = normalize(lights[i].position - varying_position);//get vector from surface to light
 	float attenuation = CalculateAttenuation(i);//calculate light fall off
 
-	vec3 ambient = fragmentColor * material.ambientIntensity;
+	vec3 ambient = fragmentColor * material.ambientIntensity * attenuation;
 
 	vec3 diffuse = fragmentColor * CalculateDiffuse(dirToLight, normal) * attenuation;//calculate light reaching surface and apply fall off
 	
@@ -230,13 +251,12 @@ vec3 CalculateSpotLight(int i, vec3 normal)
 
 	vec3 dirToLight = normalize(lights[i].position - varying_position);//vector from surface to light
 	float angleBetweenSpotDirectionAndCutOff = dot(-dirToLight, normalize(lights[i].direction));//calculate angle of fragment from light direction
+	float attenuation = CalculateAttenuation(i);//calculte light fall off
 	
-	vec3 ambient = fragmentColor * material.ambientIntensity;
+	vec3 ambient = fragmentColor * material.ambientIntensity * attenuation;
 
 	if(angleBetweenSpotDirectionAndCutOff > lights[i].cutOffAngle)//if the angle of the fragment is inside of the cutoff (radius/cone area) 
 	{
-		float attenuation = CalculateAttenuation(i);//calculte light fall off
-
 		vec3 diffuse = fragmentColor * CalculateDiffuse(dirToLight, normal) * attenuation;
 
 		vec3 specular = specularColor * material.specularIntensity * CalculateSpecular(i, normal) * attenuation;//calculate reachable specular and apply fall off
