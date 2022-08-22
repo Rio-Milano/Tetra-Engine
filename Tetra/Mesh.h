@@ -32,8 +32,8 @@ public:
 protected:
 	float m_ambientIntensity{0.1f};
 	float m_specularIntensity{3.f};
-	glm::vec3 m_defaultDiffuseColor{ 1.0f, 1.0f, 1.0f };
-	glm::vec3 m_defaultSpecularColor{ 1.0f, 1.0f, 1.0f };
+	glm::vec3 m_defaultDiffuseColor{ 0.1f, 0.1f, 0.1f };
+	glm::vec3 m_defaultSpecularColor{ 0.0f, 1.0f, 0.0f };
 	float emissionRange{40.0f};
 
 private:

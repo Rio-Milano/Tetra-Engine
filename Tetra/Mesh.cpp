@@ -20,6 +20,10 @@ void Mesh::GenerateMesh(std::vector<glm::vec3>& positions, const std::string& te
 	{
 		m_hasBoundTexture = true;
 		m_textureID = TextureManager.GetTexture(textureName).GetTextureAttributes().textureID;
+	}
+
+	if (textureCords.size())
+	{
 		CreateBuffer(GL_ARRAY_BUFFER, textureCords.size() * sizeof(glm::vec2), (void*)textureCords.data(), GL_STATIC_DRAW);
 		CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
 	}

@@ -24,9 +24,9 @@ void SandBoxLayer::Start()
 
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
 	
-	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .3f);//3
+	//m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .3f);//3
 
-	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.1f);//4
+	//m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.1f);//4
 }
 
 
