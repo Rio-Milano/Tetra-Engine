@@ -75,7 +75,8 @@ void LightManager::SetDirectionalLight(const glm::vec3& direction, const glm::ve
 	light.m_lightType = LightType::Directional;
 }
 
-void LightManager::SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index, float cutOffAngle, const float& range)
+
+void LightManager::SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index, float innerCutOff, float outerCutoff, const float& range)
 {
 	//if no index set
 	if (index == -1)
@@ -101,7 +102,8 @@ void LightManager::SetSpotLight(const glm::vec3& position, const glm::vec3& dire
 	light.m_lightIntensity = intensity;
 	light.m_range = range;
 	light.m_position = position;
-	light.m_cutOffAngle = cutOffAngle;
+	light.m_innerCutOffAngle = innerCutOff;
+	light.m_outerCutOffAngle = outerCutoff;
 	light.m_lightType = LightType::Spot;
 }
 
@@ -161,7 +163,8 @@ void LightManager::UpdateShader()
 		std::string prefix = "lights[" + std::to_string(i) + "].";
 
 		GLuint lightPosLoc = m_shader->GetLocation(prefix + "position");
-		GLuint lightCutOffAngle = m_shader->GetLocation(prefix + "cutOffAngle");
+		GLuint innerLightCutOffAngleLoc = m_shader->GetLocation(prefix + "innerCutOffAngle");
+		GLuint outerLightCutoffAngleLoc = m_shader->GetLocation(prefix + "outerCutOffAngle");
 		GLuint lightColorLoc = m_shader->GetLocation(prefix + "color");
 		GLuint lightIntensityLoc = m_shader->GetLocation(prefix + "intensity");
 		GLuint lightTypeLoc = m_shader->GetLocation(prefix + "type");
@@ -182,7 +185,8 @@ void LightManager::UpdateShader()
 		m_shader->SetUniform3fv(lightDirLoc, light.m_direction);
 		m_shader->SetUniform3fv(lightPosLoc, light.m_position);
 		m_shader->SetUniform1f(lightRangeLoc, light.m_range);
-		m_shader->SetUniform1f(lightCutOffAngle, light.m_cutOffAngle);
+		m_shader->SetUniform1f(innerLightCutOffAngleLoc, light.m_innerCutOffAngle);
+		m_shader->SetUniform1f(outerLightCutoffAngleLoc, light.m_outerCutOffAngle);
 
 		//switch (light.m_lightType)
 		//{

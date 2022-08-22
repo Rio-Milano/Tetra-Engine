@@ -33,7 +33,8 @@ struct Light
 	float 
 		intensity,
 		range,
-		cutOffAngle;
+		innerCutOffAngle,
+		outerCutOffAngle;
 
 	uint type;
 
@@ -250,20 +251,37 @@ vec3 CalculateSpotLight(int i, vec3 normal)
 	vec3 specularColor = GetFragmentSpecular();
 
 	vec3 dirToLight = normalize(lights[i].position - varying_position);//vector from surface to light
-	float angleBetweenSpotDirectionAndCutOff = dot(-dirToLight, normalize(lights[i].direction));//calculate angle of fragment from light direction
+	float theta = dot(-dirToLight, normalize(lights[i].direction));//calculate angle of -light direction and the fragment->light
 	float attenuation = CalculateAttenuation(i);//calculte light fall off
 	
 	vec3 ambient = fragmentColor * material.ambientIntensity * attenuation;
 
-	if(angleBetweenSpotDirectionAndCutOff > lights[i].cutOffAngle)//if the angle of the fragment is inside of the cutoff (radius/cone area) 
+	if(theta >= lights[i].outerCutOffAngle)//if the angle of the fragment is inside of the outter cutoff
 	{
 		vec3 diffuse = fragmentColor * CalculateDiffuse(dirToLight, normal) * attenuation;
-
+		
 		vec3 specular = specularColor * material.specularIntensity * CalculateSpecular(i, normal) * attenuation;//calculate reachable specular and apply fall off
+
+		//calculate the angle between the inner and outer cutoff
+		float epsilon = lights[i].innerCutOffAngle - lights[i].outerCutOffAngle;
+		
+		//calculate the angle between theta and outer cutoff angle which gives how far along theta is past of before the outer angle then divide it by epsilon
+		
+		float I = (theta - lights[i].outerCutOffAngle) / epsilon;
+		//if fragment is inbetween the inner and outer cutoff I should be 0->1
+		//if fragment is inside inner cutoff I would be > 1
+		//if fragment is outside outer cutoff I is < 1
+		//so we clamp I
+		I = clamp(I, 0.0, 1.0);
+
+		diffuse *= I;
+		specular *= I;
 
 		//final calculation
 		return (ambient + diffuse + specular) * lightColor;
 	}
+
+
 	return ambient * lightColor;
 
 };

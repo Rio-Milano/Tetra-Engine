@@ -29,7 +29,8 @@ struct Light
 	glm::vec3 m_direction;
 	glm::vec3 m_lightColor;
 	float m_lightIntensity;
-	float m_cutOffAngle;
+	float m_innerCutOffAngle;
+	float m_outerCutOffAngle;
 	LightType m_lightType;
 	bool m_inUse;
 	float m_range;
@@ -50,7 +51,7 @@ public:
 	void SetDirectionalLight(const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1);
 
 	
-	void SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1, float cutOffAngle = static_cast<float>(cos(glm::radians(22.5f))), const float& range = 40.f);
+	void SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1, float innerCutOff = static_cast<float>(cos(glm::radians(12.5f))), float outerCutoff = static_cast<float>(cos(glm::radians(25.0f))), const float& range = 40.f);
 
 	void SetPointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity, const float& range = { 40.f }, int index = -1);
 

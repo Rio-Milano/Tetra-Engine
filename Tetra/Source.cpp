@@ -1,6 +1,9 @@
 #include"Application.h"
 #include"SandBoxLayer.h"
 
+//for when changes arent included in build
+//https://stackoverflow.com/questions/17283839/visual-studio-c-does-not-update-new-code-after-building
+
 int main()
 {
 	/*

@@ -209,6 +209,11 @@
     <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
     <None Include="Data\Shaders\lightCubeVertexShader.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Images\Box.png" />
+    <Image Include="Data\Images\BoxEmission.png" />
+    <Image Include="Data\Images\BoxSpec.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

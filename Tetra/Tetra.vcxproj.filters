@@ -193,4 +193,15 @@
     <None Include="Data\Shaders\lightCubeVertexShader.vert" />
     <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Images\Box.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Data\Images\BoxEmission.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Data\Images\BoxSpec.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

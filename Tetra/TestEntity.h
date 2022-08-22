@@ -134,7 +134,7 @@ public:
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		};
 
-		GenerateMesh(positions, "Box", "BoxSpec", "BoxEmission", 1, {}, normals, textureCords);
+		GenerateMesh(positions, "Box", "BoxSpec", "", 1, {}, normals, textureCords);
 		SetProgramName("main");
 		//m_transform = glm::scale(m_transform, glm::vec3(6.0f, 6.0f, 6.0f));
 
@@ -143,7 +143,7 @@ public:
 
 	void Update(const float& dt) override final
 	{
-		m_transform = glm::rotate(m_transform, glm::radians(30.f) * dt, glm::vec3(1.0f, 1.0f, 1.0f));
+		//m_transform = glm::rotate(m_transform, glm::radians(30.f) * dt, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 
 	void Render(Renderer& renderer) override final
