@@ -1,13 +1,4 @@
-﻿  Application.cpp
-  BaseLayer.cpp
-  LightManager.cpp
-  Mesh.cpp
-  Renderer.cpp
-  SandBoxLayer.cpp
-  Shader.cpp
-  ShaderManager.cpp
-  Source.cpp
-  Generating Code...
-C:\Users\riomi\source\repos\Tetra\Tetra\Mesh.cpp(71): warning C4172: returning address of local variable or temporary
-C:\Users\riomi\source\repos\Tetra\Tetra\Mesh.cpp(66): warning C4172: returning address of local variable or temporary
+﻿  SandBoxLayer.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\riomi\source\repos\Tetra\Tetra\external_libaries\include\glad\glad.h(32): message : see previous definition of 'APIENTRY'
   Tetra.vcxproj -> C:\Users\riomi\source\repos\Tetra\x64\Debug\Tetra.exe

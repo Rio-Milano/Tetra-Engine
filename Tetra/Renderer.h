@@ -11,8 +11,6 @@
 #include"Shader.h"
 #include"Camera.h"
 
-class Mesh;
-
 class Renderer
 {
 public:
@@ -20,7 +18,7 @@ public:
 	Renderer() = default;
 	~Renderer() = default;
 
-	void CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
+	void CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
 	void InitRenderer();
 	static void UpdateViewportWhenWindowSizeChanged(GLFWwindow* window, int windowWidth, int windowHeight);
 

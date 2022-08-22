@@ -36,7 +36,7 @@ void ShaderManager::UpdateAllShaders(const glm::mat4& projection_x_view_mat, glm
 		Shader& shader = i->second;
 
 		shader.SetUniformMat4f(shader.GetLocation("Projection_X_View"), projection_x_view_mat);
-		shader.SetUniform3fv(shader.GetLocation("cameraPosition"), &cameraPosition.x);
+		shader.SetUniform3fv(shader.GetLocation("cameraPosition"), cameraPosition);
 	}
 }
 

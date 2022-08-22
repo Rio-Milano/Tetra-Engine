@@ -17,7 +17,7 @@ Window::~Window()
 	glfwTerminate();
 }
 
-bool Window::CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
+bool Window::CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
 	m_renderWindow = glfwCreateWindow(renderWindowWidth, renderWindowHeight, renderWindowName.c_str(), glfwGetPrimaryMonitor(), 0);
 

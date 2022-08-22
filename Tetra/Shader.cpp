@@ -51,10 +51,16 @@ void Shader::Delete()
 	glDeleteShader(m_programID);
 }
 
-void Shader::SetUniform3fv(const GLuint& location, float* data)
+void Shader::SetUniform3fv(const GLuint& location, const glm::vec3& data)
 {
 	Use();
-	glUniform3fv(location, 1, data);
+	glUniform3fv(location, 1, glm::value_ptr(data));
+}
+
+void Shader::SetUniform1i(const GLuint& location, const int& data)
+{
+	Use();
+	glUniform1i(location, data);
 }
 
 void Shader::SetUniform1f(const GLuint& location, const float& data)

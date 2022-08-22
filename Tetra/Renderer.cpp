@@ -6,10 +6,10 @@
 #include"ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 
-void Renderer::CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
+void Renderer::CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
 	//create window
-	m_window.CreateWindow(renderWindowWidth, renderWindowHeight, renderWindowName);
+	m_window.CreateWindowGLFW(renderWindowWidth, renderWindowHeight, renderWindowName);
 }
 
 void Renderer::UpdateViewportWhenWindowSizeChanged(GLFWwindow* window, int windowWidth, int windowHeight)
@@ -40,13 +40,37 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 
 	//get ready to render
 	shader.Use();
-	glBindVertexArray(mesh.GetVAO());
 
-	if (mesh.GetHasTexture())
+	shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), mesh.m_defaultDiffuseColor);
+	shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), mesh.m_defaultSpecularColor);
+	shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), mesh.m_ambientIntensity);
+	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
+	
+	if (mesh.m_hasBoundTexture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mesh.GetTextureID());
+		glBindTexture(GL_TEXTURE_2D, mesh.m_textureID);
+		shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
+		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
 	}
+	else
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
+	}
+
+	if (mesh.GetHasSpecular())
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mesh.m_specularID);
+		shader.SetUniform1i(shader.GetLocation("material.specularMap"), 1);
+		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), true);
+	}
+	else
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
+	}
+	
+	glBindVertexArray(mesh.GetVAO());
 
 	switch (mesh.GetDrawType())
 	{

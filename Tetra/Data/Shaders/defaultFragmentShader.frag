@@ -14,7 +14,7 @@ in vec3 varying_position;
 /*
  OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT
 */
-out vec4 fragColor;
+out vec4 FragColor;
 
 
 
@@ -47,7 +47,20 @@ struct Light
 	*/
 };
 
+struct Material
+{
+	sampler2D diffuseMap;
+	bool hasDiffuseMap;
+	vec3 defaultDiffuseColor;
+	
+	sampler2D specularMap;
+	bool hasSpecularMap;
+	vec3 defaultSpecularColor;
 
+	float ambientIntensity;
+	float specularIntensity;
+
+};
 
 
 
@@ -55,7 +68,7 @@ struct Light
 MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO
 */
 #define NUMBER_OF_LIGHTS 10
-
+#define SPECULAR_POWER 32
 
 
 
@@ -63,10 +76,10 @@ MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO
 /*
  UNIFORM UNIFORM UNIFORM UNIFORM UNIFORM UNIFORM
 */
-uniform sampler2D textureSampler;
+uniform Material material;
 uniform Light lights [NUMBER_OF_LIGHTS];
 uniform vec3 cameraPosition;
-uniform float ambientIntensity;
+
 
 /*
 FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS 
@@ -79,6 +92,8 @@ vec3 CalculateDirectionalLight(int i, vec3 normal);
 vec3 CalculatePointLight(int i, vec3 normal);
 vec3 CalculateSpotLight(int i, vec3 normal);
 
+vec3 GetFragmentDiffuse();
+vec3 GetFragmentSpecular();
 
 
 
@@ -86,7 +101,7 @@ vec3 CalculateSpotLight(int i, vec3 normal);
 void main()
 {
 	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
-	vec3 totalRecivedLight;
+	vec3 finalColor;
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
@@ -97,15 +112,15 @@ void main()
 		switch(lights[i].type)
 		{
 			case 0U://DIRECTIONAL
-				totalRecivedLight += CalculateDirectionalLight(i, normal);
+				finalColor += CalculateDirectionalLight(i, normal);
 				break;
 
 			case 1U://POINT
-				totalRecivedLight += CalculatePointLight(i, normal);
+				finalColor += CalculatePointLight(i, normal);
 				break;
 
 			case 2U://SPOT
-				totalRecivedLight  += CalculateSpotLight(i, normal);
+				finalColor  += CalculateSpotLight(i, normal);
 				break;
 			default:
 				break;
@@ -113,10 +128,32 @@ void main()
 
 	};
 
-	vec4 textureColor = texture(textureSampler, varying_textureCord);
-	fragColor = vec4(totalRecivedLight, 1.0) * textureColor;
+	FragColor = vec4(finalColor, 1.0);
 
 }
+
+
+vec3 GetFragmentSpecular()
+{
+	if(material.hasSpecularMap)
+		return texture(material.specularMap, varying_textureCord).xyz;
+	else
+	{
+		if(material.hasDiffuseMap)
+			return GetFragmentDiffuse();
+		else
+			return material.defaultSpecularColor;
+	}
+};
+
+
+vec3 GetFragmentDiffuse()
+{
+	if(material.hasDiffuseMap)
+		return texture(material.diffuseMap, varying_textureCord).xyz;
+	else
+		return material.defaultDiffuseColor;
+};
 
 float CalculateAttenuation(int i)
 {
@@ -140,22 +177,29 @@ float CalculateSpecular(int i, vec3 normal)
 
 	vec3 reflected = reflect(-dirToLight, normal);//reflect Surface->Light over surface normal
 
-	float shinyness = 30.0;//would come from a specular map 
-
-	return pow(CalculateDiffuse(dirToCamera, reflected), shinyness);//specular calculation
+	return material.specularIntensity * pow(CalculateDiffuse(dirToCamera, reflected), SPECULAR_POWER);//specular calculation
 }
 
 
 
 vec3 CalculateDirectionalLight(int i, vec3 normal)
 {
+	//Light and Fragment Color
 	vec3 lightColor = lights[i].color * lights[i].intensity; // calculate overall light color
-	vec3 inverseLightDirection = normalize(-lights[i].direction);//get vector pointing towards directional light
-	
-	float diffuse = CalculateDiffuse(inverseLightDirection, normal);//find angle netween surface normal and inverse directional light
-	float specular = CalculateSpecular(i, normal);//calculate specular
+	vec3 fragmentColor = GetFragmentDiffuse();
+	vec3 specularColor = GetFragmentSpecular();
 
-	return (ambientIntensity + diffuse + specular) * lightColor;//calculate the final light color
+	//Ambient Color
+	vec3 ambient = fragmentColor * material.ambientIntensity;
+
+	//Diffuse color
+	vec3 inverseLightDirection = normalize(-lights[i].direction);//get vector pointing towards directional light
+	vec3 diffuse = fragmentColor * CalculateDiffuse(inverseLightDirection, normal);//find angle netween surface normal and inverse directional light
+	
+	//Specular color
+	vec3 specular = specularColor * material.specularIntensity * CalculateSpecular(i, normal);//calculate specular
+
+	return (ambient + diffuse + specular) * lightColor;//calculate the final light color
 };
 
 
@@ -163,33 +207,43 @@ vec3 CalculateDirectionalLight(int i, vec3 normal)
 vec3 CalculatePointLight(int i, vec3 normal)
 {
 	vec3 lightColor = lights[i].color * lights[i].intensity;//calculate overall light color
-	vec3 dirToLight = normalize(lights[i].position - varying_position);//get vector from surface to light
-	
-	float attenuation = CalculateAttenuation(i);//calculate light fall off
-	float diffuse = CalculateDiffuse(dirToLight, normal) * attenuation;//calculate light reaching surface and apply fall off
-	float specular = CalculateSpecular(i, normal) * attenuation;//calculate specular on surface and apply fall off
+	vec3 fragmentColor = GetFragmentDiffuse();
+	vec3 specularColor = GetFragmentSpecular();
 
-	return (ambientIntensity + diffuse + specular) * lightColor;//final calculation
+	vec3 dirToLight = normalize(lights[i].position - varying_position);//get vector from surface to light
+	float attenuation = CalculateAttenuation(i);//calculate light fall off
+
+	vec3 ambient = fragmentColor * material.ambientIntensity;
+
+	vec3 diffuse = fragmentColor * CalculateDiffuse(dirToLight, normal) * attenuation;//calculate light reaching surface and apply fall off
+	
+	vec3 specular =  specularColor * material.specularIntensity * CalculateSpecular(i, normal) * attenuation;//calculate specular on surface and apply fall off
+
+	return (ambient + diffuse + specular) * lightColor;//final calculation
 };
 
 vec3 CalculateSpotLight(int i, vec3 normal)
 {
 	vec3 lightColor = lights[i].color * lights[i].intensity;//overall light color
+	vec3 fragmentColor = GetFragmentDiffuse();
+	vec3 specularColor = GetFragmentSpecular();
 
 	vec3 dirToLight = normalize(lights[i].position - varying_position);//vector from surface to light
-	
 	float angleBetweenSpotDirectionAndCutOff = dot(-dirToLight, normalize(lights[i].direction));//calculate angle of fragment from light direction
 	
+	vec3 ambient = fragmentColor * material.ambientIntensity;
+
 	if(angleBetweenSpotDirectionAndCutOff > lights[i].cutOffAngle)//if the angle of the fragment is inside of the cutoff (radius/cone area) 
 	{
 		float attenuation = CalculateAttenuation(i);//calculte light fall off
 
-		float diffuse = CalculateDiffuse(dirToLight, normal) * attenuation;//calculate reachable light and apply fall off
-		float specular = CalculateSpecular(i, normal)* attenuation;//calculate reachable specular and apply fall off
+		vec3 diffuse = fragmentColor * CalculateDiffuse(dirToLight, normal) * attenuation;
+
+		vec3 specular = specularColor * material.specularIntensity * CalculateSpecular(i, normal) * attenuation;//calculate reachable specular and apply fall off
 
 		//final calculation
-		return (ambientIntensity + diffuse + specular) * lightColor;
+		return (ambient + diffuse + specular) * lightColor;
 	}
-	return vec3(0.0);
+	return ambient * lightColor;
 
 };

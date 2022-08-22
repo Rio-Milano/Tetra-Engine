@@ -6,11 +6,11 @@
 #include"TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 #include"Mesh.h"
+#include<iostream>
 
 class TestEntity: public Entity, public Transform, public Mesh
 {
 public:
-	TestEntity() = default;
 	void Init() override final 
 	{
 		std::vector<glm::vec3> positions
@@ -134,7 +134,7 @@ public:
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		};
 
-		GenerateMesh(positions, "Bricks", 1, {}, normals, textureCords);
+		GenerateMesh(positions, "Bricks", "Bricks2", 1, {}, normals, textureCords);
 		SetProgramName("main");
 		//m_transform = glm::scale(m_transform, glm::vec3(6.0f, 6.0f, 6.0f));
 

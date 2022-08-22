@@ -9,6 +9,9 @@ void SandBoxLayer::Start()
 	Texture bricks;
 	bricks.InitializeTexture("Data/Images/Container.jpg");
 	TextureManager.AddTexture("Bricks", bricks);
+	Texture bricks2;
+	bricks2.InitializeTexture("Data/Images/Container_Spec.jpg");
+	TextureManager.AddTexture("Bricks2", bricks2);
 
 	m_entity.Init();
 	
@@ -21,7 +24,7 @@ void SandBoxLayer::Start()
 	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(1.f), .4f);//2
 	m_lightManager.SetPointLight(glm::vec3(-8.f, 0.f, 0.f), glm::vec3(1.f), .4f);//3
 
-	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 1.f, 0);//4
+	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 0);//4
 }
 
 
@@ -36,7 +39,7 @@ void SandBoxLayer::Update(float dt)
 
 
 	m_entity.Update(dt);
-	m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(0.97f, 1.f, 0.12f), .7f, 5);
+	m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
 	
 
 	/*Light& light = m_lightManager.GetLight(4);

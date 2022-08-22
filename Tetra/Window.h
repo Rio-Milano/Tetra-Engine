@@ -11,7 +11,7 @@ public:
 	Window();
 	~Window();
 
-	bool CreateWindow(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
+	bool CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName);
 	GLFWwindow* GetWindowPtr();
 	void UpdateWindow();
 

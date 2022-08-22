@@ -4,6 +4,7 @@
 #include<string>
 #include<glad/glad.h>
 #include"glmIncludes.h"
+#include <Windows.h>
 
 
 class Shader
@@ -16,12 +17,14 @@ public:
 	void Use()const;
 	void Delete();
 
-	void SetUniform3fv(const GLuint& location, float* data);
+	void SetUniform3fv(const GLuint& location, const glm::vec3& data);
+	void SetUniform1i(const GLuint& location, const int& data);
 	void SetUniform1f(const GLuint& location, const float& data);
 	void SetUniform1ui(const GLuint& location, const unsigned int& data);
 	void SetUniform1b(const GLuint& location, const bool& data);
 	void SetUniformMat4f(const GLuint location, const glm::mat4& mat4);
 	void SetUniformMat3f(const GLuint location, const glm::mat3& mat3);
+	
 
 	GLuint GetLocation(const std::string& string) const;
 

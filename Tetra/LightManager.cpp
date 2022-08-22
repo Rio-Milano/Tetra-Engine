@@ -37,7 +37,7 @@ void LightManager::Initialize()
 	cubeShader.Create("Data/Shaders/lightCubeVertexShader.vert", "Data/Shaders/lightCubeFragmentShader.frag");
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 
-	m_meshForLight.GenerateMesh(positions, "", 0, elements);
+	m_meshForLight.GenerateMesh(positions, "", "", 0, elements);
 	m_meshForLight.SetProgramName("lightCubeShader");
 }
 
@@ -175,12 +175,12 @@ void LightManager::UpdateShader()
 		//light.m_position.y = yOffset;
 
 
-		m_shader->SetUniform3fv(lightColorLoc, &light.m_lightColor.x);
+		m_shader->SetUniform3fv(lightColorLoc, light.m_lightColor);
 		m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
 		m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
 		m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
-		m_shader->SetUniform3fv(lightDirLoc, &light.m_direction.x);
-		m_shader->SetUniform3fv(lightPosLoc, &light.m_position.x);
+		m_shader->SetUniform3fv(lightDirLoc, light.m_direction);
+		m_shader->SetUniform3fv(lightPosLoc, light.m_position);
 		m_shader->SetUniform1f(lightRangeLoc, light.m_range);
 		m_shader->SetUniform1f(lightCutOffAngle, light.m_cutOffAngle);
 
@@ -225,7 +225,7 @@ void LightManager::DrawLights(Renderer& renderer)
 
 				glm::vec3 overallLightColor = m_lights[i].m_lightColor * m_lights[i].m_lightIntensity;
 
-				shader.SetUniform3fv(shader.GetLocation("cubeColor"), &overallLightColor.x);
+				shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);
 
 				renderer.RenderMesh(m_meshForLight, transform);
 			}

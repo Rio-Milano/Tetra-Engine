@@ -1,16 +1,15 @@
 #ifndef XINPUT_WRAPPER_H
 #define XINPUT_WRAPPER_H
 
-#include<Windows.h>
-#include<Xinput.h>
 #include<vector>
 #include<memory>
 #include<chrono>
+#include<Windows.h>
+#include<Xinput.h>
 
 /*
 https://docs.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput
 https://www.geeksforgeeks.org/chrono-in-c/
-
 */
 class Controller
 {
@@ -25,22 +24,24 @@ public:
 	const float& GetRightStickY()const;
 	const float& GetLeftTrigger()const;
 	const float& GetRightTrigger()const;
-	
+	const WORD& GetLeftMotorSpeed()const;
+	const WORD& GetRightMotorSpeed()const;
+
 	void SetVibrationState(WORD leftMotorSpeed, WORD rightMotorSpeed);
 
 
 private:
 
-	XINPUT_STATE m_state{0};
-	XINPUT_VIBRATION m_vibrationState{0};
+	XINPUT_STATE m_state{ 0 };
+	XINPUT_VIBRATION m_vibrationState{ 0 };
 	bool m_connected{ false };
 	DWORD m_index{ 0 };
-	
-	float m_leftAnalogStickX{0.f};
-	float m_leftAnalogStickY{0.f};
-	float m_rightAnalogStickX{0.f};
-	float m_rightAnalogStickY{0.f};
-	
+
+	float m_leftAnalogStickX{ 0.f };
+	float m_leftAnalogStickY{ 0.f };
+	float m_rightAnalogStickX{ 0.f };
+	float m_rightAnalogStickY{ 0.f };
+
 	float m_leftTrigger{ 0.f };
 	float m_rightTrigger{ 0.f };
 
@@ -73,10 +74,10 @@ private:
 
 	std::vector<std::shared_ptr<Controller>> m_controllers{};
 	std::chrono::time_point<std::chrono::system_clock> m_A{}, m_B{};
-	
+
 	double m_checkForConnectedControllersInIntervalsOfX{ 3.0 };
-	
-	float m_leftAnalogStickRadius{32767};
+
+	float m_leftAnalogStickRadius{ 32767 };
 	float m_leftAnalogStickDeadZone{ 100.f };
 	float m_rightAnalogStickRadius{ 32767 };
 	float m_rightAnalogStickDeadZone{ 100 };

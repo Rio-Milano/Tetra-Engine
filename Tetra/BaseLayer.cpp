@@ -11,7 +11,7 @@
 #include"Helper.h"
 void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName)
 {
-	m_renderer.CreateWindow(windowSize.x, windowSize.y, windowName);
+	m_renderer.CreateWindowGLFW(windowSize.x, windowSize.y, windowName);
 	InitGLAD();
 	m_renderer.InitRenderer();
 	InputManager.InitializeInputManager(m_renderer.GetWindow().GetWindowPtr());
@@ -80,4 +80,5 @@ void BaseLayer::CreateShader()
 	Shader shader;
 	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag");
 	ShaderManager.AddShader("main", shader);
+
 }
