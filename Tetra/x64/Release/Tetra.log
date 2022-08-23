@@ -1,34 +1,9 @@
-﻿  Application.cpp
-  BaseLayer.cpp
-  Camera.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
-  stb_image.cpp
-  glmIncludes.h
-  Helper.cpp
-  InputManager.cpp
-  LightManager.cpp
-  Mesh.cpp
-  Renderer.cpp
-  ShaderManager.cpp
-  SandBoxLayer.cpp
-  Shader.cpp
-  Compiling...
-  Source.cpp
-  Texture.cpp
-  TextureManager.cpp
-  Window.cpp
-  XInput_Wrapper.cpp
-  glad.c
+﻿  Camera.cpp
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 2322 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  4 of 2324 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    28 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glfw3.lib(input.obj) : warning LNK4099: PDB 'glfw3.pdb' was not found with 'glfw3.lib(input.obj)' or at 'C:\Users\riomi\source\repos\Tetra\x64\Release\glfw3.pdb'; linking object as if no debug info
 glfw3.lib(window.obj) : warning LNK4099: PDB 'glfw3.pdb' was not found with 'glfw3.lib(window.obj)' or at 'C:\Users\riomi\source\repos\Tetra\x64\Release\glfw3.pdb'; linking object as if no debug info

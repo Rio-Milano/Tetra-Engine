@@ -200,17 +200,25 @@ void Camera::UpdateRightVector()
 void Camera::KeyboardInput(const float& dt)
 {
 
+	glm::vec3 direction(0.0f);
+
 	if (glfwGetKey(m_windowPtr, GLFW_KEY_W) == GLFW_PRESS)
-		mv3_position += mv3_forward * mf_cameraSpeed * dt;
+		direction += mv3_forward;
 
 	if (glfwGetKey(m_windowPtr, GLFW_KEY_S) == GLFW_PRESS)
-		mv3_position -= mv3_forward * mf_cameraSpeed * dt;
+		direction -= mv3_forward;
 
 	if (glfwGetKey(m_windowPtr, GLFW_KEY_A) == GLFW_PRESS)
-		mv3_position -= mv3_right * mf_cameraSpeed * dt;
+		direction -= mv3_right;
 
 	if (glfwGetKey(m_windowPtr, GLFW_KEY_D) == GLFW_PRESS)
-		mv3_position += mv3_right * mf_cameraSpeed * dt;
+		direction += mv3_right;
+
+	if(glm::dot(direction, direction) > 0)
+		direction = glm::normalize(direction) * mf_cameraSpeed * dt;
+	
+	glm::vec3 prevPos = mv3_position;
+	mv3_position += direction;
 
 }
 
