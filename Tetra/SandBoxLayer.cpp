@@ -95,27 +95,54 @@ void SandBoxLayer::ImGUI()
 			Light& light = m_lightManager.GetLight(i);
 
 			ImGui::Checkbox("Light in use", &light.m_inUse);
-			
-			if (ImGui::BeginCombo("Light Type", ""))
+		
+			if (light.m_lightType == LightType::Directional)
 			{
-				if (ImGui::Button("Directional Light", ImVec2(buttonX, buttonY)))
-					light.m_lightType = LightType::Directional;
-				if (ImGui::Button("Point Light", ImVec2(buttonX, buttonY)))
-					light.m_lightType = LightType::Point;
-				if (ImGui::Button("Spot Light", ImVec2(buttonX, buttonY)))
-					light.m_lightType = LightType::Spot;
+				ImGui::Text("Directional Light");
 
-				ImGui::EndCombo();
+				ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
+				ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
+				ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
 			}
-			
-			ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
-			ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
-			ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
-			ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
-			ImGui::SliderFloat("Inner Cutoff Angle", &light.m_innerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
-			ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
-			ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+			else if (light.m_lightType == LightType::Point)
+			{
+				ImGui::Text("Point Light");
 
+				ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
+				ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
+				ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+				ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+
+			}
+			else if (light.m_lightType == LightType::Spot)
+			{
+				ImGui::Text("Spot Light");
+			
+				ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
+				ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
+				ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
+				ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+				ImGui::SliderFloat("Inner Cutoff Angle", &light.m_innerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
+				ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
+				ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+
+			}
+
+			ImGui::Text("Select Light Type");
+
+			ImGui::SameLine();
+			if (ImGui::Button("Directional Light", ImVec2(buttonX, buttonY)))
+				light.m_lightType = LightType::Directional;
+
+			ImGui::SameLine();
+			if (ImGui::Button("Point Light", ImVec2(buttonX, buttonY)))
+				light.m_lightType = LightType::Point;
+
+			ImGui::SameLine();
+			if (ImGui::Button("Spot Light", ImVec2(buttonX, buttonY)))
+				light.m_lightType = LightType::Spot;
+
+			
 
 			ImGui::EndCombo();
 		}
