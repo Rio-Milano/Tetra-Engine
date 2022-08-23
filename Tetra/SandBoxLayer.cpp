@@ -82,75 +82,111 @@ void SandBoxLayer::End()
 
 void SandBoxLayer::ImGUI()
 {
+	static bool LightingGUIOpen = true;
+	static bool SystemGUIOpen = true;
 
 	float buttonX = 140.f;
 	float buttonY = 20.f;
 
-	ImGui::Begin("Lights");
-
-	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
+	//Lighting GUI
 	{
-		if (ImGui::BeginCombo(std::string("Light :" + std::to_string(i+1)).c_str(), ""))
+
+		if (LightingGUIOpen)
 		{
-			Light& light = m_lightManager.GetLight(i);
+			ImGui::Begin("Lights");
 
-			ImGui::Checkbox("Light in use", &light.m_inUse);
-		
-			if (light.m_lightType == LightType::Directional)
+			if (ImGui::Button("Close", ImVec2(buttonX, buttonY)))
+				LightingGUIOpen = false;
+
+			for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
 			{
-				ImGui::Text("Directional Light");
+				if (ImGui::BeginCombo(std::string("Light :" + std::to_string(i + 1)).c_str(), "", ImGuiComboFlags_HeightLargest))
+				{
+					Light& light = m_lightManager.GetLight(i);
 
-				ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
-				ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
-				ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+					ImGui::Checkbox("Light in use", &light.m_inUse);
+
+					if (light.m_lightType == LightType::Directional)
+					{
+						ImGui::Text("Directional Light");
+
+						ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
+						ImGui::ColorPicker3("Color", &light.m_lightColor[0]);
+						ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+					}
+					else if (light.m_lightType == LightType::Point)
+					{
+						ImGui::Text("Point Light");
+
+						ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
+						ImGui::ColorPicker3("Color", &light.m_lightColor[0]);
+						ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+						ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+
+					}
+					else if (light.m_lightType == LightType::Spot)
+					{
+						ImGui::Text("Spot Light");
+
+						ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
+						ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
+						ImGui::ColorPicker3("Color", &light.m_lightColor[0]);
+						ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+						ImGui::SliderFloat("Inner Cutoff Angle", &light.m_innerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
+						ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
+						ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+
+					}
+
+					ImGui::Text("Select Light Type");
+
+					ImGui::SameLine();
+					if (ImGui::Button("Directional Light", ImVec2(buttonX, buttonY)))
+						light.m_lightType = LightType::Directional;
+
+					ImGui::SameLine();
+					if (ImGui::Button("Point Light", ImVec2(buttonX, buttonY)))
+						light.m_lightType = LightType::Point;
+
+					ImGui::SameLine();
+					if (ImGui::Button("Spot Light", ImVec2(buttonX, buttonY)))
+						light.m_lightType = LightType::Spot;
+
+
+
+					ImGui::EndCombo();
+				}
+
 			}
-			else if (light.m_lightType == LightType::Point)
-			{
-				ImGui::Text("Point Light");
-
-				ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
-				ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
-				ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
-				ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
-
-			}
-			else if (light.m_lightType == LightType::Spot)
-			{
-				ImGui::Text("Spot Light");
-			
-				ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
-				ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
-				ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
-				ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
-				ImGui::SliderFloat("Inner Cutoff Angle", &light.m_innerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
-				ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
-				ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
-
-			}
-
-			ImGui::Text("Select Light Type");
-
-			ImGui::SameLine();
-			if (ImGui::Button("Directional Light", ImVec2(buttonX, buttonY)))
-				light.m_lightType = LightType::Directional;
-
-			ImGui::SameLine();
-			if (ImGui::Button("Point Light", ImVec2(buttonX, buttonY)))
-				light.m_lightType = LightType::Point;
-
-			ImGui::SameLine();
-			if (ImGui::Button("Spot Light", ImVec2(buttonX, buttonY)))
-				light.m_lightType = LightType::Spot;
-
-			
-
-			ImGui::EndCombo();
+		ImGui::End();
 		}
-
 	}
 
 	
+	//System GUI
+	{
+		if (SystemGUIOpen)
+		{
+			ImGui::Begin("Rendering");
+			if (ImGui::Button("Close", ImVec2(buttonX, buttonY)))
+				SystemGUIOpen = false;
 
-	ImGui::End();
+			ImGui::Checkbox("Wireframe", &m_wireframeMode);
+			ImGui::End();
+		}
+	}
 
+
+	///Control ImGui
+	{
+		ImGui::Begin("Controll");
+		ImGui::Checkbox("Rendering", &SystemGUIOpen);
+		ImGui::Checkbox("Lighting", &LightingGUIOpen);
+		if (ImGui::Button("Exit"))
+		{
+			glfwWindowShouldClose(m_renderer.GetWindow().GetWindowPtr());
+		}
+		ImGui::End();
+
+	}
 }

@@ -46,7 +46,6 @@ void Camera::Update(const float& dt)
 		{
 			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			m_usingCamera = false;
-			return;
 		}
 	}
 	else
@@ -54,12 +53,9 @@ void Camera::Update(const float& dt)
 		if (glfwGetKey(m_windowPtr, GLFW_KEY_F) == GLFW_PRESS)
 		{
 			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			InputManager.m_firstMouseEvent = false;
-			InputManager.m_seccondMouseEvent = false;
 			m_usingCamera = true;
 		}
-		else
-			return;
+
 	}
 
 	//changes fov of prespective matrix
@@ -130,10 +126,8 @@ void Camera::UpdateFOV()
 	ComputePrespectiveMatrix();//now that the fov has changed we must recalculate the projection matrix
 }
 
-
 void Camera::MouseInput(const float& dt)
 {
-
 	float
 		mouseX = InputManager.m_currentMousePosition.x,
 		mouseY = InputManager.m_currentMousePosition.y;
@@ -159,13 +153,27 @@ void Camera::MouseInput(const float& dt)
 
 
 		//add displacement to pitch and yaw respectively
-		mf_pitch += lf_mouseYOffset;
-		mf_yaw += lf_mouseXOffset;
+		if (m_usingCamera == false)
+		{
+			if (glfwGetMouseButton(m_windowPtr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+			{
+				glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				mf_pitch += lf_mouseYOffset;
+				mf_yaw += lf_mouseXOffset;
+			}
+			else
+				glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+		else
+		{
+			mf_pitch += lf_mouseYOffset;
+			mf_yaw += lf_mouseXOffset;
+		}
 
-	
+
 
 		//constrain pitch and yaw to range
-		if (mf_pitch > 89.f)	
+		if (mf_pitch > 89.f)
 			mf_pitch = 89.f;
 
 		else if (mf_pitch < -89.f)
@@ -176,9 +184,6 @@ void Camera::MouseInput(const float& dt)
 		else if (mf_yaw > 360.f)
 			mf_yaw = 360.f;*/
 	}
-
-
-
 
 }
 
