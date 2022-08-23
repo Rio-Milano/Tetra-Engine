@@ -2,6 +2,15 @@
 #define LIGHTMANAGER_H
 
 #define NUMBER_OF_LIGHTS 10
+#define MAX_RANGE 100.f
+#define MIN_XYZ -50.f
+#define MAX_XYZ 50.f
+#define MIN_COLOR 0.f
+#define MAX_COLOR 1.f
+#define MIN_DIRECTION_XYZ -1.f
+#define MAX_DIRECTION_XYZ 1.f
+#define MIN_CONE_ANGLE 0.f
+#define MAX_CONE_ANGLE 90.f
 
 #include<vector>
 #include<glad/glad.h>
@@ -51,7 +60,7 @@ public:
 	void SetDirectionalLight(const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1);
 
 	
-	void SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1, float innerCutOff = static_cast<float>(cos(glm::radians(6.0f))), float outerCutoff = static_cast<float>(cos(glm::radians(12.5f))), const float& range = 40.f);
+	void SetSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, const float& intensity, int index = -1, float innerCutOff = 6.0f, float outerCutoff = 12.5f, const float& range = 40.f);
 
 	void SetPointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity, const float& range = { 40.f }, int index = -1);
 

@@ -36,7 +36,7 @@ struct Light
 		innerCutOffAngle,
 		outerCutOffAngle;
 
-	uint type;
+	int type;
 
 	bool inUse;
 
@@ -105,6 +105,8 @@ vec3 GetFragmentEmission();
 
 void main()
 {
+	//some code amongst the functions is redundant so theres room for optimization if needed
+
 	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
 	vec3 finalColor;
 
@@ -116,15 +118,15 @@ void main()
 
 		switch(lights[i].type)
 		{
-			case 0U://DIRECTIONAL
+			case 0://DIRECTIONAL
 				finalColor += CalculateDirectionalLight(i, normal);
 				break;
 
-			case 1U://POINT
+			case 1://POINT
 				finalColor += CalculatePointLight(i, normal);
 				break;
 
-			case 2U://SPOT
+			case 2://SPOT
 				finalColor  += CalculateSpotLight(i, normal);
 				break;
 			default:

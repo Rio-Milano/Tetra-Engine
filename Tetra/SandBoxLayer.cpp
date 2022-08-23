@@ -1,7 +1,8 @@
 #include "SandBoxLayer.h"
 #include"TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
-
+#include"InputManager.h"
+#define InputManager InputManager::GetInstance()
 #include "external_libaries/include/imGUI/imgui.h"
 
 void SandBoxLayer::Start()
@@ -43,8 +44,9 @@ void SandBoxLayer::Update(float dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
+
 	m_entity.Update(dt);
-	m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
+	//m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
 	
 
 	/*Light& light = m_lightManager.GetLight(4);
@@ -81,27 +83,47 @@ void SandBoxLayer::End()
 void SandBoxLayer::ImGUI()
 {
 
-	static float f = 0.0f;
-	static int counter = 0;
-	bool show_demo_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	float buttonX = 140.f;
+	float buttonY = 20.f;
 
-	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Lights");
 
-	ImGui::Checkbox("Wireframe", &m_wireframeMode);
+	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
+	{
+		if (ImGui::BeginCombo(std::string("Light :" + std::to_string(i+1)).c_str(), ""))
+		{
+			Light& light = m_lightManager.GetLight(i);
+
+			ImGui::Checkbox("Light in use", &light.m_inUse);
+			
+			if (ImGui::BeginCombo("Light Type", ""))
+			{
+				if (ImGui::Button("Directional Light", ImVec2(buttonX, buttonY)))
+					light.m_lightType = LightType::Directional;
+				if (ImGui::Button("Point Light", ImVec2(buttonX, buttonY)))
+					light.m_lightType = LightType::Point;
+				if (ImGui::Button("Spot Light", ImVec2(buttonX, buttonY)))
+					light.m_lightType = LightType::Spot;
+
+				ImGui::EndCombo();
+			}
+			
+			ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
+			ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
+			ImGui::SliderFloat3("Color", &light.m_lightColor.x, MIN_COLOR, MAX_COLOR);
+			ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
+			ImGui::SliderFloat("Inner Cutoff Angle", &light.m_innerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
+			ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
+			ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+
+
+			ImGui::EndCombo();
+		}
+
+	}
+
 	
-	ImGui::End();
 
-
-// 3. Show another simple window.
-if (show_another_window)
-{
-	ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-	ImGui::Text("Hello from another window!");
-	if (ImGui::Button("Close Me"))
-		show_another_window = false;
 	ImGui::End();
-}
 
 }

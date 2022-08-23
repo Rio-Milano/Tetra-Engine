@@ -154,10 +154,6 @@ void LightManager::UpdateShader()
 		return;
 	}
 
-	GLuint shaderID = m_shader->GetID();
-
-
-
 	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
 		std::string prefix = "lights[" + std::to_string(i) + "].";
@@ -174,38 +170,15 @@ void LightManager::UpdateShader()
 
 		Light& light = m_lights[i];
 
-		float yOffset = 4.f + ((float)sin(glfwGetTime()) / 2.f + .5f) * 16.f;
-		//light.m_position.y = yOffset;
-
-
 		m_shader->SetUniform3fv(lightColorLoc, light.m_lightColor);
 		m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
 		m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
-		m_shader->SetUniform1ui(lightTypeLoc, static_cast<unsigned int>(light.m_lightType));
+		m_shader->SetUniform1i(lightTypeLoc, static_cast<int>(light.m_lightType));
 		m_shader->SetUniform3fv(lightDirLoc, light.m_direction);
 		m_shader->SetUniform3fv(lightPosLoc, light.m_position);
 		m_shader->SetUniform1f(lightRangeLoc, light.m_range);
-		m_shader->SetUniform1f(innerLightCutOffAngleLoc, light.m_innerCutOffAngle);
-		m_shader->SetUniform1f(outerLightCutoffAngleLoc, light.m_outerCutOffAngle);
-
-		//switch (light.m_lightType)
-		//{
-		//	case LightType::Ambient:
-		//		break;
-
-		//	case LightType::Directional:
-		//		break;
-
-		//	case LightType::Point:
-		//		break;
-
-		//	case LightType::Spot:
-		//		break;
-
-		//	default:
-		//		std::cout << "LightType not recognised!\n;";
-		//		break;
-		//}
+		m_shader->SetUniform1f(innerLightCutOffAngleLoc, static_cast<float>(cos(glm::radians(light.m_innerCutOffAngle))));
+		m_shader->SetUniform1f(outerLightCutoffAngleLoc, static_cast<float>(cos(glm::radians(light.m_outerCutOffAngle))));
 
 	}
 
@@ -217,7 +190,7 @@ void LightManager::DrawLights(Renderer& renderer)
 	{
 		if (m_lights[i].m_inUse)
 		{
-			if (m_lights[i].m_lightType == LightType::Point)
+			if (m_lights[i].m_lightType != LightType::Directional)
 			{
 				Shader& shader = ShaderManager.GetShader("lightCubeShader");
 

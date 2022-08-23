@@ -152,6 +152,8 @@ public:
 		{
 			glm::mat4 trans(1.0f);
 			trans = glm::translate(trans, cubePositions[i]);
+			if (i == 0)
+				trans = glm::scale(trans, glm::vec3(15.f, 15.f, 15.f));
 			trans *= m_transform;
 			
 			renderer.RenderMesh(*this, trans);

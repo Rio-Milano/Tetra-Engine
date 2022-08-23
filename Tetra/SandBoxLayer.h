@@ -18,6 +18,7 @@ private:
 	LightManager m_lightManager;
 	TestEntity m_entity;
 
+
 	bool m_wireframeMode{false};
 };
 
