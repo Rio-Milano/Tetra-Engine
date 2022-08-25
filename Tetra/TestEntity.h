@@ -134,8 +134,7 @@ public:
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		};
 
-		GenerateMesh(positions, "Box", "BoxSpec", "", 1, {}, normals, textureCords);
-		SetProgramName("main");
+		GenerateMesh(positions, normals, textureCords, {}, "Box", "BoxSpec", "", 1);
 		//m_transform = glm::scale(m_transform, glm::vec3(6.0f, 6.0f, 6.0f));
 
 	}

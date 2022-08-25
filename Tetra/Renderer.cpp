@@ -31,7 +31,7 @@ void Renderer::InitRenderer()
 void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 {
 	//set uniforms
-	Shader& shader = ShaderManager.GetShader(mesh.GetProgramName());
+	Shader& shader = ShaderManager.GetShader(mesh.m_programName);
 	
 	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
 	
@@ -60,7 +60,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
 	}
 
-	if (mesh.GetHasSpecular())
+	if (mesh.m_hasBoundSpecular)
 	{
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, mesh.m_specularID);
@@ -84,15 +84,15 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
 	}
 	
-	glBindVertexArray(mesh.GetVAO());
+	glBindVertexArray(mesh.m_VAO);
 
-	switch (mesh.GetDrawType())
+	switch (mesh.m_drawType)
 	{
 	case 0:
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.GetNumberOfElements()), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements.size()), GL_UNSIGNED_INT, 0);
 		break;
 	case 1:
-		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(mesh.GetVertexCount()));
+		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(mesh.m_verticies.size()));
 		break;
 	default:
 		break;
