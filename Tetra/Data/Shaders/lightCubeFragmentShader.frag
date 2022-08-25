@@ -2,6 +2,7 @@
 
 uniform vec3 cubeColor;
 
+
 out vec4 fragColor;
 
 void main()

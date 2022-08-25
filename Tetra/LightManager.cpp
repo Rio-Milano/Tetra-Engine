@@ -186,25 +186,50 @@ void LightManager::UpdateShader()
 
 void LightManager::DrawLights(Renderer& renderer)
 {
+	Shader& shader = ShaderManager.GetShader("lightCubeShader");
+
 	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
-		if (m_lights[i].m_inUse)
+		Light& light = m_lights[i];
+
+		if (light.m_inUse)
 		{
-			if (m_lights[i].m_lightType != LightType::Directional)
+			if (light.m_lightType != LightType::Directional)
 			{
-				Shader& shader = ShaderManager.GetShader("lightCubeShader");
-
-				glm::mat4 transform(1.0f);
-				transform = glm::translate(transform, m_lights[i].m_position);
-				transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
-
-				shader.SetUniformMat4f(shader.GetLocation("world"), transform);
-
-				glm::vec3 overallLightColor = m_lights[i].m_lightColor * m_lights[i].m_lightIntensity;
-
+				glm::vec3 overallLightColor = light.m_lightColor * light.m_lightIntensity;
 				shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);
 
+
+				//translate to light position
+				glm::mat4 transform(1.0f);
+				transform = glm::translate(transform, m_lights[i].m_position);
+
+				if (light.m_lightType == LightType::Spot)
+				{
+					//code taken from :https://iquilezles.org/articles/noacos/
+					const glm::vec3   axi = glm::normalize(glm::cross(light.m_direction, glm::vec3(-1, 0, 0)));
+					const float  ang = acosf(glm::clamp(glm::dot(light.m_direction, glm::vec3(-1, 0, 0)), -1.0f, 1.0f));
+					const float  co = cosf(ang);
+					const float  si = sinf(ang);
+					const float  ic = 1.0f - co;
+					//calculate a rotation matrix to rotate vector A to B
+					const glm::mat4 rot =
+					{ 
+						axi.x * axi.x * ic + co,			axi.y * axi.x * ic - si * axi.z,	axi.z * axi.x * ic + si * axi.y,	0,
+						axi.x * axi.y * ic + si * axi.z,	axi.y * axi.y * ic + co,			axi.z * axi.y * ic - si * axi.x,	0,
+						axi.x * axi.z * ic - si * axi.y,	axi.y * axi.z * ic + si * axi.x,	axi.z * axi.z * ic + co,			0,
+						0,									0,									0,									1 
+					};
+					//rotate to light direction
+					transform *= rot;
+					//scale x to x3 others
+					transform = glm::scale(transform, glm::vec3(1.5f, 0.5f, 0.5f));
+				}
+				//point light scaling
+				transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+
 				renderer.RenderMesh(m_meshForLight, transform);
+				
 			}
 		}
 	}
