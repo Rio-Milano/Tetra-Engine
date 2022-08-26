@@ -43,6 +43,12 @@ struct Light
 	LightType m_lightType;
 	bool m_inUse;
 	float m_range;
+
+	bool simulateLight = false;
+		float lightAngle = 0.0f;
+		float radius = 10.f;
+		float rotationSpeed = 2.0f;
+
 };
 
 class LightManager
@@ -66,7 +72,7 @@ public:
 
 	Light& GetLight(const int& index);
 
-	void UpdateShader();
+	void UpdateShader(const float& dt);
 
 	void DrawLights(Renderer& renderer);
 

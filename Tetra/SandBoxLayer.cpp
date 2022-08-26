@@ -66,7 +66,7 @@ void SandBoxLayer::Update(float dt)
 
 	light.m_direction.x = theta;*/
 
-	m_lightManager.UpdateShader();
+	m_lightManager.UpdateShader(dt);
 }
 
 void SandBoxLayer::Render()
@@ -135,7 +135,12 @@ void SandBoxLayer::ImGUI()
 						ImGui::SliderFloat("Inner Cutoff Angle", &light.m_innerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
 						ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
 						ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
-
+						ImGui::Checkbox("Simulate Light", &light.simulateLight);
+						if (light.simulateLight)
+						{
+							ImGui::SliderFloat("Radius", &light.radius, 0.0f, 20.f);
+							ImGui::SliderFloat("Rotation Speed", &light.rotationSpeed, 0.0f, 100.0f);
+						}
 					}
 
 					ImGui::Text("Select Light Type");
@@ -184,7 +189,7 @@ void SandBoxLayer::ImGUI()
 		ImGui::Checkbox("Lighting", &LightingGUIOpen);
 		if (ImGui::Button("Exit"))
 		{
-			glfwWindowShouldClose(m_renderer.GetWindow().GetWindowPtr());
+			glfwSetWindowShouldClose(m_renderer.GetWindow().GetWindowPtr(), true);
 		}
 		ImGui::End();
 

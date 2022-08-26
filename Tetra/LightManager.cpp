@@ -146,7 +146,7 @@ Light& LightManager::GetLight(const int& index)
 	return m_lights[index];
 }
 
-void LightManager::UpdateShader()
+void LightManager::UpdateShader(const float& dt)
 {
 	if (!m_shader)
 	{
@@ -180,6 +180,21 @@ void LightManager::UpdateShader()
 		m_shader->SetUniform1f(innerLightCutOffAngleLoc, static_cast<float>(cos(glm::radians(light.m_innerCutOffAngle))));
 		m_shader->SetUniform1f(outerLightCutoffAngleLoc, static_cast<float>(cos(glm::radians(light.m_outerCutOffAngle))));
 
+		if (light.m_lightType == LightType::Spot)
+		{
+			if (light.simulateLight)
+			{
+				float x = cos(glm::radians(light.lightAngle)) * light.radius;
+				float z = sin(glm::radians(light.lightAngle)) * light.radius;
+				light.m_position = glm::vec3(x, light.m_position.y, z);
+
+				light.lightAngle += light.rotationSpeed * dt;
+				if (light.lightAngle > 360.f)
+					light.lightAngle = 0.f;
+
+				light.m_direction = glm::normalize(glm::vec3(0.0f) - light.m_position);
+			}
+		}
 	}
 
 }
@@ -196,14 +211,11 @@ void LightManager::DrawLights(Renderer& renderer)
 		{
 			if (light.m_lightType != LightType::Directional)
 			{
-				glm::vec3 overallLightColor = light.m_lightColor * light.m_lightIntensity;
-				shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);
-
-
 				//translate to light position
 				glm::mat4 transform(1.0f);
+				
 				transform = glm::translate(transform, m_lights[i].m_position);
-
+				
 				if (light.m_lightType == LightType::Spot)
 				{
 					//code taken from :https://iquilezles.org/articles/noacos/
@@ -222,12 +234,31 @@ void LightManager::DrawLights(Renderer& renderer)
 					};
 					//rotate to light direction
 					transform *= rot;
-					//scale x to x3 others
-					transform = glm::scale(transform, glm::vec3(1.5f, 0.5f, 0.5f));
-				}
-				//point light scaling
-				transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+					
+					glm::vec3 spotLightScale(1.f, 0.3f, 0.3f);
 
+					//spot light scaling
+					transform = glm::scale(transform, spotLightScale);
+
+					glm::vec3 shiftTransform(-0.5f, 0.0f, 0.0f);
+					transform = glm::translate(transform, shiftTransform);
+
+					glm::mat4 transform_2(1.0f);
+					transform_2 = glm::translate(transform_2, light.m_position);
+					transform_2 *= rot;
+					transform_2 = glm::scale(transform_2, glm::vec3(0.6f, 0.6f, 0.6f));
+					shader.SetUniform3fv(shader.GetLocation("cubeColor"), glm::vec3(1.0f)*0.5f);
+					renderer.RenderMesh(m_meshForLight, transform_2);
+
+				}
+				else
+				{
+					//point light scaling
+					transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+				}
+
+				glm::vec3 overallLightColor = light.m_lightColor * light.m_lightIntensity;
+				shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);
 				renderer.RenderMesh(m_meshForLight, transform);
 				
 			}
