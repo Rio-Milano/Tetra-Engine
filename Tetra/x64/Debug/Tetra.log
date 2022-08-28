@@ -1,5 +1,10 @@
-﻿  MeshManager.cpp
+﻿  Mesh.cpp
+  MeshManager.cpp
 C:\Users\riomi\source\repos\Tetra\Tetra\MeshManager.cpp(70,20): warning C4018: '<': signed/unsigned mismatch
 C:\Users\riomi\source\repos\Tetra\Tetra\MeshManager.cpp(77,20): warning C4018: '<': signed/unsigned mismatch
 C:\Users\riomi\source\repos\Tetra\Tetra\MeshManager.cpp(185,47): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+  Model.cpp
+  Renderer.cpp
+  glmIncludes.h
+  Generating Code...
   Tetra.vcxproj -> C:\Users\riomi\source\repos\Tetra\x64\Debug\Tetra.exe

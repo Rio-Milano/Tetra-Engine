@@ -32,7 +32,7 @@ std::shared_ptr<ModelNode> MeshManager::LoadModel(const std::string& modelPath)
 	const char* path = modelPath.c_str();
 
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
 
 	if (scene == nullptr || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || scene->mRootNode == nullptr)
 	{
@@ -115,16 +115,17 @@ std::shared_ptr<Mesh> MeshManager::ConstructMeshFromAssimpMesh(aiMesh* assimpMes
 		vertex.position.z = assimpVertexPosition.z;
 		//else leave position
 		
-			const aiVector3D& assimpVertexNormal = assimpMesh->mNormals[i];
-			vertex.normal.x = assimpVertexNormal.x;
-			vertex.normal.y = assimpVertexNormal.y;
-			vertex.normal.z = assimpVertexNormal.z;
-		//else leave normal
+		const aiVector3D& assimpVertexNormal = assimpMesh->mNormals[i];
+		vertex.normal.x = assimpVertexNormal.x;
+		vertex.normal.y = assimpVertexNormal.y;
+		vertex.normal.z = assimpVertexNormal.z;
+	//else leave normal
 
-
-		vertex.textureCord.x = assimpMesh->mTextureCoords[0][i].x;
-		vertex.textureCord.y = assimpMesh->mTextureCoords[0][i].y;
-
+		if (assimpMesh->HasTextureCoords(0))
+		{
+			vertex.textureCord.x = assimpMesh->mTextureCoords[0][i].x;
+			vertex.textureCord.y = assimpMesh->mTextureCoords[0][i].y;
+		}
 	}
 
 	if (assimpMesh->HasFaces())
