@@ -1,35 +1,26 @@
 #include "Model.h"
 #include"MeshManager.h"
+#include<iostream>
 #define MeshManager MeshManager::GetInstance()
 /*
 ModelNode
 */
 
-ModelNode::ModelNode(const Transform& transform)
-	:m_transform(transform)
+ModelNode::ModelNode(const glm::mat4& transform)
+	:m_transform_mat4(transform)
 {
 
 }
 
-ModelNode::ModelNode(const Transform& transform, const std::string& modelNodeName)
-	:m_transform(transform), m_modelNodeName(modelNodeName)
+ModelNode::ModelNode(const glm::mat4& transform, const std::string& modelNodeName)
+	:m_transform_mat4(transform), m_modelNodeName(modelNodeName)
 {
 
 }
 
-void ModelNode::Render(Renderer& renderer, const glm::mat4& worldPrevious)const
+void ModelNode::Render(Renderer& renderer, const glm::mat4& worldPrevious)
 {
-	glm::mat4 worldCurrent(1.0f);
-	worldCurrent = glm::translate(worldCurrent, m_transform.m_position);
-	
-	if(glm::dot(m_transform.m_rotation, m_transform.m_rotation) != 0.0f)
-		worldCurrent = glm::rotate(worldCurrent, m_transform.m_angle, m_transform.m_rotation);
-	
-	worldCurrent = glm::scale(worldCurrent, m_transform.m_scale);
-
-	glm::mat4 worldFinal = worldCurrent * worldPrevious;
-
-	std::cout << m_modelNodeName << std::endl;
+	glm::mat4 worldFinal = m_transform_mat4 * worldPrevious;
 
 	for (const std::shared_ptr<Mesh>& mesh : m_meshes)
 	{

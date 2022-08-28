@@ -10,7 +10,7 @@
 #include"Model.h"
 #include<iostream>
 
-class TestEntity: public Entity, public Transform, public Model
+class TestEntity: public Entity, public Model
 {
 public:
 	TestEntity() = default;
@@ -143,7 +143,7 @@ public:
 		mesh->GenerateMesh(positions, normals, textureCords, {}, "Box", "BoxSpec", "BoxEmission", 1);
 
 
-		std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(Transform(), "box");
+		std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(glm::mat4(1.0f), "box");
 		modelNode_1->AddMesh(mesh);
 
 
@@ -154,15 +154,15 @@ public:
 
 	void Update(const float& dt) override final
 	{
-		m_rootModelNode->m_transform.m_rotation = glm::vec3(1.0f);
-		m_rootModelNode->m_transform.m_angle += glm::radians(30.f) * dt;
+		/*m_rootModelNode->m_transform.m_rotation = glm::vec3(1.0f);
+		m_rootModelNode->m_transform.m_angle += glm::radians(30.f) * dt;*/
 	}
 
 	void Render(Renderer& renderer) override final
 	{
 		for (int i = 0; i < cubePositions.size(); i++)
 		{
-			m_rootModelNode->m_transform.m_position =cubePositions[i];
+			//m_rootModelNode->m_transform.m_position =cubePositions[i];
 			m_rootModelNode->Render(renderer);
 		}
 	}

@@ -23,13 +23,13 @@ const Texture::TextureAttributes& Texture::GetTextureAttributes() const
 	return m_textureAttributes;
 }
 
-void Texture::InitializeTexture(const std::string& textureFileLocation, const ImageType& imageType)
+void Texture::InitializeTexture(const std::string& textureFileLocation)
 {
 	LoadTexture(textureFileLocation);
-	GenerateTextureBuffer(imageType);
+	GenerateTextureBuffer(textureFileLocation);
 }
 
-void Texture::GenerateTextureBuffer(const ImageType& imageType)
+void Texture::GenerateTextureBuffer(const std::string& textureFileLocation)
 {
 	int&
 		texWidth{ m_textureAttributes.width },
@@ -48,19 +48,12 @@ void Texture::GenerateTextureBuffer(const ImageType& imageType)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	GLenum imageType_EN;
-
-	switch (imageType)
-	{
-	case ImageType::png:
+	std::string extension = textureFileLocation.substr(textureFileLocation.find_last_of('.') + 1, textureFileLocation.size() - 1);
+	if (extension == "png")
 		imageType_EN = GL_RGBA;
-		break;
-	case ImageType::jpg:
+	else if (extension == "jpg")
 		imageType_EN = GL_RGB;
-		break;
-	default:
-		std::cout << "Image type not recognized\n";
-		return;
-	}
+
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, imageType_EN, GL_UNSIGNED_BYTE, texturePtr);
 	glGenerateMipmap(GL_TEXTURE_2D);

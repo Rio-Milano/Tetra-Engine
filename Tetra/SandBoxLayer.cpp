@@ -4,21 +4,26 @@
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
 #include "external_libaries/include/imGUI/imgui.h"
+#include"MeshManager.h"
+#define MeshManager MeshManager::GetInstance()
 
 void SandBoxLayer::Start()
 {
-	Texture t1;
-	t1.InitializeTexture("Data/Images/Box.png", ImageType::png);
+	std::shared_ptr<Texture> t1 = std::make_shared<Texture>();
+	t1->InitializeTexture("Data/Images/Box.png");
 	TextureManager.AddTexture("Box", t1);
 
-	Texture t2;
-	t2.InitializeTexture("Data/Images/BoxSpec.png", ImageType::png);
+	std::shared_ptr<Texture> t2 = std::make_shared<Texture>();
+	t2->InitializeTexture("Data/Images/BoxSpec.png");
 	TextureManager.AddTexture("BoxSpec", t2);
 
-	Texture t3;
-	t3.InitializeTexture("Data/Images/BoxEmission.png", ImageType::png);
+	std::shared_ptr<Texture> t3 = std::make_shared<Texture>();
+	t3->InitializeTexture("Data/Images/BoxEmission.png");
 	TextureManager.AddTexture("BoxEmission", t3);
 
+	
+	modelRoot = MeshManager.LoadModel("Data/Models/backpack/backpack.obj");
+	
 	m_entity.Init();
 	
 	m_lightManager.Initialize();
@@ -43,7 +48,7 @@ void SandBoxLayer::Update(float dt)
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-
+	modelRoot->m_transform_mat4 = glm::rotate(modelRoot->m_transform_mat4, (float)glm::radians(40.0*dt), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	m_entity.Update(dt);
 	//m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
@@ -73,7 +78,9 @@ void SandBoxLayer::Render()
 {
 
 	m_lightManager.DrawLights(m_renderer);
-	m_entity.Render(m_renderer);
+	//m_entity.Render(m_renderer);
+	if (modelRoot != nullptr)
+		modelRoot->Render(m_renderer);
 }
 
 void SandBoxLayer::End()

@@ -48,7 +48,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), mesh.emissionRange);
 
-	const Texture* diffuseTexture = mesh.m_diffuse;
+	const std::shared_ptr<Texture>& diffuseTexture = mesh.m_diffuse;
 	if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
 	{
 		glActiveTexture(GL_TEXTURE0);
@@ -62,7 +62,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
 	}
 
-	const Texture* specularTexture = mesh.m_specular;
+	const std::shared_ptr<Texture>& specularTexture = mesh.m_specular;
 	if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
 	{
 		glActiveTexture(GL_TEXTURE1);
@@ -75,7 +75,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
 	}
 
-	const Texture* emissionTexture = mesh.m_emission;
+	const std::shared_ptr<Texture>& emissionTexture = mesh.m_emission;
 	if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
 	{
 		glActiveTexture(GL_TEXTURE2);

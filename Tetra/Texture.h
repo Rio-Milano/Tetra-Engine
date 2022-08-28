@@ -5,11 +5,6 @@
 #include<glad/glad.h>
 #include<string>
 
-enum class ImageType
-{
-	png,
-	jpg
-};
 
 class Texture
 {
@@ -25,11 +20,11 @@ public:
 	
 	const TextureAttributes& GetTextureAttributes()const;
 
-	void InitializeTexture(const std::string& textureFileLocation, const ImageType& imageType);
+	void InitializeTexture(const std::string& textureFileLocation);
 
 private:
 	void LoadTexture(const std::string& textureFileLocation);
-	void GenerateTextureBuffer(const ImageType& imageType);
+	void GenerateTextureBuffer(const std::string& textureFileLocation);
 
 	TextureAttributes m_textureAttributes;
 };

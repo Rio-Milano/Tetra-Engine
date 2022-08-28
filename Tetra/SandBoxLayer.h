@@ -20,7 +20,7 @@ public:
 private:
 	LightManager m_lightManager;
 	TestEntity m_entity;
-
+	std::shared_ptr<ModelNode> modelRoot = nullptr;
 
 	bool m_wireframeMode{false};
 };
