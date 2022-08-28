@@ -8,11 +8,6 @@
 #define ShaderManager ShaderManager::GetInstance()
 
 
-struct Transform
-{
-	glm::mat4 m_transform{ 1.0f };
-};
-
 class Renderer;
 
 class Entity

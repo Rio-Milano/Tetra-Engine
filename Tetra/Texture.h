@@ -20,6 +20,7 @@ public:
 		unsigned char* texturePtr{ nullptr };
 
 		GLuint textureID{0};
+		bool validTexture{false};
 	};
 	
 	const TextureAttributes& GetTextureAttributes()const;

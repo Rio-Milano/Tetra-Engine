@@ -22,7 +22,7 @@ public:
 	void InitRenderer();
 	static void UpdateViewportWhenWindowSizeChanged(GLFWwindow* window, int windowWidth, int windowHeight);
 
-	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat);
+	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const;
 	void StartRendering();
 	void EndRendering();
 

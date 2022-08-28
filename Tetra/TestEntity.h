@@ -5,12 +5,17 @@
 #include"Renderer.h"
 #include"TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
-#include"Mesh.h"
+#include"MeshManager.h"
+#define MeshManager MeshManager::GetInstance()
+#include"Model.h"
 #include<iostream>
 
-class TestEntity: public Entity, public Transform, public Mesh
+class TestEntity: public Entity, public Transform, public Model
 {
 public:
+	TestEntity() = default;
+	~TestEntity() = default;
+
 	void Init() override final 
 	{
 		std::vector<glm::vec3> positions
@@ -134,28 +139,31 @@ public:
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		};
 
-		GenerateMesh(positions, normals, textureCords, {}, "Box", "BoxSpec", "", 1);
-		//m_transform = glm::scale(m_transform, glm::vec3(6.0f, 6.0f, 6.0f));
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+		mesh->GenerateMesh(positions, normals, textureCords, {}, "Box", "BoxSpec", "BoxEmission", 1);
+
+
+		std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(Transform(), "box");
+		modelNode_1->AddMesh(mesh);
+
+
+		m_rootModelNode = modelNode_1;
 
 	}
 
 
 	void Update(const float& dt) override final
 	{
-		//m_transform = glm::rotate(m_transform, glm::radians(30.f) * dt, glm::vec3(1.0f, 1.0f, 1.0f));
+		m_rootModelNode->m_transform.m_rotation = glm::vec3(1.0f);
+		m_rootModelNode->m_transform.m_angle += glm::radians(30.f) * dt;
 	}
 
 	void Render(Renderer& renderer) override final
 	{
 		for (int i = 0; i < cubePositions.size(); i++)
 		{
-			glm::mat4 trans(1.0f);
-			trans = glm::translate(trans, cubePositions[i]);
-			trans *= m_transform;
-			
-			renderer.RenderMesh(*this, trans);
-
-
+			m_rootModelNode->m_transform.m_position =cubePositions[i];
+			m_rootModelNode->Render(renderer);
 		}
 	}
 

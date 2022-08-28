@@ -46,10 +46,8 @@ void Mesh::GenerateMesh
 			vertex.normal = normals[i];
 	}
 
-	GLsizei positionSize = sizeof(glm::vec3);
-	GLsizei normalSize = positionSize;
-	GLsizei textureCordSize = sizeof(glm::vec2);
-	GLsizei vertexSize = positionSize + textureCordSize + normalSize;
+
+	GLsizei vertexSize = sizeof(Vertex);
 
 	//Send vertex data to gpu
 	CreateBuffer(GL_ARRAY_BUFFER, m_verticies.size() * vertexSize, m_verticies.data(), GL_STATIC_DRAW);
@@ -58,10 +56,10 @@ void Mesh::GenerateMesh
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*)0);
 
 	//setup texture cord stream
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TEXTURE_CORD, 2, GL_FLOAT, GL_FALSE, vertexSize, (void*)positionSize);
+	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TEXTURE_CORD, 2, GL_FLOAT, GL_FALSE, vertexSize, (void*)offsetof(Vertex, textureCord));
 
 	//setup normal stream
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL,3, GL_FLOAT, GL_FALSE, vertexSize, (void*)(positionSize + textureCordSize));
+	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL,3, GL_FLOAT, GL_FALSE, vertexSize, (void*)offsetof(Vertex, normal));
 
 	EndBuffer(GL_ARRAY_BUFFER);
 
@@ -70,22 +68,13 @@ void Mesh::GenerateMesh
 
 	//bind texture maps to mesh
 	if (textureName.size())
-	{
-		m_hasBoundTexture = true;
-		m_textureID = TextureManager.GetTexture(textureName).GetTextureAttributes().textureID;
-	}
+		m_diffuse = &TextureManager.GetTexture(textureName);
 
 	if (specularName.size())
-	{
-		m_hasBoundSpecular = true;
-		m_specularID = TextureManager.GetTexture(specularName).GetTextureAttributes().textureID;
-	}
+		m_specular = &TextureManager.GetTexture(specularName);
 
 	if (emissionName.size())
-	{
-		m_hasBoundEmission = true;
-		m_emissionID = TextureManager.GetTexture(emissionName).GetTextureAttributes().textureID;
-	}
+		m_emission = &TextureManager.GetTexture(emissionName);
 }
 
 GLuint Mesh::StartVAO()

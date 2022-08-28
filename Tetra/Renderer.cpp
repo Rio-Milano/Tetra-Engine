@@ -5,6 +5,7 @@
 
 #include"ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
+#include"Texture.h"
 
 void Renderer::CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
@@ -28,7 +29,7 @@ void Renderer::InitRenderer()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
+void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 {
 	//set uniforms
 	Shader& shader = ShaderManager.GetShader(mesh.m_programName);
@@ -47,10 +48,11 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), mesh.emissionRange);
 
-	if (mesh.m_hasBoundTexture)
+	const Texture* diffuseTexture = mesh.m_diffuse;
+	if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mesh.m_textureID);
+		glBindTexture(GL_TEXTURE_2D, diffuseTexture->GetTextureAttributes().textureID);
 		shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
 		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
 
@@ -60,10 +62,11 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
 	}
 
-	if (mesh.m_hasBoundSpecular)
+	const Texture* specularTexture = mesh.m_specular;
+	if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
 	{
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mesh.m_specularID);
+		glBindTexture(GL_TEXTURE_2D, specularTexture->GetTextureAttributes().textureID);
 		shader.SetUniform1i(shader.GetLocation("material.specularMap"), 1);
 		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), true);
 	}
@@ -72,10 +75,11 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
 	}
 
-	if (mesh.m_hasBoundEmission)
+	const Texture* emissionTexture = mesh.m_emission;
+	if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
 	{
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, mesh.m_emissionID);
+		glBindTexture(GL_TEXTURE_2D, emissionTexture->GetTextureAttributes().textureID);
 		shader.SetUniform1i(shader.GetLocation("material.emissionMap"), 2);
 		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), true);
 	}

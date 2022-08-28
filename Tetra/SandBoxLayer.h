@@ -8,6 +8,9 @@
 class SandBoxLayer : public BaseLayer
 {
 public:
+	SandBoxLayer() = default;
+	~SandBoxLayer() = default;
+
 	void Start() override final;
 	void Update(float dt) override final;
 	void Render() override final;

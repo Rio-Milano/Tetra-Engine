@@ -12,6 +12,10 @@ void Texture::LoadTexture(const std::string& textureFileLocation)
 		std::cout << "Failed to Load Texture :" << textureFileLocation << std::endl;
 		return;
 	}
+	else
+	{
+		m_textureAttributes.validTexture = true;
+	}
 }
 
 const Texture::TextureAttributes& Texture::GetTextureAttributes() const

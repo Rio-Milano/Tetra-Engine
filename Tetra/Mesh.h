@@ -6,6 +6,9 @@
 #include<glad/glad.h>
 #include<vector>
 #include<string>
+#include"Texture.h"
+
+
 
 class Mesh
 {
@@ -68,15 +71,11 @@ private:
 	std::string
 		m_programName;
 
-	//maps
-	GLuint
-		m_textureID,
-		m_specularID,
-		m_emissionID;
-
-	bool m_hasBoundTexture{ false };
-	bool m_hasBoundSpecular{ false };
-	bool m_hasBoundEmission{ false };
+	//textures
+	const Texture
+		*m_diffuse,
+		*m_specular,
+		*m_emission;
 };
 
 #endif
