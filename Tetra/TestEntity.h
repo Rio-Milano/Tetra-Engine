@@ -151,34 +151,34 @@ public:
 
 	}
 
-
+	float rot = 0.0f;
 	void Update(const float& dt) override final
 	{
-		/*m_rootModelNode->m_transform.m_rotation = glm::vec3(1.0f);
-		m_rootModelNode->m_transform.m_angle += glm::radians(30.f) * dt;*/
+		rot += 3*dt;
 	}
 
 	void Render(Renderer& renderer) override final
 	{
 		for (int i = 0; i < cubePositions.size(); i++)
 		{
-			//m_rootModelNode->m_transform.m_position =cubePositions[i];
+			m_rootModelNode->m_transform_mat4 = 
+				glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), rot, glm::vec3(1.0f));
 			m_rootModelNode->Render(renderer);
 		}
 	}
 
 	private:
 		std::vector<glm::vec3> cubePositions = {
-												glm::vec3(0.0f, 0.0f, 0.0f),
-												glm::vec3(2.0f, 5.0f, -15.0f),
-												glm::vec3(-1.5f, -2.2f, -2.5f),
+												glm::vec3(-8.0f, 0.0f, 0.0f),
+												glm::vec3(5.0f, 5.0f, -15.0f),
+												glm::vec3(-7.5f, -2.2f, -2.5f),
 												glm::vec3(-3.8f, -2.0f, -12.3f),
-												glm::vec3(2.4f, -0.4f, -3.5f),
-												glm::vec3(-1.7f, 3.0f, -7.5f),
-												glm::vec3(1.3f, -2.0f, -2.5f),
-												glm::vec3(1.5f, 2.0f, -2.5f),
-												glm::vec3(1.5f, 0.2f, -1.5f),
-												glm::vec3(-1.3f, 1.0f, -1.5f)
+												glm::vec3(-5.4f, -0.4f, -3.5f),
+												glm::vec3(-4.7f, 3.0f, -7.5f),
+												glm::vec3(9.3f, -2.0f, -2.5f),
+												glm::vec3(6.5f, 2.0f, -2.5f),
+												glm::vec3(-6.5f, 0.2f, -1.5f),
+												glm::vec3(-4.3f, 1.0f, -1.5f)
 												};
 };
 

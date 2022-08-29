@@ -23,7 +23,9 @@ void SandBoxLayer::Start()
 
 	
 	modelRoot = MeshManager.LoadModel("Data/Models/backpack/backpack.obj");
-	
+	//modelRoot->m_transform_mat4 = glm::rotate(modelRoot->m_transform_mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//modelRoot->m_transform_mat4 = glm::scale(modelRoot->m_transform_mat4, glm::vec3(0.005));
+
 	m_entity.Init();
 	
 	m_lightManager.Initialize();
@@ -78,7 +80,7 @@ void SandBoxLayer::Render()
 {
 
 	m_lightManager.DrawLights(m_renderer);
-	//m_entity.Render(m_renderer);
+	m_entity.Render(m_renderer);
 	if (modelRoot != nullptr)
 		modelRoot->Render(m_renderer);
 }
