@@ -64,6 +64,8 @@ void SandBoxLayer::Start()
 	ngun_base->AddChild(ngun);
 
 	//construct transform hirearchy
+	nhull->m_nodeTransform = glm::translate(nhull->m_nodeTransform, glm::vec3(8, 0, 8));
+
 	glm::mat4 Twing_right(1.0f);
 	Twing_right = glm::translate(Twing_right, glm::vec3(-2.231, 0.272, -2.663));
 	nwing_right->m_transform_mat4 = Twing_right;
@@ -138,22 +140,13 @@ void SandBoxLayer::Update(float dt)
 		static float theta = 0.0f;
 
 		std::shared_ptr<ModelNode> propellerNode = aquaPig->FindNode("propeller.obj");
-		glm::mat4 Tpropeller(1.0f);
-		Tpropeller = glm::rotate(Tpropeller, (float)glm::radians(theta), glm::vec3(0, 1, 0));
-		propellerNode->m_nodeTransform = Tpropeller;
+		propellerNode->m_nodeTransform = glm::rotate(propellerNode->m_nodeTransform, (float)glm::radians(400.0f * dt), glm::vec3(0, 1, 0));
 
 		std::shared_ptr<ModelNode> hullNode = aquaPig->m_rootModelNode;
-		glm::mat4 hull(1.0f);
-		hull = glm::translate(hull, glm::vec3(8, 0, 8));
-		hull = glm::rotate(hull, (float)glm::radians(sin(glfwGetTime())) * 10.f, glm::vec3(1, 0, 1));
-		hullNode->m_nodeTransform = hull;
+		hullNode->m_nodeTransform = glm::rotate(hullNode->m_nodeTransform, (float)glm::radians(sin(glfwGetTime()))*dt * 10.0f, glm::vec3(1, 0, 1));
 
 		std::shared_ptr<ModelNode> gunNode = aquaPig->FindNode("gun");
-		glm::mat4 Tgun(1.0f);
-		Tgun = glm::rotate(Tgun, (float)glm::radians(sin(glfwGetTime())) * 60.f, glm::vec3(1, 0, 0));
-		gunNode->m_nodeTransform = Tgun;
-
-		theta += 400.0f * dt;
+		gunNode->m_nodeTransform = glm::rotate(gunNode->m_nodeTransform, (float)glm::radians(sin(glfwGetTime())) * dt * 20.0f, glm::vec3(1, 0, 0));
 	}
 }
 
