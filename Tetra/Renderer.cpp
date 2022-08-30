@@ -36,59 +36,68 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 	
 	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
 	
-	glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(worldMat))); 
-	shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
-
-	//get ready to render
-	shader.Use();
-
-	shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), mesh.m_defaultDiffuseColor);
-	shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), mesh.m_defaultSpecularColor);
-	shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), mesh.m_ambientIntensity);
-	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
-	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), mesh.emissionRange);
-
-	const std::shared_ptr<Texture>& diffuseTexture = mesh.m_diffuse;
-	if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
+	if (mesh.m_programName == "main")
 	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseTexture->GetTextureAttributes().textureID);
-		shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
-		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
+		glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(worldMat)));
+		shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
 
-	}
-	else
-	{
-		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
-	}
+		//get ready to render
+		shader.Use();
 
-	const std::shared_ptr<Texture>& specularTexture = mesh.m_specular;
-	if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
-	{
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularTexture->GetTextureAttributes().textureID);
-		shader.SetUniform1i(shader.GetLocation("material.specularMap"), 1);
-		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), true);
-	}
-	else
-	{
-		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
-	}
+		shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), mesh.m_defaultDiffuseColor);
+		shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), mesh.m_defaultSpecularColor);
+		shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), mesh.m_ambientIntensity);
+		shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
+		shader.SetUniform1f(shader.GetLocation("material.emissionRange"), mesh.emissionRange);
 
-	const std::shared_ptr<Texture>& emissionTexture = mesh.m_emission;
-	if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
-	{
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, emissionTexture->GetTextureAttributes().textureID);
-		shader.SetUniform1i(shader.GetLocation("material.emissionMap"), 2);
-		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), true);
+		const std::shared_ptr<Texture>& diffuseTexture = mesh.m_diffuse;
+		if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, diffuseTexture->GetTextureAttributes().textureID);
+			shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
+			shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
+
+		}
+		else
+		{
+			shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
+		}
+
+		const std::shared_ptr<Texture>& specularTexture = mesh.m_specular;
+		if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
+		{
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, specularTexture->GetTextureAttributes().textureID);
+			shader.SetUniform1i(shader.GetLocation("material.specularMap"), 1);
+			shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), true);
+		}
+		else
+		{
+			shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
+		}
+
+		const std::shared_ptr<Texture>& emissionTexture = mesh.m_emission;
+		if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
+		{
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, emissionTexture->GetTextureAttributes().textureID);
+			shader.SetUniform1i(shader.GetLocation("material.emissionMap"), 2);
+			shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), true);
+		}
+		else
+		{
+			shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
+		}
 	}
-	else
-	{
-		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
-	}
-	
 	glBindVertexArray(mesh.m_VAO);
+
+	GLsizei vertexCount = 0ull;
+	if (mesh.customVertex)
+		vertexCount = static_cast<GLsizei>(mesh.m_vertexCount);
+	else
+		vertexCount = static_cast<GLsizei>(mesh.m_verticies.size());
+	
 
 	switch (mesh.m_drawType)
 	{
@@ -96,8 +105,10 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements.size()), GL_UNSIGNED_INT, 0);
 		break;
 	case 1:
-		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(mesh.m_verticies.size()));
+		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(vertexCount));
 		break;
+	case 2:
+		glDrawArrays(GL_LINES, 0, vertexCount);
 	default:
 		break;
 	}

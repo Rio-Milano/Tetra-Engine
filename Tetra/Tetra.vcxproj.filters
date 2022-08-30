@@ -105,6 +105,9 @@
     <ClCompile Include="MeshManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -194,6 +197,9 @@
     <ClInclude Include="MeshManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\Shaders\fragment_shader.vs.txt" />
@@ -204,6 +210,8 @@
     <None Include="Data\Shaders\defaultFragmentShader.frag" />
     <None Include="Data\Shaders\lightCubeVertexShader.vert" />
     <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
+    <None Include="Data\Shaders\Position-Color.vert" />
+    <None Include="Data\Shaders\Position-Color.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png">

@@ -3,10 +3,6 @@
 
 #include"Entity.h"
 #include"Renderer.h"
-#include"TextureManager.h"
-#define TextureManager TextureManager::GetInstance()
-#include"MeshManager.h"
-#define MeshManager MeshManager::GetInstance()
 #include"Model.h"
 #include<iostream>
 

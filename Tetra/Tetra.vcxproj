@@ -159,6 +159,7 @@
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LightManager.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Helper.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LightManager.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="Model.h" />
@@ -212,6 +214,8 @@
     <None Include="Data\Shaders\defaultVertexShader.vert" />
     <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
     <None Include="Data\Shaders\lightCubeVertexShader.vert" />
+    <None Include="Data\Shaders\Position-Color.frag" />
+    <None Include="Data\Shaders\Position-Color.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png" />

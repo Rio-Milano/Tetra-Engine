@@ -81,4 +81,8 @@ void BaseLayer::CreateShader()
 	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag");
 	ShaderManager.AddShader("main", shader);
 
+	Shader shader_2;
+	shader_2.Create("Data/Shaders/Position-Color.vert", "Data/Shaders/Position-Color.frag");
+	ShaderManager.AddShader("Position-Color", shader_2);
+
 }

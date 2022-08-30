@@ -23,6 +23,7 @@ struct Vertex
 class Mesh
 {
 	friend class Renderer;
+	friend class Line;
 
 public:
 
@@ -40,12 +41,12 @@ public:
 		const std::string& specularName = "",
 		const std::string& emissionName = "",
 
-		const GLuint& drawType = 1,
+		const GLuint& drawType = 1,//0 = elements, 1 = arrays, 2 = lines
 		const GLenum& usage = GL_STATIC_DRAW,
 		const std::string& programName = "main"
 	);
 
-	
+
 	void GenerateMesh
 	(
 		const std::vector<Vertex>& verticies = {},
@@ -72,23 +73,23 @@ public:
 
 protected:
 	//default values
-	float m_ambientIntensity{0.1f};//amount of ambient light we can reflect
-	float m_specularIntensity{3.f};//amount of specular lighting we can reflect
+	float m_ambientIntensity{ 0.1f };//amount of ambient light we can reflect
+	float m_specularIntensity{ 3.f };//amount of specular lighting we can reflect
 	glm::vec3 m_defaultDiffuseColor{ 1.0f, 1.0f, 1.0f };//default colors when no texture maps are avaliable
 	glm::vec3 m_defaultSpecularColor{ 1.0f, 1.0f, 1.0f };
-	float emissionRange{40.0f};//range on emission light source (treated as a light but only attenuation is applied)
+	float emissionRange{ 40.0f };//range on emission light source (treated as a light but only attenuation is applied)
 
 
 private:
 	void StartMesh(const GLuint& drawType, const std::string& programName, const std::vector<GLuint>& elements);
-	
+
 	void ConstructVerticiesFromRawData(const std::vector<glm::vec3>& positions = {}, const std::vector<glm::vec2>& textureCords = {}, const std::vector<glm::vec3>& normals = {});
 	void SendVertexDataToGPU(const GLenum& usage = GL_STATIC_DRAW);
-	
+
 	void ProcessTextures(const std::shared_ptr<Texture>& diffuseTexture = nullptr, const std::shared_ptr<Texture>& specularTexture = nullptr, const std::shared_ptr<Texture>& emissiveTexture = nullptr);
 	void ProcessTextures(const std::string& textureName = "", const std::string& specularName = "", const std::string& emissionName = "");
 
-	void EndMesh(const std::shared_ptr<Texture>& diffuseTexture = nullptr,	const std::shared_ptr<Texture>& specularTexture = nullptr,	const std::shared_ptr<Texture>& emissiveTexture = nullptr, const GLenum& usage = GL_STATIC_DRAW);
+	void EndMesh(const std::shared_ptr<Texture>& diffuseTexture = nullptr, const std::shared_ptr<Texture>& specularTexture = nullptr, const std::shared_ptr<Texture>& emissiveTexture = nullptr, const GLenum& usage = GL_STATIC_DRAW);
 	void EndMesh(const std::string& textureName = "", const std::string& specularName = "", const std::string& emissionName = "", const GLenum& usage = GL_STATIC_DRAW);
 
 	GLuint StartVAO();
@@ -101,6 +102,9 @@ private:
 	std::vector<Vertex> m_verticies;
 	std::vector<GLuint> m_elements;
 
+	bool customVertex{ false };
+	size_t m_vertexCount{0ull};
+		
 
 	//general mesh data
 	GLuint

@@ -7,6 +7,9 @@
 #include"MeshManager.h"
 #define MeshManager MeshManager::GetInstance()
 
+
+
+
 void SandBoxLayer::Start()
 {
 	std::shared_ptr<Texture> t1 = std::make_shared<Texture>();
@@ -22,8 +25,6 @@ void SandBoxLayer::Start()
 	TextureManager.AddTexture("BoxEmission", t3);
 
 
-	backPack = MeshManager.LoadModel("Data/Models/backpack/backpack.obj");
-
 	//modelRoot->m_transform_mat4 = glm::rotate(modelRoot->m_transform_mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	//modelRoot->m_transform_mat4 = glm::scale(modelRoot->m_transform_mat4, glm::vec3(0.005));
 
@@ -34,7 +35,8 @@ void SandBoxLayer::Start()
 		hull = MeshManager.LoadModel("Data/Models/AquaPig/hull.obj"),
 		propeller = MeshManager.LoadModel("Data/Models/AquaPig/propeller.obj"),
 		wing_left = MeshManager.LoadModel("Data/Models/AquaPig/wing_left.obj"),
-		wing_right = MeshManager.LoadModel("Data/Models/AquaPig/wing_right.obj");
+		wing_right = MeshManager.LoadModel("Data/Models/AquaPig/wing_right.obj"),
+		backPack = MeshManager.LoadModel("Data/Models/backpack/backpack.obj");;
 
 	if (!(gun && gun_base && hull && propeller && wing_left && wing_left)) 
 		_ASSERT(false);
@@ -46,7 +48,8 @@ void SandBoxLayer::Start()
 		nhull = hull->m_rootModelNode,
 		npropeller = propeller->m_rootModelNode,
 		nwing_left = wing_left->m_rootModelNode,
-		nwing_right = wing_right->m_rootModelNode;
+		nwing_right = wing_right->m_rootModelNode,
+		nbackPack = backPack->m_rootModelNode;
 
 	std::shared_ptr<Texture> aquaPigTexture = std::make_shared<Texture>();
 	aquaPigTexture->InitializeTexture("Data/Models/AquaPig/aqua_pig_1K.jpg");
@@ -60,7 +63,7 @@ void SandBoxLayer::Start()
 
 
 	//construct hirearchy
-	nhull->AddChildren({ nwing_left, nwing_right, npropeller, ngun_base });
+	nhull->AddChildren({ nwing_left, nwing_right, npropeller, ngun_base , nbackPack});
 	ngun_base->AddChild(ngun);
 
 	//construct transform hirearchy
@@ -87,13 +90,28 @@ void SandBoxLayer::Start()
 	Tgun = glm::translate(Tgun, glm::vec3(0, 1.506, 0.644));
 	ngun->m_transform_mat4 = Tgun;
 
-
+	glm::mat4 TbackPack(1.0f);
+	TbackPack = glm::translate(TbackPack, glm::vec3(-0.5f, 1.0f, 1.0f));
+	TbackPack = glm::rotate(TbackPack, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	TbackPack = glm::scale(TbackPack, glm::vec3(0.4f));
+	nbackPack->m_nodeTransform = TbackPack;
 
 	aquaPig = hull;
 
+	m_Line1.AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	m_Line1.AddVertex(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_Line1.AddVertex(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	m_Line1.AddVertex(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	m_Line1.AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	m_Line1.AddVertex(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
 
 	m_entity.Init();
-	
+	m_Line1.Init();
+	m_Line2.Init();
+	m_Line3.Init();
 
 	m_lightManager.Initialize();
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
@@ -112,7 +130,7 @@ void SandBoxLayer::Update(float dt)
 {
 	if (!m_pauseSimulation)
 	{
-		backPack->m_rootModelNode->m_transform_mat4 = glm::rotate(backPack->m_rootModelNode->m_transform_mat4, (float)glm::radians(40.0 * dt), glm::vec3(0.0f, 1.0f, 0.0f));
+		//backPack->m_rootModelNode->m_transform_mat4 = glm::rotate(backPack->m_rootModelNode->m_transform_mat4, (float)glm::radians(40.0 * dt), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		m_entity.Update(dt);
 		//m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
@@ -160,9 +178,11 @@ void SandBoxLayer::Render()
 
 	m_lightManager.DrawLights(m_renderer);
 	m_entity.Render(m_renderer);
-	backPack->Render(m_renderer);
 
 	aquaPig->Render(m_renderer);
+	m_Line1.Render(m_renderer);
+	m_Line2.Render(m_renderer);
+	m_Line3.Render(m_renderer);
 }
 
 void SandBoxLayer::End()
