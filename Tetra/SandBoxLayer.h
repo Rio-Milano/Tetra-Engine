@@ -19,8 +19,11 @@ public:
 
 private:
 	LightManager m_lightManager;
+	
+	
 	TestEntity m_entity;
-	std::shared_ptr<ModelNode> modelRoot = nullptr;
+	std::shared_ptr<Model> backPack = nullptr;
+	std::shared_ptr<Model> aquaPig = nullptr;
 
 	bool m_wireframeMode{false};
 };

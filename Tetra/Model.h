@@ -22,12 +22,14 @@ public:
 	void AddMesh(const std::string& meshName);
 	void AddMesh(const std::shared_ptr<Mesh>& mesh);
 	void AddChild(const std::shared_ptr<ModelNode>& modelNode);
+	void AddChildren(const std::vector<std::shared_ptr<ModelNode>> modelNodes);
 
 	const std::string& GetNodeName()const;
 
 	glm::mat4 m_transform_mat4;
+	glm::mat4 m_nodeTransform;
 
-private:
+
 	std::vector<std::shared_ptr<Mesh>> m_meshes;
 	std::vector<std::shared_ptr<ModelNode>> m_children;
 	std::string m_modelNodeName{"basic"};
@@ -42,8 +44,8 @@ public:
 	~Model() = default;
 
 	void Render(Renderer& renderer);
-
-protected:
+	std::shared_ptr<ModelNode> FindNode(const std::string& nodeName, std::shared_ptr<ModelNode> node = nullptr)const;
+	std::shared_ptr<Mesh> FindMesh(const std::string& meshName, std::shared_ptr<ModelNode> node = nullptr)const;
 	std::shared_ptr<ModelNode> m_rootModelNode = nullptr;
 };
 

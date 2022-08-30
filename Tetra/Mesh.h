@@ -9,7 +9,6 @@
 #include<memory>
 #include"Texture.h"
 
-
 #define SHADER_LAYOUT_INDEX_POSITION		0
 #define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
 #define SHADER_LAYOUT_INDEX_NORMAL			2
@@ -62,13 +61,23 @@ public:
 		const std::string& programName = "main"
 	);
 
+	const std::string& GetMeshName() const { return m_meshName; };
+	void SetMeshName(const std::string& meshName) { m_meshName = meshName; };
+	//textures
+	std::shared_ptr<Texture>
+		m_diffuse,
+		m_specular,
+		m_emission;
+
+
 protected:
 	//default values
 	float m_ambientIntensity{0.1f};//amount of ambient light we can reflect
 	float m_specularIntensity{3.f};//amount of specular lighting we can reflect
-	glm::vec3 m_defaultDiffuseColor{ 0.1f, 0.1f, 0.1f };//default colors when no texture maps are avaliable
-	glm::vec3 m_defaultSpecularColor{ 0.0f, 1.0f, 0.0f };
+	glm::vec3 m_defaultDiffuseColor{ 1.0f, 1.0f, 1.0f };//default colors when no texture maps are avaliable
+	glm::vec3 m_defaultSpecularColor{ 1.0f, 1.0f, 1.0f };
 	float emissionRange{40.0f};//range on emission light source (treated as a light but only attenuation is applied)
+
 
 private:
 	void StartMesh(const GLuint& drawType, const std::string& programName, const std::vector<GLuint>& elements);
@@ -100,13 +109,9 @@ private:
 
 	//shader link
 	std::string
-		m_programName;
+		m_programName,
+		m_meshName;
 
-	//textures
-	std::shared_ptr<Texture>
-		m_diffuse,
-		m_specular,
-		m_emission;
 };
 
 #endif

@@ -36,7 +36,7 @@ const std::shared_ptr<Mesh>& MeshManager::GetMesh(const std::string& meshName)
 }
 
 //recieve a model location
-std::shared_ptr<ModelNode> MeshManager::LoadModel(const std::string& modelPath)
+std::shared_ptr<Model> MeshManager::LoadModel(const std::string& modelPath)
 {
 	//get the path as a const char *
 	const char* path = modelPath.c_str();
@@ -62,7 +62,7 @@ std::shared_ptr<ModelNode> MeshManager::LoadModel(const std::string& modelPath)
 	return PullAssimpMeshFromNode(scene->mRootNode, scene, modelDirectory);
 }
 
-std::shared_ptr<ModelNode> MeshManager::PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode)
+std::shared_ptr<Model> MeshManager::PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode)
 {
 	//if a root node for OUR model node dosent exist
 	if (modelNode == nullptr)
@@ -121,8 +121,10 @@ std::shared_ptr<ModelNode> MeshManager::PullAssimpMeshFromNode(aiNode* node, con
 		//add the child node to the current node
 		modelNode->AddChild(childModelNode);
 	}
+	std::shared_ptr<Model> newModel = std::make_shared<Model>();
+	newModel->m_rootModelNode = modelNode;
 
-	return modelNode;
+	return newModel;
 }
 
 #define TRIANGLE_PRIMITIVE_SIZE 3//how
@@ -206,6 +208,7 @@ std::shared_ptr<Mesh> MeshManager::ConstructMeshFromAssimpMesh(aiMesh* assimpMes
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 	//load vertex data into mesh
 	mesh->GenerateMesh(verticies, elements, diffuseMap, specularMap, emissionMap, 0);
+	mesh->SetMeshName(std::string(assimpMesh->mName.C_Str()));
 	//return the created mesh
 	return mesh;
 }

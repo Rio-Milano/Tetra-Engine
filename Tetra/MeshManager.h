@@ -25,7 +25,7 @@ public:
 	const std::shared_ptr<Mesh>& GetMesh(const std::string& meshName);
 
 	//uses assimp to load a model from disk then converts it into our own data structures and returns the root node for it
-	std::shared_ptr<ModelNode> LoadModel(const std::string& modelPath);
+	std::shared_ptr<Model> LoadModel(const std::string& modelPath);
 
 private:
 	//part of singleton
@@ -33,7 +33,7 @@ private:
 	~MeshManager() = default;
 
 	//process an assimp node by pulling meshes and processing mesh children, meanwhile making a mock of the hirearchy through modelNode
-	std::shared_ptr<ModelNode> PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode = nullptr);
+	std::shared_ptr<Model> PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode = nullptr);
 	
 	//take assimps representation of a models mesh and converts it into our own representation
 	std::shared_ptr<Mesh> ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, const aiScene* scene, const std::string& localPath);
