@@ -154,7 +154,7 @@ public:
 	float rot = 0.0f;
 	void Update(const float& dt) override final
 	{
-		rot += 3*dt;
+		rot += dt;
 	}
 
 	void Render(Renderer& renderer) override final

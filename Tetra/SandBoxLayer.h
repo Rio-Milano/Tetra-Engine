@@ -26,6 +26,7 @@ private:
 	std::shared_ptr<Model> aquaPig = nullptr;
 
 	bool m_wireframeMode{false};
+	bool m_pauseSimulation{false};
 };
 
 #endif

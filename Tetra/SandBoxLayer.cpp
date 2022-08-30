@@ -108,61 +108,62 @@ void SandBoxLayer::Start()
 
 void SandBoxLayer::Update(float dt)
 {
+	if (!m_pauseSimulation)
+	{
+		backPack->m_rootModelNode->m_transform_mat4 = glm::rotate(backPack->m_rootModelNode->m_transform_mat4, (float)glm::radians(40.0 * dt), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		m_entity.Update(dt);
+		//m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
+
+
+		/*Light& light = m_lightManager.GetLight(4);
+		static float theta = 0;
+		static const float vx = 1.f;
+
+		if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_LEFT) == GLFW_PRESS)
+			theta -= vx * dt;
+
+		if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+			theta += vx * dt;
+
+		if (theta < -1.f)
+			theta = -1.f;
+		else if (theta > 1.f)
+			theta = 1.f;
+
+		light.m_direction.x = theta;*/
+
+		m_lightManager.UpdateShader(dt);
+
+		static float theta = 0.0f;
+
+		std::shared_ptr<ModelNode> propellerNode = aquaPig->FindNode("propeller.obj");
+		glm::mat4 Tpropeller(1.0f);
+		Tpropeller = glm::rotate(Tpropeller, (float)glm::radians(theta), glm::vec3(0, 1, 0));
+		propellerNode->m_nodeTransform = Tpropeller;
+
+		std::shared_ptr<ModelNode> hullNode = aquaPig->m_rootModelNode;
+		glm::mat4 hull(1.0f);
+		hull = glm::translate(hull, glm::vec3(8, 0, 8));
+		hull = glm::rotate(hull, (float)glm::radians(sin(glfwGetTime())) * 10.f, glm::vec3(1, 0, 1));
+		hullNode->m_nodeTransform = hull;
+
+		std::shared_ptr<ModelNode> gunNode = aquaPig->FindNode("gun");
+		glm::mat4 Tgun(1.0f);
+		Tgun = glm::rotate(Tgun, (float)glm::radians(sin(glfwGetTime())) * 60.f, glm::vec3(1, 0, 0));
+		gunNode->m_nodeTransform = Tgun;
+
+		theta += 400.0f * dt;
+	}
+}
+
+void SandBoxLayer::Render()
+{
 	if (m_wireframeMode)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	 backPack->m_rootModelNode->m_transform_mat4 = glm::rotate(backPack->m_rootModelNode->m_transform_mat4, (float)glm::radians(40.0*dt), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	m_entity.Update(dt);
-	//m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
-	
-
-	/*Light& light = m_lightManager.GetLight(4);
-	static float theta = 0;
-	static const float vx = 1.f;
-
-	if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_LEFT) == GLFW_PRESS)
-		theta -= vx * dt;
-
-	if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_RIGHT) == GLFW_PRESS)
-		theta += vx * dt;
-
-	if (theta < -1.f)
-		theta = -1.f;
-	else if (theta > 1.f)
-		theta = 1.f;
-
-	light.m_direction.x = theta;*/
-
-	m_lightManager.UpdateShader(dt);
-	
-	static float theta = 0.0f;
-
-	std::shared_ptr<ModelNode> propellerNode = aquaPig->FindNode("propeller.obj");
-	glm::mat4 Tpropeller(1.0f);
-	Tpropeller = glm::rotate(Tpropeller, (float)glm::radians(theta), glm::vec3(0, 1, 0));
-	propellerNode->m_nodeTransform = Tpropeller;
-
-	std::shared_ptr<ModelNode> hullNode = aquaPig->m_rootModelNode;
-	glm::mat4 hull(1.0f);
-	hull = glm::translate(hull, glm::vec3(8, 0, 8));
-	hull = glm::rotate(hull, (float)glm::radians(sin(glfwGetTime()))*10.f, glm::vec3(1, 0, 1));
-	hullNode->m_nodeTransform = hull;
-
-	std::shared_ptr<ModelNode> gunNode = aquaPig->FindNode("gun");
-	glm::mat4 Tgun(1.0f);
-	Tgun = glm::rotate(Tgun, (float)glm::radians(sin(glfwGetTime())) * 60.f, glm::vec3(1, 0, 0));
-	gunNode->m_nodeTransform = Tgun;
-
-	theta += 400.0f * dt;
-
-}
-
-void SandBoxLayer::Render()
-{
 
 	m_lightManager.DrawLights(m_renderer);
 	m_entity.Render(m_renderer);
@@ -272,6 +273,7 @@ void SandBoxLayer::ImGUI()
 				SystemGUIOpen = false;
 
 			ImGui::Checkbox("Wireframe", &m_wireframeMode);
+			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
 			ImGui::End();
 		}
 	}
