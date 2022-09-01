@@ -7,6 +7,7 @@
 #include<memory>
 #include<unordered_map>
 
+//class prototypes
 class Mesh;
 class Model;
 class ModelNode;
@@ -30,7 +31,7 @@ public:
 private:
 	//part of singleton
 	MeshManager() = default;
-	~MeshManager() = default;
+	~MeshManager() = default;	
 
 	//process an assimp node by pulling meshes and processing mesh children, meanwhile making a mock of the hirearchy through modelNode
 	std::shared_ptr<Model> PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode = nullptr);

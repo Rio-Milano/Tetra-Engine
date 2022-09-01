@@ -11,7 +11,7 @@
 class Line : public Entity, public Model
 {
 public:
-	Line() = default;
+	Line(const std::string& lineName) : Entity(lineName) {};
 	~Line() = default;
 
 	void AddVertex(const glm::vec3& position, const glm::vec3& color = glm::vec3(1.0f))
@@ -50,7 +50,7 @@ public:
 		std::shared_ptr<ModelNode> newModelNode = std::make_shared<ModelNode>(glm::mat4(1.0f), "line");
 		newModelNode->AddMesh(newMesh);
 
-		m_rootModelNode = newModelNode;
+		SetRoot(newModelNode);
 
 	}
 
@@ -58,7 +58,7 @@ public:
 
 	void Render(Renderer& renderer)override final
 	{
-		m_rootModelNode->Render(renderer);
+		GetRoot()->Render(renderer);
 	}
 
 private:

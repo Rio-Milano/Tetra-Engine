@@ -3,12 +3,14 @@
 #define ShaderManager ShaderManager::GetInstance()
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
-
 #include "external_libaries/include/imGUI/imgui.h"
 #include "external_libaries/include/imGUI/imgui_impl_glfw.h"
 #include "external_libaries/include/imGUI/imgui_impl_opengl3.h"
-
 #include"Helper.h"
+
+#include<chrono>
+#include<thread>
+
 void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName)
 {
 	m_renderer.CreateWindowGLFW(windowSize.x, windowSize.y, windowName);
@@ -19,13 +21,13 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 4.0f), m_renderer.GetWindow().GetWindowPtr());
 	Helper::Status::DisplayUsefulInfo();
 	InitializeImGui();
+
 }
 
 void BaseLayer::InitializeImGui()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(m_renderer.GetWindow().GetWindowPtr(), true);
 	ImGui_ImplOpenGL3_Init("#version 330");

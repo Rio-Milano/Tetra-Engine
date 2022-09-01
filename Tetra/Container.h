@@ -1,16 +1,44 @@
-#ifndef TESTENTITY_H
-#define TESTENTITY_H
+#ifndef CONTAINER_H
+#define CONTAINER_H
 
 #include"Entity.h"
 #include"Renderer.h"
 #include"Model.h"
 #include<iostream>
 
-class TestEntity: public Entity, public Model
+#include"TextureManager.h"
+#define TextureManager TextureManager::GetInstance()
+
+class Container: public Entity, public Model
 {
 public:
-	TestEntity() = default;
-	~TestEntity() = default;
+
+	Container(const std::string& containerName)
+		:Entity(containerName)
+	{
+		if (TextureManager.GetTexture("box") == nullptr)
+		{
+			std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
+			diffuseTexture->InitializeTexture("Data/Images/Box.png");
+			TextureManager.AddTexture("Box", diffuseTexture);
+		}
+
+		if (TextureManager.GetTexture("BoxSpec") == nullptr)
+		{
+			std::shared_ptr<Texture> specularTexture = std::make_shared<Texture>();
+			specularTexture->InitializeTexture("Data/Images/BoxSpec.png");
+			TextureManager.AddTexture("BoxSpec", specularTexture);
+		}
+
+		if (TextureManager.GetTexture("BoxEmission") == nullptr)
+		{
+			std::shared_ptr<Texture> emissionTexture = std::make_shared<Texture>();
+			emissionTexture->InitializeTexture("Data/Images/BoxEmission.png");
+			TextureManager.AddTexture("BoxEmission", emissionTexture);
+		}
+
+	};
+	~Container() = default;
 
 	void Init() override final 
 	{
@@ -143,7 +171,7 @@ public:
 		modelNode_1->AddMesh(mesh);
 
 
-		m_rootModelNode = modelNode_1;
+		SetRoot(modelNode_1);
 
 	}
 
@@ -157,9 +185,8 @@ public:
 	{
 		for (int i = 0; i < cubePositions.size(); i++)
 		{
-			m_rootModelNode->m_transform_mat4 = 
-				glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), rot, glm::vec3(1.0f));
-			m_rootModelNode->Render(renderer);
+			GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), rot, glm::vec3(1.0f)));
+			GetRoot()->Render(renderer);
 		}
 	}
 

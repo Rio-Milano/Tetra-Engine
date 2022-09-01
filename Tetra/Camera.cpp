@@ -4,6 +4,8 @@
 #include"InputManager.h"
 #define InputManager InputManager::GetInstance()
 #include<iostream>
+#include<assert.h>
+
 Camera::~Camera()
 {
 	delete controller;
@@ -31,7 +33,17 @@ void Camera::Initialize
 	if(m_fpsCamera)
 		std::cout << "FPS camera enabled!\n";
 
-	glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	/*
+	automatically unfocuses camera to use mouse when in 
+	debug so primary monitor can be used for inspecting break points
+	*/
+	#if(_DEBUG)
+		m_usingCamera = false;
+		glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	#else
+		m_usingCamera = true;
+		glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	#endif
 
 	controller = new XInput_Wrapper;
 }

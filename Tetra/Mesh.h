@@ -13,23 +13,26 @@
 #define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
 #define SHADER_LAYOUT_INDEX_NORMAL			2
 
+//simple vertex representation
 struct Vertex
 {
 	glm::vec3 position{ 0.0f, 0.0f, 0.0f };
 	glm::vec2 textureCord{0.0f, 0.0f};
 	glm::vec3 normal{0.0f, 0.0f, 0.0f};
-
 };
+
+//class for representing a collection of attributes opengl can use to display something
 class Mesh
 {
-	friend class Renderer;
+	friend class Renderer;//!!!!!!!!
 	friend class Line;
 
 public:
-
+	//ctors/dtors
 	Mesh() = default;
 	~Mesh() = default;
 
+	//for generating a user defined mesh
 	void GenerateMesh
 	(
 		const std::vector<glm::vec3>& positions = {},
@@ -41,12 +44,12 @@ public:
 		const std::string& specularName = "",
 		const std::string& emissionName = "",
 
-		const GLuint& drawType = 1,//0 = elements, 1 = arrays, 2 = lines
+		const GLuint& drawType = 1,
 		const GLenum& usage = GL_STATIC_DRAW,
 		const std::string& programName = "main"
 	);
 
-
+	//for generating an assimp defined mesh
 	void GenerateMesh
 	(
 		const std::vector<Vertex>& verticies = {},

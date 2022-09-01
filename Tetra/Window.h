@@ -16,6 +16,7 @@ public:
 	void UpdateWindow();
 
 private:
+	//internal helper funstions
 	void Set_GL_Context();
 
 	GLFWwindow* m_renderWindow{ nullptr };

@@ -4,10 +4,6 @@
 
 #include<iostream>
 
-#define SHADER_LAYOUT_INDEX_POSITION		0
-#define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
-#define SHADER_LAYOUT_INDEX_NORMAL			2
-
 
 
 

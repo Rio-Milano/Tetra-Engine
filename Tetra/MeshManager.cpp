@@ -26,6 +26,7 @@ const std::shared_ptr<Mesh>& MeshManager::GetMesh(const std::string& meshName)
 	//search the data store for a 'meshName'
 	if (m_meshName_mesh_map.find(meshName) == m_meshName_mesh_map.end())
 	{
+		//if not return a referance to static
 		return fallBack;
 	}
 	else
@@ -44,7 +45,7 @@ std::shared_ptr<Model> MeshManager::LoadModel(const std::string& modelPath)
 	//define an importer object to load the model
 	Assimp::Importer importer;
 
-	//tell importer to read path and force triangulation then hold the resulting scene ptr
+	//tell importer to read path and force triangulation then hold the returned scene ptr
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
 
 	//if scene is empty or scene failed some point or root node of scene is empty then report error
@@ -56,15 +57,17 @@ std::shared_ptr<Model> MeshManager::LoadModel(const std::string& modelPath)
 		return nullptr;
 	}
 
-	//find the local directory of the model by using only the part of the path upto the last '/'
+	//find the local directory of the model by using only the part of the path upto the last '/' and including '/'
 	std::string modelDirectory = modelPath.substr(0, modelPath.find_last_of('/')+1);
 
+	//traverse the assimp hirearchy and pull each node into a node of our own recursively hich returns a model which we can return
 	return PullAssimpMeshFromNode(scene->mRootNode, scene, modelDirectory);
 }
 
+
 std::shared_ptr<Model> MeshManager::PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode)
 {
-	//if a root node for OUR model node dosent exist
+	//if a root node for current model  dosent exist
 	if (modelNode == nullptr)
 	{
 		//get the transform for the current ASSIMP node
@@ -78,11 +81,11 @@ std::shared_ptr<Model> MeshManager::PullAssimpMeshFromNode(aiNode* node, const a
 			static_cast<float>(transform.c1),static_cast<float>(transform.c2),static_cast<float>(transform.c3),static_cast<float>(transform.c4),
 			static_cast<float>(transform.d1),static_cast<float>(transform.d2),static_cast<float>(transform.d3),static_cast<float>(transform.d4),
 		};
-		//create the root node with assimp transform and the assimp root name
+		//create the root node with converted assimp transform and the assimp root name
 		modelNode = std::make_shared<ModelNode>(glmMat4, std::string(node->mName.C_Str()));
 	}
 
-	//loop mesh indicies on assimp node
+	//loop meshes on current assimp node
 	for (int i = 0; i < node->mNumMeshes; i++)
 	{
 		//retrieve current mesh
@@ -116,18 +119,19 @@ std::shared_ptr<Model> MeshManager::PullAssimpMeshFromNode(aiNode* node, const a
 
 		//create OUR child node using glm mat4 and child node name
 		std::shared_ptr<ModelNode> childModelNode = std::make_shared<ModelNode>(glmMat4, std::string(node->mChildren[j]->mName.C_Str()));
-		//process the assimp child node
+		//process the assimp child node but with our new child node
 		PullAssimpMeshFromNode(node->mChildren[j], scene, localPath, childModelNode);
 		//add the child node to the current node
 		modelNode->AddChild(childModelNode);
 	}
 	std::shared_ptr<Model> newModel = std::make_shared<Model>();
-	newModel->m_rootModelNode = modelNode;
+	newModel->SetRoot(modelNode);
 
+	//return the created model
 	return newModel;
 }
 
-#define TRIANGLE_PRIMITIVE_SIZE 3//how
+#define TRIANGLE_PRIMITIVE_SIZE 3//number of vertices per face
 std::shared_ptr<Mesh> MeshManager::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, const aiScene* scene, const std::string& localPath)
 {
 	//define a vector of verticies and resize
@@ -142,30 +146,36 @@ std::shared_ptr<Mesh> MeshManager::ConstructMeshFromAssimpMesh(aiMesh* assimpMes
 	//convert the vertex data from assimp structure to my structure
 	for (size_t i = 0; i < assimpMesh->mNumVertices; i++)
 	{
+		//grab a referance of current vertex from vertex vector
 		Vertex& vertex = verticies[i];
 
+		//provess positions
 		const aiVector3D& assimpVertexPosition = assimpMesh->mVertices[i];
 		vertex.position.x = assimpVertexPosition.x;
 		vertex.position.y = assimpVertexPosition.y;
 		vertex.position.z = assimpVertexPosition.z;
 		
+		//process normals
 		const aiVector3D& assimpVertexNormal = assimpMesh->mNormals[i];
 		vertex.normal.x = assimpVertexNormal.x;
 		vertex.normal.y = assimpVertexNormal.y;
 		vertex.normal.z = assimpVertexNormal.z;
 
+		//provess texture cords only if has them
 		if (assimpMesh->HasTextureCoords(0))
 		{
+			//process texture cords
 			vertex.textureCord.x = assimpMesh->mTextureCoords[0][i].x;
 			vertex.textureCord.y = assimpMesh->mTextureCoords[0][i].y;
 		}
 	}
 
+	//process indexed vertices
 	if (assimpMesh->HasFaces())
 	{
-		//define index to change in elements
+		//define index to change element index
 		size_t elementIndex = 0;
-		//loop facxes
+		//loop faces
 		for (size_t i = 0; i < assimpMesh->mNumFaces; i++)
 		{
 			//get current face
@@ -238,14 +248,17 @@ std::shared_ptr<Texture> MeshManager::LoadMaterialFromAssimpMesh(aiMaterial* mat
 		return TextureManager.GetTexture(localPath + std::string(fileLocation.C_Str()));
 
 	}
-
+	//return null as material has no texture for the passed type
 	return nullptr;
 }
 
 void MeshManager::AddMesh(const std::string& meshName, const std::shared_ptr<Mesh>& mesh)
 {
+	//search store for mesh with meshName
 	if (m_meshName_mesh_map.find(meshName) == m_meshName_mesh_map.end())
+		//if no mesh with that name was found then add meosh
 		m_meshName_mesh_map[meshName] = mesh;
 	else
-		_ASSERT(false);//mesh already exists
+		//mesh already exists
+		_ASSERT(false);
 }

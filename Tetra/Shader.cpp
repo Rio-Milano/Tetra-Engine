@@ -6,7 +6,7 @@
 void LoadStringFromFile(const std::string& fileLocation, std::string& data)
 {
 	//try to open file
-	std::fstream fileStream(fileLocation, std::fstream::in);
+	std::ifstream fileStream(fileLocation);
 	
 	//if file not open
 	if (!fileStream.is_open())
@@ -30,6 +30,7 @@ void LoadStringFromFile(const std::string& fileLocation, std::string& data)
 
 void Shader::Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
+	//get shader source and create shader for vertex and fragment
 	std::string vertexShaderSource;
 	LoadStringFromFile(vertexShaderPath, vertexShaderSource);
 	GLuint vertexShaderID = CreateShader(vertexShaderSource, GL_VERTEX_SHADER);
@@ -38,6 +39,7 @@ void Shader::Create(const std::string& vertexShaderPath, const std::string& frag
 	LoadStringFromFile(fragmentShaderPath, fragmentShaderSource);
 	GLuint fragmentShaderID = CreateShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
+	//link shaders above
 	LinkShadersIntoProgram(vertexShaderID, fragmentShaderID);
 }
 
@@ -143,7 +145,6 @@ GLuint Shader::CreateShader(const std::string& shaderCode, const GLenum& shaderT
 	}
 
 	//output success
-	std::cout << shaderTypeName << " Created!\n";
 
 	return shaderID;
 }
@@ -182,7 +183,4 @@ void Shader::LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& 
 		std::cout << "Program failed to link shaders, error :" << linkErrors << std::endl;
 		return;
 	}
-
-	std::cout << "Program Created!\n";
-
 }

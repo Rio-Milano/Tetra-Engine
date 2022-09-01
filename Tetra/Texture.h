@@ -11,21 +11,25 @@ class Texture
 public:
 	struct TextureAttributes
 	{
-		int width{ 0 }, height{ 0 }, channels{ 0 };
-		unsigned char* texturePtr{ nullptr };
+		int width{ 0 }, height{ 0 }, channels{ 0 };//this values are persistant
+		unsigned char* texturePtr{ nullptr };//texture is deleted once loaded onto the gpu
 
-		GLuint textureID{0};
-		bool validTexture{false};
+		GLuint textureID{0};//texture id on gpu
+		bool validTexture{false};//did texture load successfully
 	};
 	
+	//getters
 	const TextureAttributes& GetTextureAttributes()const;
 
+	//loaders
 	void InitializeTexture(const std::string& textureFileLocation);
 
 private:
+	//internal helpers
 	void LoadTexture(const std::string& textureFileLocation);
 	void GenerateTextureBuffer(const std::string& textureFileLocation);
 
+	//members
 	TextureAttributes m_textureAttributes;
 };
 

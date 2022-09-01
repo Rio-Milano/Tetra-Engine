@@ -7,6 +7,7 @@
 #include"glmIncludes.h"
 #include"Shader.h"
 #include"Entity.h"
+#include"LightManager.h"
 
 #include<string>
 #include<vector>
@@ -25,6 +26,7 @@ protected:
 
 	Renderer m_renderer;
 	Camera m_camera;
+	LightManager m_lightManager;
 
 private:
 	void CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName);

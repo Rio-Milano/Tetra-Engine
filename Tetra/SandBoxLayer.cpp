@@ -7,111 +7,32 @@
 #include"MeshManager.h"
 #define MeshManager MeshManager::GetInstance()
 
-
-
+#include"AquaPig.h"
+#include"Container.h"
+#include"Line.h"
 
 void SandBoxLayer::Start()
 {
-	std::shared_ptr<Texture> t1 = std::make_shared<Texture>();
-	t1->InitializeTexture("Data/Images/Box.png");
-	TextureManager.AddTexture("Box", t1);
-
-	std::shared_ptr<Texture> t2 = std::make_shared<Texture>();
-	t2->InitializeTexture("Data/Images/BoxSpec.png");
-	TextureManager.AddTexture("BoxSpec", t2);
-
-	std::shared_ptr<Texture> t3 = std::make_shared<Texture>();
-	t3->InitializeTexture("Data/Images/BoxEmission.png");
-	TextureManager.AddTexture("BoxEmission", t3);
-
-
-	//modelRoot->m_transform_mat4 = glm::rotate(modelRoot->m_transform_mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	//modelRoot->m_transform_mat4 = glm::scale(modelRoot->m_transform_mat4, glm::vec3(0.005));
-
-	//load in the seperate .obj files
-	std::shared_ptr<Model>
-		gun = MeshManager.LoadModel("Data/Models/AquaPig/gun.obj"),
-		gun_base = MeshManager.LoadModel("Data/Models/AquaPig/gun_base.obj"),
-		hull = MeshManager.LoadModel("Data/Models/AquaPig/hull.obj"),
-		propeller = MeshManager.LoadModel("Data/Models/AquaPig/propeller.obj"),
-		wing_left = MeshManager.LoadModel("Data/Models/AquaPig/wing_left.obj"),
-		wing_right = MeshManager.LoadModel("Data/Models/AquaPig/wing_right.obj"),
-		backPack = MeshManager.LoadModel("Data/Models/backpack/backpack.obj");;
-
-	if (!(gun && gun_base && hull && propeller && wing_left && wing_left)) 
-		_ASSERT(false);
-
-	//take the nodes from each model
-	std::shared_ptr<ModelNode>
-		ngun = gun->m_rootModelNode,
-		ngun_base = gun_base->m_rootModelNode,
-		nhull = hull->m_rootModelNode,
-		npropeller = propeller->m_rootModelNode,
-		nwing_left = wing_left->m_rootModelNode,
-		nwing_right = wing_right->m_rootModelNode,
-		nbackPack = backPack->m_rootModelNode;
-
-	std::shared_ptr<Texture> aquaPigTexture = std::make_shared<Texture>();
-	aquaPigTexture->InitializeTexture("Data/Models/AquaPig/aqua_pig_1K.jpg");
+	//add entities to entity vector
+	m_entities.emplace_back(std::make_shared<AquaPig>("Boat"));
+	m_entities.emplace_back(std::make_shared<Container>("Box"));
 	
-	ngun->m_children[0]->m_meshes[0]->m_diffuse = aquaPigTexture;
-	ngun_base->m_children[0]->m_meshes[0]->m_diffuse = aquaPigTexture;
-	nhull->m_children[0]->m_meshes[0]->m_diffuse = aquaPigTexture;
-	npropeller->m_children[0]->m_meshes[0]->m_diffuse = aquaPigTexture;
-	nwing_left->m_children[0]->m_meshes[0]->m_diffuse = aquaPigTexture;
-	nwing_right->m_children[0]->m_meshes[0]->m_diffuse = aquaPigTexture;
+	const std::shared_ptr<Line>& originLine = std::make_shared<Line>("OriginLine");
+	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	originLine->AddVertex(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
+	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	originLine->AddVertex(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-	//construct hirearchy
-	nhull->AddChildren({ nwing_left, nwing_right, npropeller, ngun_base , nbackPack});
-	ngun_base->AddChild(ngun);
+	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	originLine->AddVertex(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	m_entities.emplace_back(originLine);
 
-	//construct transform hirearchy
-	nhull->m_nodeTransform = glm::translate(nhull->m_nodeTransform, glm::vec3(8, 0, 8));
-
-	glm::mat4 Twing_right(1.0f);
-	Twing_right = glm::translate(Twing_right, glm::vec3(-2.231, 0.272, -2.663));
-	nwing_right->m_transform_mat4 = Twing_right;
-
-	glm::mat4 Twing_left(1.0f);
-	Twing_left = glm::translate(Twing_left, glm::vec3(2.231, 0.272, -2.663));
-	nwing_left->m_transform_mat4 = Twing_left;
-
-	glm::mat4 Tpropeller(1.0f);
-	Tpropeller = glm::translate(Tpropeller, glm::vec3(0, 1.395, -3.616));
-	Tpropeller = glm::rotate(Tpropeller, (float)glm::radians(90.0f), glm::vec3(1, 0, 0));
-	npropeller->m_transform_mat4 = Tpropeller;
-
-	glm::mat4 Tgun_base(1.0f);
-	Tgun_base = glm::translate(Tgun_base, glm::vec3(0, 0.569, -1.866));
-	ngun_base->m_transform_mat4 = Tgun_base;
-
-	glm::mat4 Tgun(1.0f);
-	Tgun = glm::translate(Tgun, glm::vec3(0, 1.506, 0.644));
-	ngun->m_transform_mat4 = Tgun;
-
-	glm::mat4 TbackPack(1.0f);
-	TbackPack = glm::translate(TbackPack, glm::vec3(-0.5f, 1.0f, 1.0f));
-	TbackPack = glm::rotate(TbackPack, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	TbackPack = glm::scale(TbackPack, glm::vec3(0.4f));
-	nbackPack->m_nodeTransform = TbackPack;
-
-	aquaPig = hull;
-
-	m_Line1.AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	m_Line1.AddVertex(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	m_Line1.AddVertex(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	m_Line1.AddVertex(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	m_Line1.AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	m_Line1.AddVertex(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-
-	m_entity.Init();
-	m_Line1.Init();
-	m_Line2.Init();
-	m_Line3.Init();
+	//init entities
+	for (const std::shared_ptr<Entity>& entity : m_entities)
+	{
+		entity->Init();
+	}
 
 	m_lightManager.Initialize();
 	m_lightManager.SetShaderID(&ShaderManager.GetShader("main"));
@@ -121,68 +42,42 @@ void SandBoxLayer::Start()
 	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f), .5f);//2
 	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(0.0f, 0.0f, 1.0f), .5f);//3
 	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(0.0f, 1.0f, 0.0f), .5f);//4
-
 }
 
 
 
 void SandBoxLayer::Update(float dt)
 {
+	//only update if simulation is not paused
 	if (!m_pauseSimulation)
 	{
-		//backPack->m_rootModelNode->m_transform_mat4 = glm::rotate(backPack->m_rootModelNode->m_transform_mat4, (float)glm::radians(40.0 * dt), glm::vec3(0.0f, 1.0f, 0.0f));
+		//update 
+		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
 
-		m_entity.Update(dt);
-		//m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f, 5);
-
-
-		/*Light& light = m_lightManager.GetLight(4);
-		static float theta = 0;
-		static const float vx = 1.f;
-
-		if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_LEFT) == GLFW_PRESS)
-			theta -= vx * dt;
-
-		if (glfwGetKey(m_renderer.GetWindow().GetWindowPtr(), GLFW_KEY_RIGHT) == GLFW_PRESS)
-			theta += vx * dt;
-
-		if (theta < -1.f)
-			theta = -1.f;
-		else if (theta > 1.f)
-			theta = 1.f;
-
-		light.m_direction.x = theta;*/
-
-		m_lightManager.UpdateShader(dt);
-
-		static float theta = 0.0f;
-
-		std::shared_ptr<ModelNode> propellerNode = aquaPig->FindNode("propeller.obj");
-		propellerNode->m_nodeTransform = glm::rotate(propellerNode->m_nodeTransform, (float)glm::radians(400.0f * dt), glm::vec3(0, 1, 0));
-
-		std::shared_ptr<ModelNode> hullNode = aquaPig->m_rootModelNode;
-		hullNode->m_nodeTransform = glm::rotate(hullNode->m_nodeTransform, (float)glm::radians(sin(glfwGetTime()))*dt * 10.0f, glm::vec3(1, 0, 1));
-
-		std::shared_ptr<ModelNode> gunNode = aquaPig->FindNode("gun");
-		gunNode->m_nodeTransform = glm::rotate(gunNode->m_nodeTransform, (float)glm::radians(sin(glfwGetTime())) * dt * 20.0f, glm::vec3(1, 0, 0));
+		//loop entitys
+		for (const std::shared_ptr<Entity>& entity : m_entities)
+		{
+			entity->Update(dt);
+		}
 	}
 }
 
 void SandBoxLayer::Render()
 {
+	//wireframe context ON/OFF
 	if (m_wireframeMode)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	//render cubes/oblongs for point/spot lights
 	m_lightManager.DrawLights(m_renderer);
-	m_entity.Render(m_renderer);
 
-	aquaPig->Render(m_renderer);
-	m_Line1.Render(m_renderer);
-	m_Line2.Render(m_renderer);
-	m_Line3.Render(m_renderer);
+	//loop entities
+	for (const std::shared_ptr<Entity>& entity : m_entities)
+	{
+		entity->Render(m_renderer);
+	}
 }
 
 void SandBoxLayer::End()
@@ -194,6 +89,7 @@ void SandBoxLayer::ImGUI()
 	static bool LightingGUIOpen = true;
 	static bool SystemGUIOpen = true;
 
+	//button sizes
 	float buttonX = 140.f;
 	float buttonY = 20.f;
 
@@ -202,39 +98,40 @@ void SandBoxLayer::ImGUI()
 
 		if (LightingGUIOpen)
 		{
-			ImGui::Begin("Lights");
+			ImGui::Begin("Lights");//create window for light management
 
-			if (ImGui::Button("Close", ImVec2(buttonX, buttonY)))
+			if (ImGui::Button("Close", ImVec2(buttonX, buttonY)))//close window button
 				LightingGUIOpen = false;
 
-			for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
+			for (int i = 0; i < NUMBER_OF_LIGHTS; i++)//loop lights
 			{
-				if (ImGui::BeginCombo(std::string("Light :" + std::to_string(i + 1)).c_str(), "", ImGuiComboFlags_HeightLargest))
+				if (ImGui::BeginCombo(std::string("Light :" + std::to_string(i + 1)).c_str(), "", ImGuiComboFlags_HeightLargest))//create a drop down for each light
 				{
-					Light& light = m_lightManager.GetLight(i);
+					Light& light = m_lightManager.GetLight(i);//get current light
 
-					ImGui::Checkbox("Light in use", &light.m_inUse);
+					ImGui::Checkbox("Light in use", &light.m_inUse);//is light being used in light model
 
-					if (light.m_lightType == LightType::Directional)
+					//each if 
+					switch (light.m_lightType)
 					{
+					case LightType::Directional:
 						ImGui::Text("Directional Light");
 
 						ImGui::SliderFloat3("Direction", &light.m_direction.x, MIN_DIRECTION_XYZ, MAX_DIRECTION_XYZ);
 						ImGui::ColorPicker3("Color", &light.m_lightColor[0]);
 						ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
-					}
-					else if (light.m_lightType == LightType::Point)
-					{
+						break;
+					
+					case LightType::Point:
 						ImGui::Text("Point Light");
 
 						ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
 						ImGui::ColorPicker3("Color", &light.m_lightColor[0]);
 						ImGui::SliderFloat("Light intensity", &light.m_lightIntensity, MIN_COLOR, MAX_COLOR);
 						ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
+						break;
 
-					}
-					else if (light.m_lightType == LightType::Spot)
-					{
+					case LightType::Spot:
 						ImGui::Text("Spot Light");
 
 						ImGui::SliderFloat3("Position", &light.m_position.x, MIN_XYZ, MAX_XYZ);
@@ -245,11 +142,15 @@ void SandBoxLayer::ImGUI()
 						ImGui::SliderFloat("Outer Cutoff Angle", &light.m_outerCutOffAngle, MIN_CONE_ANGLE, MAX_CONE_ANGLE);
 						ImGui::SliderFloat("Light range", &light.m_range, 0, MAX_RANGE);
 						ImGui::Checkbox("Simulate Light", &light.simulateLight);
-						if (light.simulateLight)
+						if (light.simulateLight)//have light rotate about origin while also facing origin
 						{
 							ImGui::SliderFloat("Radius", &light.radius, 0.0f, 20.f);
 							ImGui::SliderFloat("Rotation Speed", &light.rotationSpeed, 0.0f, 100.0f);
 						}
+						break;
+
+					default:
+						break;
 					}
 
 					ImGui::Text("Select Light Type");
