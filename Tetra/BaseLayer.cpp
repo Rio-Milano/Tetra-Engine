@@ -13,13 +13,20 @@
 
 void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName)
 {
+	//create a window
 	m_renderer.CreateWindowGLFW(windowSize.x, windowSize.y, windowName);
+	//pull function pointers from gpu driver
 	InitGLAD();
+	//init the renderer
 	m_renderer.InitRenderer();
 	InputManager.InitializeInputManager(m_renderer.GetWindow().GetWindowPtr());
+	//create default shaders
 	CreateShader();
+	//setup camera with attributes
 	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 4.0f), m_renderer.GetWindow().GetWindowPtr());
+	//output gl state
 	Helper::Status::DisplayUsefulInfo();
+	//init gui lib
 	InitializeImGui();
 
 }
@@ -35,7 +42,10 @@ void BaseLayer::InitializeImGui()
 
 void BaseLayer::DestroyLayer()
 {
+	//delete gpu shaders
 	ShaderManager.DeleteAllShaders();
+	
+	//close imgui
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -43,34 +53,44 @@ void BaseLayer::DestroyLayer()
 
 void BaseLayer::BaseRender()
 {
+	//draw layer
 	Render();
+	//draw imgui when not using camera
 	if(!m_camera.GetUsingCamera())
 		BaseimGUI();
 }
 
 void BaseLayer::BaseUpdate(const float& dt)
 {
+	//process window events
 	m_renderer.GetWindow().UpdateWindow();
+	//update camera
 	m_camera.Update(dt);
+	//update generic shader uniforms
 	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveViewMat4(), m_camera.GetPosition());
+	//update layer
 	Update(dt);
 
 }
 
 void BaseLayer::BaseimGUI()
 {
+	//imgui frame setup
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	//render imgui
 	ImGUI();
 
+	//imgui frame done
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void BaseLayer::InitGLAD()
 {
+	//pull opengl function pointers from driver
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		std::cout << "Failed to initialize glad!\n";
 	else
@@ -79,6 +99,8 @@ void BaseLayer::InitGLAD()
 
 void BaseLayer::CreateShader()
 {
+	//create default shaders
+
 	Shader shader;
 	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag");
 	ShaderManager.AddShader("main", shader);

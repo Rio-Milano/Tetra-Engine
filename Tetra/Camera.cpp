@@ -45,26 +45,37 @@ void Camera::Initialize
 		glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	#endif
 
+	//assign a controller
 	controller = new XInput_Wrapper;
 }
 
 void Camera::Update(const float& dt)
 {
+	//update user input from controller
 	controller->Update();
 
+	//if using the camera
 	if (m_usingCamera)
 	{
+		//check for camera unfocus
 		if (glfwGetKey(m_windowPtr, GLFW_KEY_U) == GLFW_PRESS)
 		{
+			//make cursor seen
 			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			//now not using camera
 			m_usingCamera = false;
 		}
 	}
 	else
 	{
+		//if not using camera 
+
+		//check for camera focus
 		if (glfwGetKey(m_windowPtr, GLFW_KEY_F) == GLFW_PRESS)
 		{
+			//disable cursor 
 			glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			//now using camera
 			m_usingCamera = true;
 		}
 
@@ -83,14 +94,16 @@ void Camera::Update(const float& dt)
 	//calculate forward vector using new pitch and yaw and to calculate right vector later
 	UpdateForwardVector();
 
-	//update right vector so it can be used by keyboard input
+	//update right vector by using up and forward so it can be used by keyboard input
 	UpdateRightVector();
 
-	//process all user input
+	//process all keyboard user input
 	KeyboardInput(dt);
 
+	//process controller input
 	mv3_position += (mv3_forward * controller0->GetLeftStickY() + mv3_right * controller0->GetLeftStickX()) * mf_cameraSpeed * dt;
 
+	//compute view matrix from camera directions
 	ComputeViewMatrix();
 }
 
@@ -128,26 +141,34 @@ void Camera::ComputeViewMatrix()
 }
 void Camera::UpdateFOV()
 {
+	//apply any fov changes to the fov
 	mf_fov -= InputManager.m_mouseScrollY;
+	//reset scroll y of mouse
 	InputManager.m_mouseScrollY = 0;
 
+	//constrain fov
 	if (mf_fov < 1.0f)
 		mf_fov = 1.0f;
 	else if (mf_fov > 90.0f)
 		mf_fov = 90.0f;
+	//compute perspective matrix
 	ComputePrespectiveMatrix();//now that the fov has changed we must recalculate the projection matrix
 }
 
 void Camera::MouseInput(const float& dt)
 {
+	//get mouse position
 	float
 		mouseX = InputManager.m_currentMousePosition.x,
 		mouseY = InputManager.m_currentMousePosition.y;
-
+	
+	//if the mouse has moved
 	if (InputManager.m_firstMouseEvent)
 	{
+		//if the mouse has moved only once
 		if (!InputManager.m_seccondMouseEvent)
 		{
+			//set mouse previous values
 			mf_previousMouseX = mouseX;
 			mf_previousMouseY = mouseY;
 		}
@@ -156,6 +177,7 @@ void Camera::MouseInput(const float& dt)
 			lf_mouseXOffset{ mouseX - mf_previousMouseX },
 			lf_mouseYOffset{ mf_previousMouseY - mouseY };
 
+		//set previous mouse to current mouse possition
 		mf_previousMouseX = mouseX;
 		mf_previousMouseY = mouseY;
 
@@ -165,19 +187,26 @@ void Camera::MouseInput(const float& dt)
 
 
 		//add displacement to pitch and yaw respectively
+		
+		//if not using camera
 		if (m_usingCamera == false)
 		{
+			//we must click and hold mouse right to move
 			if (glfwGetMouseButton(m_windowPtr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
+				//when moving mouse disable the cursor
 				glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				//apply angle changes
 				mf_pitch += lf_mouseYOffset;
 				mf_yaw += lf_mouseXOffset;
 			}
 			else
+				//if not using mouse and not holding down left mouse then enable cursor
 				glfwSetInputMode(m_windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
 		else
 		{
+			//if using camera then apply values as normal
 			mf_pitch += lf_mouseYOffset;
 			mf_yaw += lf_mouseXOffset;
 		}
@@ -190,11 +219,6 @@ void Camera::MouseInput(const float& dt)
 
 		else if (mf_pitch < -89.f)
 			mf_pitch = -89.f;
-
-		/*if (mf_yaw < -360.f)
-			mf_yaw = -360.f;
-		else if (mf_yaw > 360.f)
-			mf_yaw = 360.f;*/
 	}
 
 }

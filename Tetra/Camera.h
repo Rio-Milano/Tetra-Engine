@@ -6,6 +6,7 @@ class XInput_Wrapper;
 
 #include"glmIncludes.h"
 
+//directions for camera
 enum Direction
 {
 	NONE = 0,
@@ -15,13 +16,14 @@ enum Direction
 	RIGHT
 };
 
+//class for maintaining a free fly camera
 class Camera
 {
 public:
 	Camera() = default;
 	~Camera();
 
-	void Initialize
+	void Initialize//assign attributes of camera
 	(
 		const float& fov,
 		const glm::vec2& centreOfViewPort,
@@ -32,10 +34,15 @@ public:
 		GLFWwindow* windowPtr
 	);
 
+	//update camera by taking user input
 	void Update(const float& dt);
+	//get the perspective matrix
 	glm::mat4 GetPerspectiveViewMat4()const;
+	//camera position
 	const glm::vec3& GetPosition()const;
+	//camera forward vector
 	const glm::vec3& GetForwardVector()const;
+	//is user actively controlling the camera
 	const bool& GetUsingCamera()const;
 
 
@@ -74,7 +81,7 @@ private:
 
 	GLFWwindow* m_windowPtr;
 
-
+	//internal helpers
 	void ComputePrespectiveMatrix();
 	void ComputeViewMatrix();
 

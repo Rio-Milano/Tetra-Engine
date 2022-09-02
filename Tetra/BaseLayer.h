@@ -29,6 +29,7 @@ protected:
 	LightManager m_lightManager;
 
 private:
+	//internal helpers
 	void CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName);
 	void InitializeImGui();
 	void DestroyLayer();

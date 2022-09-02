@@ -49,15 +49,18 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 		//set normal matrix in shader
 		shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
 
+		//get the material of the mesh
+		std::shared_ptr<Material> meshMaterial = mesh.GetMaterial();
+
 		//set the material properties in the shader
-		shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), mesh.m_defaultDiffuseColor);
-		shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), mesh.m_defaultSpecularColor);
-		shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), mesh.m_ambientIntensity);
-		shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), mesh.m_specularIntensity);
-		shader.SetUniform1f(shader.GetLocation("material.emissionRange"), mesh.emissionRange);
+		shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), meshMaterial->m_defaultDiffuseColor);
+		shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), meshMaterial->m_defaultSpecularColor);
+		shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), meshMaterial->m_ambientIntensity);
+		shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), meshMaterial->m_specularIntensity);
+		shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
 
 		//get the tetxure pointer for the mesh diffuse map
-		const std::shared_ptr<Texture>& diffuseTexture = mesh.m_diffuse;
+		const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;
 		//if the texture is valid and if loaded successfully
 		if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
 		{
@@ -76,7 +79,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 			shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
 		}
 		//get the tetxure pointer for the mesh spec map
-		const std::shared_ptr<Texture>& specularTexture = mesh.m_specular;
+		const std::shared_ptr<Texture>& specularTexture = meshMaterial->m_specular;
 		//if texture is valid and loaded successfully
 		if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
 		{
@@ -96,7 +99,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 		}
 
 		//get emission texture from mesh
-		const std::shared_ptr<Texture>& emissionTexture = mesh.m_emission;
+		const std::shared_ptr<Texture>& emissionTexture = meshMaterial->m_emission;
 		//if emission texture is valid and loaded successfully
 		if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
 		{

@@ -4,6 +4,7 @@
 #include<vector>
 #include<memory>
 #include<crtdbg.h>
+#include <assimp/scene.h>
 
 #include"Mesh.h"
 #include"glmIncludes.h"
@@ -58,9 +59,13 @@ class Model
 {
 public:
 	//ctors and dtors
-	explicit Model(const std::shared_ptr<ModelNode>& rootNode);
+	explicit Model(const std::shared_ptr<ModelNode>& rootNode);//create model with existing root node
+	explicit Model(const std::string& modelPath);//create model by loading it from a path on disk
 	Model() = default;
 	~Model() = default;
+
+	//uses assimp to load a model from disk then converts it into our own data structures and returns the root node for it
+	void LoadModel(const std::string& modelPath);
 
 	//render the model by starting at root of hirearchy
 	void Render(Renderer& renderer);
@@ -76,6 +81,15 @@ public:
 	void SetRoot(const std::shared_ptr<ModelNode>& newRoot);
 
 private:
+	//process an assimp node by pulling meshes and processing mesh children, meanwhile making a mock of the hirearchy through modelNode
+	std::shared_ptr<ModelNode> PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode = nullptr);
+
+	//take assimps representation of a models mesh and converts it into our own representation
+	std::shared_ptr<Mesh> ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, const aiScene* scene, const std::string& localPath);
+
+	//extract the texture maps from assimp mesh  nand puts it into our own data structures
+	std::shared_ptr<Texture> LoadMaterialFromAssimpMesh(aiMaterial* material, aiTextureType type, const std::string& localPath);
+
 	std::shared_ptr<ModelNode> m_rootModelNode = nullptr;
 };
 
