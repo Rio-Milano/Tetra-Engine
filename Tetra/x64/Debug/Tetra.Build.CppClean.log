@@ -1,6 +1,5 @@
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\vc143.pdb
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\vc143.idb
-c:\users\riomi\source\repos\tetra\tetra\x64\debug\model.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\meshmanager.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\mesh.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\line.obj
@@ -18,6 +17,7 @@ c:\users\riomi\source\repos\tetra\tetra\x64\debug\imgui_demo.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\imgui.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\camera.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\baselayer.obj
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\basegrid.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\aquapig.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\application.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\xinput_wrapper.obj
@@ -27,9 +27,18 @@ c:\users\riomi\source\repos\tetra\tetra\x64\debug\texture.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\container.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\source.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\shader.obj
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\sandboxlayer.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\shadermanager.obj
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\renderer.obj
-c:\users\riomi\source\repos\tetra\tetra\x64\debug\sandboxlayer.obj
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\plane.obj
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\model.obj
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\glad.obj
+c:\users\riomi\source\repos\tetra\x64\debug\tetra.exe
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.ilk
+c:\users\riomi\source\repos\tetra\x64\debug\tetra.pdb
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.tlog\cl.command.1.tlog
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.tlog\cl.read.1.tlog
 c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.tlog\cl.write.1.tlog
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.tlog\link.command.1.tlog
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.tlog\link.read.1.tlog
+c:\users\riomi\source\repos\tetra\tetra\x64\debug\tetra.tlog\link.write.1.tlog

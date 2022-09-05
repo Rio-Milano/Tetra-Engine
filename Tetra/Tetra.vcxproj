@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AquaPig.cpp" />
+    <ClCompile Include="BaseGrid.cpp" />
     <ClCompile Include="BaseLayer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="external_libaries\include\imGUI\imgui.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SandBoxLayer.cpp" />
@@ -178,6 +180,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AquaPig.h" />
+    <ClInclude Include="BaseGrid.h" />
     <ClInclude Include="BaseLayer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Entity.h" />
@@ -198,6 +201,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SandBoxLayer.h" />

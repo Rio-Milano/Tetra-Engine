@@ -10,6 +10,8 @@
 #include"AquaPig.h"
 #include"Container.h"
 #include"Line.h"
+#include"BaseGrid.h"
+#include"Plane.h"
 
 void SandBoxLayer::Start()
 {
@@ -17,16 +19,9 @@ void SandBoxLayer::Start()
 	m_entities.emplace_back(std::make_shared<AquaPig>("Boat"));
 	m_entities.emplace_back(std::make_shared<Container>("Box"));
 	
-	const std::shared_ptr<Line>& originLine = std::make_shared<Line>("OriginLine");
-	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	originLine->AddVertex(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	m_entities.emplace_back(std::make_shared<BaseGrid>());
 
-	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	originLine->AddVertex(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	originLine->AddVertex(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	m_entities.emplace_back(originLine);
+	m_entities.emplace_back(std::make_shared<Plane>());
 
 	//init entities
 	for (const std::shared_ptr<Entity>& entity : m_entities)

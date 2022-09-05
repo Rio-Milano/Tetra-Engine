@@ -46,7 +46,8 @@ struct Material
 //class for representing a collection of attributes opengl can use to display something
 class Mesh
 {
-	friend class Renderer;//!!!!!!!!
+	friend class Renderer;
+	friend class Plane;
 	friend class Line;
 
 public:
