@@ -23,6 +23,7 @@ public:
 
 	//recursively search the hirearchy and render each node
 	void Render(Renderer& renderer, const glm::mat4& worldPrevious = glm::mat4(1.0f));
+	void DrawOutline(Mesh& mesh, Renderer& renderer, const glm::mat4& worldPrevious = glm::mat4(1.0f));
 
 	//add a mesh to the current node by using a name to pull a mesh from the mesh manager
 	void AddMesh(const std::string& meshName);
@@ -44,10 +45,13 @@ public:
 	//Setters
 	void SetTransform(const glm::mat4& transform);
 	void SetAssimpNodeTransform(const glm::mat4& transform);
+	void SetDrawOutline(const bool& flag);
+	const bool& GetDrawOutline()const;
+
 private:
 	glm::mat4 m_assimpTransform;
 	glm::mat4 m_transform;
-
+	bool m_drawOutline{false};
 
 	std::vector<std::shared_ptr<Mesh>> m_meshes;
 	std::vector<std::shared_ptr<ModelNode>> m_children;

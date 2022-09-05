@@ -101,6 +101,16 @@ void AquaPig::Init()
 	nwing_left->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_specular = aquaPigSpecular;
 	nwing_right->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_specular = aquaPigSpecular;
 
+
+	//set each node to have an outline
+	ngun->GetChildren()[0]->SetDrawOutline(1);
+	ngun_base->GetChildren()[0]->SetDrawOutline(1);
+	nhull->GetChildren()[0]->SetDrawOutline(1);
+	npropeller->GetChildren()[0]->SetDrawOutline(1);
+	nwing_left->GetChildren()[0]->SetDrawOutline(1);
+	nwing_right->GetChildren()[0]->SetDrawOutline(1);
+	nhull->GetChildren()[0]->SetDrawOutline(1);
+
 	SetRoot(nhull);
 }
 

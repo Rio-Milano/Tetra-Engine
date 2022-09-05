@@ -29,8 +29,10 @@ void Renderer::InitRenderer()
 	//set call back for viewport resize
 	glfwSetFramebufferSizeCallback(m_window.GetWindowPtr(), UpdateViewportWhenWindowSizeChanged);
 
-	//force fragments with lower depth are rendererd infront on fragments with higher depth
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);//enable depth test
+	glDepthMask(GL_TRUE);//the depth buffer is writable
+	glDepthFunc(GL_LESS);//make fragments with lower depth be drawn in front of fragments with greater depth
+
 }
 
 void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
@@ -170,6 +172,7 @@ void Renderer::StartRendering()
 {
 	glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 }
 
 void Renderer::EndRendering()

@@ -107,6 +107,19 @@ void main()
 {
 	//some code amongst the functions is redundant so theres room for optimization if needed
 
+	//emission calculations
+	float distanceToEmission = distance(cameraPosition, varying_position);
+	float attenation =  1.0 - smoothstep(0, material.emissionRange, distanceToEmission);
+
+	vec3 emissionColor =  GetFragmentEmission() * attenation;
+
+	if(dot(emissionColor, emissionColor) > 0.0)
+	{
+		FragColor = vec4(emissionColor, 1.0);
+		return;
+	}
+
+	//else do normal lighting calculations
 	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
 	vec3 finalColor;
 
@@ -127,7 +140,7 @@ void main()
 				break;
 
 			case 2://SPOT
-				finalColor  += CalculateSpotLight(i, normal);
+				finalColor += CalculateSpotLight(i, normal);
 				break;
 			default:
 				break;
@@ -135,16 +148,7 @@ void main()
 
 	};
 
-	float distanceToEmission = distance(cameraPosition, varying_position);
-	float attenation =  1.0 - smoothstep(0, material.emissionRange, distanceToEmission);
-
-	vec3 emissionColor =  GetFragmentEmission() * attenation;
-
-	if(dot(emissionColor, emissionColor) > 0.0)
-		FragColor = vec4(emissionColor, 1.0);
-	else
-		FragColor = vec4(finalColor, 1.0);
-
+	FragColor = vec4(finalColor, 1.0);
 }
 
 

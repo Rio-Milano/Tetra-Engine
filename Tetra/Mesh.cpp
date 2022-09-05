@@ -53,8 +53,15 @@ void Mesh::GenerateMesh
 
 
 
+const std::string& Mesh::GetProgramName()const
+{
+	return m_programName;
+}
 
-
+void Mesh::SetProgramName(const std::string& programName)
+{
+	m_programName = programName;
+}
 
 void Mesh::StartMesh(const GLuint& drawType,const std::string& programName, const std::vector<GLuint>& elements)
 {
