@@ -57,6 +57,7 @@ struct Material
 	sampler2D specularMap;
 	bool hasSpecularMap;
 	vec3 defaultSpecularColor;
+	bool discardLowAlphaFragment;
 
 	sampler2D emissionMap;
 	bool hasEmissionMap;
@@ -105,6 +106,16 @@ vec3 GetFragmentEmission();
 
 void main()
 {
+	if(material.discardLowAlphaFragment)
+	{
+		if(material.hasDiffuseMap)
+		{
+			if(texture(material.diffuseMap, varying_textureCord).a < 0.1)
+				discard;
+		}
+	};
+
+
 	//some code amongst the functions is redundant so theres room for optimization if needed
 
 	//emission calculations

@@ -49,6 +49,7 @@ struct Light
 		float radius = 10.f;
 		float rotationSpeed = 2.0f;
 
+	bool m_drawLight{true};
 };
 
 class LightManager

@@ -135,9 +135,6 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 
 
 
-
-
-
 const std::shared_ptr<Material>& Mesh::GetMaterial()const
 {
 	return m_material;

@@ -27,6 +27,8 @@ void Grass::Init()
 		glm::vec3(1.0f, 0.0f, 0.0f),//bottom right 3
 	};
 
+
+
 	std::vector<glm::vec2> textureCoords
 	{
 		glm::vec2(0.0f, 1.0f),
@@ -44,6 +46,7 @@ void Grass::Init()
 	this->m_mesh = std::make_shared<Mesh>();
 	this->m_mesh->GenerateMesh(positions, {}, textureCoords, elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
 	this->m_mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Grass");
+	this->m_mesh->GetMaterial()->m_discardLowAlphaFragments = true;
 }
 
 void Grass::Update(const float& dt)

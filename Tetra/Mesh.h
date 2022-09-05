@@ -29,7 +29,8 @@ struct Material
 		m_diffuse,
 		m_specular,
 		m_emission;
-
+	
+	bool m_discardLowAlphaFragments{ false };
 
 	//default values
 	float m_ambientIntensity{ 0.1f };//amount of ambient light we can reflect
@@ -83,6 +84,7 @@ public:
 	const std::string& GetMeshName() const { return m_meshName; };
 	const std::shared_ptr<Material>& GetMaterial()const;
 	const std::string& GetProgramName()const;
+
 	//setters
 	void SetMeshName(const std::string& meshName) { m_meshName = meshName; };
 	void SetMaterial(const std::shared_ptr<Material>& material);
@@ -110,7 +112,7 @@ private:
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };
 	size_t m_vertexCount{0ull};
-		
+			
 
 	//general mesh data
 	GLuint

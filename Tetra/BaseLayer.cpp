@@ -113,5 +113,4 @@ void BaseLayer::CreateShader()
 	shader_3.Create("Data/Shaders/DiscardAlpha.vert", "Data/Shaders/DiscardAlpha.frag");
 	ShaderManager.AddShader("DiscardAlpha", shader_3);
 
-
 }

@@ -57,6 +57,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 	shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), meshMaterial->m_ambientIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), meshMaterial->m_specularIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
+	shader.SetUniform1b(shader.GetLocation("material.discardLowAlphaFragment"), meshMaterial->m_discardLowAlphaFragments);
 
 	//get the tetxure pointer for the mesh diffuse map
 	const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;

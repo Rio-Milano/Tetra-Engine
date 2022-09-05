@@ -17,6 +17,8 @@ uniform Material material;
 
 void main()
 {
+	//maybe add directional light for sun
+
 	vec4 fragColor = texture(material.diffuseMap, varying_texCoord);
 	if(fragColor.a < 0.1)
 		discard;

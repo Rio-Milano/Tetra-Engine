@@ -49,6 +49,9 @@ void SandBoxLayer::Update(float dt)
 	//only update if simulation is not paused
 	if (!m_pauseSimulation)
 	{
+		m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f), 1.0f, 9);
+		m_lightManager.GetLight(9).m_drawLight = false;
+
 		//update 
 		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
 

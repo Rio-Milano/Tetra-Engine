@@ -227,7 +227,7 @@ void LightManager::DrawLights(Renderer& renderer)
 		Light& light = m_lights[i];
 
 		//if light is on
-		if (light.m_inUse)
+		if (light.m_inUse && light.m_drawLight)
 		{
 			//if light a point or spot light
 			if (light.m_lightType != LightType::Directional)
@@ -286,7 +286,7 @@ void LightManager::DrawLights(Renderer& renderer)
 				//calculate light color for light holder mesh
 				glm::vec3 overallLightColor = light.m_lightColor * light.m_lightIntensity;
 				//set bulb holder color
-				shader.SetUniform3fv(shader.GetLocation("cubeColor"), glm::vec3(1.0f)/2.0f);
+				shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);
 				//render bulb holder
 				renderer.RenderMesh(m_meshForLight, transform);
 				
