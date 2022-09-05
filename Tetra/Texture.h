@@ -22,11 +22,11 @@ public:
 	const TextureAttributes& GetTextureAttributes()const;
 
 	//loaders
-	void InitializeTexture(const std::string& textureFileLocation);
+	void InitializeTexture(const std::string& textureFileLocation, const bool& flipOnLoad = false);
 
 private:
 	//internal helpers
-	void LoadTexture(const std::string& textureFileLocation);
+	void LoadTexture(const std::string& textureFileLocation, const bool& flipOnLoad);
 	void GenerateTextureBuffer(const std::string& textureFileLocation);
 
 	//members

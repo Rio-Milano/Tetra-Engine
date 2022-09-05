@@ -43,83 +43,80 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
 	//set the word matrix for the mesh
 	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
 	
-	//if the mesh is using the default shader
-	if (mesh.m_programName == "main")
+	//calculate the normal matrix that allows for unballanced scaling so normals arent distorted
+	glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(worldMat)));
+	//set normal matrix in shader
+	shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
+
+	//get the material of the mesh
+	std::shared_ptr<Material> meshMaterial = mesh.GetMaterial();
+
+	//set the material properties in the shader
+	shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), meshMaterial->m_defaultDiffuseColor);
+	shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), meshMaterial->m_defaultSpecularColor);
+	shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), meshMaterial->m_ambientIntensity);
+	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), meshMaterial->m_specularIntensity);
+	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
+
+	//get the tetxure pointer for the mesh diffuse map
+	const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;
+	//if the texture is valid and if loaded successfully
+	if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
 	{
-		//calculate the normal matrix that allows for unballanced scaling so normals arent distorted
-		glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(worldMat)));
-		//set normal matrix in shader
-		shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
-
-		//get the material of the mesh
-		std::shared_ptr<Material> meshMaterial = mesh.GetMaterial();
-
-		//set the material properties in the shader
-		shader.SetUniform3fv(shader.GetLocation("material.defaultDiffuseColor"), meshMaterial->m_defaultDiffuseColor);
-		shader.SetUniform3fv(shader.GetLocation("material.defaultSpecularColor"), meshMaterial->m_defaultSpecularColor);
-		shader.SetUniform1f(shader.GetLocation("material.ambientIntensity"), meshMaterial->m_ambientIntensity);
-		shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), meshMaterial->m_specularIntensity);
-		shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
-
-		//get the tetxure pointer for the mesh diffuse map
-		const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;
-		//if the texture is valid and if loaded successfully
-		if (diffuseTexture != nullptr && diffuseTexture->GetTextureAttributes().validTexture)
-		{
-			//set active texture unit to 0
-			glActiveTexture(GL_TEXTURE0);
-			//bind diffuse texture to unit 0
-			glBindTexture(GL_TEXTURE_2D, diffuseTexture->GetTextureAttributes().textureID);
-			//set the diffuse texture unit to 0 in shader
-			shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
-			//set diffuse flag to true
-			shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
-		}
-		else
-		{
-			//if mesh does not have a diffuse texture then set diffuse flag to false
-			shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
-		}
-		//get the tetxure pointer for the mesh spec map
-		const std::shared_ptr<Texture>& specularTexture = meshMaterial->m_specular;
-		//if texture is valid and loaded successfully
-		if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
-		{
-			//set active texture unit to 1
-			glActiveTexture(GL_TEXTURE1);
-			//bind spec texture to unit 1
-			glBindTexture(GL_TEXTURE_2D, specularTexture->GetTextureAttributes().textureID);
-			//set texture unit of spec map to 1
-			shader.SetUniform1i(shader.GetLocation("material.specularMap"), 1);
-			//set spec material flag to true
-			shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), true);
-		}
-		else
-		{
-			//if mesh has no spec map then set spec material flag to false
-			shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
-		}
-
-		//get emission texture from mesh
-		const std::shared_ptr<Texture>& emissionTexture = meshMaterial->m_emission;
-		//if emission texture is valid and loaded successfully
-		if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
-		{
-			//set active texture unit to 2
-			glActiveTexture(GL_TEXTURE2);
-			//bind emission texture to unit 2
-			glBindTexture(GL_TEXTURE_2D, emissionTexture->GetTextureAttributes().textureID);
-			//set emission unit to 2
-			shader.SetUniform1i(shader.GetLocation("material.emissionMap"), 2);
-			//set emission material flag to true
-			shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), true);
-		}
-		else
-		{
-			//if mesh has no emission material then set material flag to false
-			shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
-		}
+		//set active texture unit to 0
+		glActiveTexture(GL_TEXTURE0);
+		//bind diffuse texture to unit 0
+		glBindTexture(GL_TEXTURE_2D, diffuseTexture->GetTextureAttributes().textureID);
+		//set the diffuse texture unit to 0 in shader
+		shader.SetUniform1i(shader.GetLocation("material.diffuseMap"), 0);
+		//set diffuse flag to true
+		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), true);
 	}
+	else
+	{
+		//if mesh does not have a diffuse texture then set diffuse flag to false
+		shader.SetUniform1b(shader.GetLocation("material.hasDiffuseMap"), false);
+	}
+	//get the tetxure pointer for the mesh spec map
+	const std::shared_ptr<Texture>& specularTexture = meshMaterial->m_specular;
+	//if texture is valid and loaded successfully
+	if (specularTexture != nullptr && specularTexture->GetTextureAttributes().validTexture)
+	{
+		//set active texture unit to 1
+		glActiveTexture(GL_TEXTURE1);
+		//bind spec texture to unit 1
+		glBindTexture(GL_TEXTURE_2D, specularTexture->GetTextureAttributes().textureID);
+		//set texture unit of spec map to 1
+		shader.SetUniform1i(shader.GetLocation("material.specularMap"), 1);
+		//set spec material flag to true
+		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), true);
+	}
+	else
+	{
+		//if mesh has no spec map then set spec material flag to false
+		shader.SetUniform1b(shader.GetLocation("material.hasSpecularMap"), false);
+	}
+
+	//get emission texture from mesh
+	const std::shared_ptr<Texture>& emissionTexture = meshMaterial->m_emission;
+	//if emission texture is valid and loaded successfully
+	if (emissionTexture != nullptr && emissionTexture->GetTextureAttributes().validTexture)
+	{
+		//set active texture unit to 2
+		glActiveTexture(GL_TEXTURE2);
+		//bind emission texture to unit 2
+		glBindTexture(GL_TEXTURE_2D, emissionTexture->GetTextureAttributes().textureID);
+		//set emission unit to 2
+		shader.SetUniform1i(shader.GetLocation("material.emissionMap"), 2);
+		//set emission material flag to true
+		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), true);
+	}
+	else
+	{
+		//if mesh has no emission material then set material flag to false
+		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
+	}
+
 	//bind to the vertex array of the mesh
 	glBindVertexArray(mesh.m_VAO);
 

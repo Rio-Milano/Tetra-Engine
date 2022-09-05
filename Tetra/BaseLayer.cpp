@@ -109,4 +109,9 @@ void BaseLayer::CreateShader()
 	shader_2.Create("Data/Shaders/Position-Color.vert", "Data/Shaders/Position-Color.frag");
 	ShaderManager.AddShader("Position-Color", shader_2);
 
+	Shader shader_3;
+	shader_3.Create("Data/Shaders/DiscardAlpha.vert", "Data/Shaders/DiscardAlpha.frag");
+	ShaderManager.AddShader("DiscardAlpha", shader_3);
+
+
 }

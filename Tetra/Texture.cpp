@@ -2,8 +2,10 @@
 
 #include<iostream>
 
-void Texture::LoadTexture(const std::string& textureFileLocation)
+void Texture::LoadTexture(const std::string& textureFileLocation, const bool& flipOnLoad)
 {
+	stbi_set_flip_vertically_on_load(flipOnLoad);
+
 	//load the texture from disk
 	m_textureAttributes.texturePtr = stbi_load(textureFileLocation.c_str(), &m_textureAttributes.width, &m_textureAttributes.height, &m_textureAttributes.channels, 0);
 
@@ -28,9 +30,9 @@ const Texture::TextureAttributes& Texture::GetTextureAttributes() const
 }
 
 //loaders
-void Texture::InitializeTexture(const std::string& textureFileLocation)
+void Texture::InitializeTexture(const std::string& textureFileLocation, const bool& flipOnLoad)
 {
-	LoadTexture(textureFileLocation);
+	LoadTexture(textureFileLocation, flipOnLoad);
 	GenerateTextureBuffer(textureFileLocation);
 }
 
@@ -48,8 +50,8 @@ void Texture::GenerateTextureBuffer(const std::string& textureFileLocation)
 	//bind to texture 2d with id
 	glBindTexture(GL_TEXTURE_2D, m_textureAttributes.textureID);
 	//set wrapping
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	//set filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -62,7 +64,7 @@ void Texture::GenerateTextureBuffer(const std::string& textureFileLocation)
 		imageType_EN = GL_RGB;
 
 	//send texture to gpu texture buffer
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, imageType_EN, GL_UNSIGNED_BYTE, texturePtr);
+	glTexImage2D(GL_TEXTURE_2D, 0, imageType_EN, texWidth, texHeight, 0, imageType_EN, GL_UNSIGNED_BYTE, texturePtr);
 	//generate texture layers
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//unbind buffer target
