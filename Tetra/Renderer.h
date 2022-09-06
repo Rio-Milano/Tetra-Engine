@@ -5,11 +5,12 @@
 #include<glad/glad.h>//must be in this order as glad includes headders that glfw needs, glad version 3.3
 #include<GLFW/glfw3.h>
 #include<string>
-
+#include<vector>
 #include"Mesh.h"
 #include"Window.h"
 #include"Shader.h"
 #include"Camera.h"
+#include<map>
 
 class Renderer
 {
@@ -24,11 +25,11 @@ public:
 	//init viewport, set window size change view port resize call back and eneble depth test
 	void InitRenderer();
 	//render a construct of geometry
-	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const;
+	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat);
 	//set clear color and clear color and depth buffers
 	void StartRendering();
 	//swap buffers
-	void EndRendering();
+	void EndRendering(const glm::vec3& cameraPosition);
 
 	//Getters
 	Window& GetWindow();
@@ -43,6 +44,8 @@ private:
 	//Tool for opengl color picking
 	//http://www.rgbtool.com
 	glm::vec4 m_clearColor{ 0.f, 0.f, 0.f, 1.f};//default window clear color
+
+	std::vector<std::pair<const Mesh*, glm::mat4>> m_transparentMeshes;
 };
 
 #endif

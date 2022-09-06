@@ -31,6 +31,7 @@ struct Material
 		m_emission;
 	
 	bool m_discardLowAlphaFragments{ false };
+	bool m_blendingEnabled{false};
 
 	//default values
 	float m_ambientIntensity{ 0.1f };//amount of ambient light we can reflect

@@ -23,5 +23,5 @@ void main()
 	if(fragColor.a < 0.1)
 		discard;
 
-	FragColor = fragColor;
+	FragColor = fragColor;//note that this includes the alpha value of the texture so blending is applied if enabled
 }

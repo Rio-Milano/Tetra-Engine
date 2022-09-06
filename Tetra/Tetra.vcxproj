@@ -175,6 +175,7 @@
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TransparentEntity.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="XInput_Wrapper.cpp" />
   </ItemGroup>
@@ -211,6 +212,7 @@
     <ClInclude Include="Container.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TransparentEntity.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="XInput_Wrapper.h" />
   </ItemGroup>

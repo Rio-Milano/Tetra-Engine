@@ -13,6 +13,7 @@
 #include"BaseGrid.h"
 #include"Plane.h"
 #include"Grass.h"
+#include"TransparentEntity.h"
 
 void SandBoxLayer::Start()
 {
@@ -25,6 +26,8 @@ void SandBoxLayer::Start()
 	m_entities.emplace_back(std::make_shared<Plane>());
 
 	m_entities.emplace_back(std::make_shared<Grass>());
+
+	m_entities.emplace_back(std::make_shared<TransparentEntity>());
 
 	//init entities
 	for (const std::shared_ptr<Entity>& entity : m_entities)

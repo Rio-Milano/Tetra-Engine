@@ -2,7 +2,7 @@
 #include"Entity.h"
 #include<iostream>
 #include<vector>
-
+#include<algorithm>
 #include"ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 #include"Texture.h"
@@ -33,10 +33,21 @@ void Renderer::InitRenderer()
 	glDepthMask(GL_TRUE);//the depth buffer is writable
 	glDepthFunc(GL_LESS);//make fragments with lower depth be drawn in front of fragments with greater depth
 
+
+	glEnable(GL_BLEND);//enable blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//set the way we blend the color buffer and fragment shader output
+	glBlendEquation(GL_FUNC_ADD);//destColor * (1 - srcA) ADD sourceColor * srcA
+
+
 }
 
-void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)const
+void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 {
+	if (mesh.m_material->m_blendingEnabled)
+	{
+		m_transparentMeshes.emplace_back(std::make_pair<const Mesh*, glm::mat4>(&mesh, glm::mat4(worldMat)));
+		return;
+	}
 	//get the shader for the mesh
 	Shader& shader = ShaderManager.GetShader(mesh.m_programName);
 	
@@ -173,8 +184,30 @@ void Renderer::StartRendering()
 
 }
 
-void Renderer::EndRendering()
+void Renderer::EndRendering(const glm::vec3& cameraPosition)
 {
+	std::sort(m_transparentMeshes.begin(), m_transparentMeshes.end(),
+		[&](const std::pair<const Mesh*, glm::mat4>& lhs, const std::pair<const Mesh*, glm::mat4>& rhs)
+		{
+			glm::vec3 lhsPos = glm::vec3(lhs.second[3]);
+			float lhsDistance = glm::length(lhsPos - cameraPosition);
+
+			glm::vec3 rhsPos = glm::vec3(rhs.second[3]);
+			float rhsDistance = glm::length(rhsPos - cameraPosition);
+
+			return (lhsDistance > rhsDistance) ? true : false;
+		});
+
+	for (const std::pair<const Mesh*, glm::mat4>& object : m_transparentMeshes)
+	{
+		object.first->m_material->m_blendingEnabled = false;
+		this->RenderMesh(*object.first, object.second);
+		object.first->m_material->m_blendingEnabled = true;
+
+	}
+	
+	m_transparentMeshes.clear();
+
 	glfwSwapBuffers(m_window.GetWindowPtr());
 }
 

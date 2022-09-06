@@ -32,7 +32,7 @@ void Application::Run()
 			//render layer
 			m_baseLayer->m_renderer.StartRendering();
 			m_baseLayer ->BaseRender();
-			m_baseLayer->m_renderer.EndRendering();
+			m_baseLayer->m_renderer.EndRendering(m_baseLayer->m_camera.GetPosition());
 		}
 		//close base layer
 		m_baseLayer->End();

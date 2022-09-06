@@ -71,26 +71,35 @@ void Grass::Render(Renderer& renderer)
 		glm::vec3(1.0f, 1.5f, 1.0f)
 	};
 
+	static float theta = 0.0f;
+
 	for (size_t i = 0ull; i < grassPositions.size(); i++)
 	{
 		const glm::vec3& position = grassPositions[i];
 		const glm::vec3& scale = grassScaling[i];
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
-		
+
 		glm::mat4 t1 = glm::scale(transform, scale);
+		t1 = glm::rotate(t1, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
 		renderer.RenderMesh(*m_mesh.get(), t1);
 
 		glm::mat4 t2 = glm::rotate(transform, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		t2 = glm::scale(t2, scale);
+		t2 = glm::rotate(t2, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
 		renderer.RenderMesh(*m_mesh.get(), t2);
 
 		glm::mat4 t3 = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		t3 = glm::scale(t2, scale);
+		t3 = glm::scale(t3, scale);
+		t3 = glm::rotate(t3, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
 		renderer.RenderMesh(*m_mesh.get(), t3);
-		
+
 		glm::mat4 t4 = glm::rotate(transform, glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		t4 = glm::scale(t4, scale);
+		t4 = glm::rotate(t4, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
 		renderer.RenderMesh(*m_mesh.get(), t4);
 	}
-}
+	theta += static_cast<float>(sin(glfwGetTime()) / 2.0 + 0.5);
+	if (theta >= 360.0f)
+		theta = 0.0f;
+};
