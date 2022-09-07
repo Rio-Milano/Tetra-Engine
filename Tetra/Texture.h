@@ -19,7 +19,7 @@ public:
 	};
 	
 	//getters
-	const TextureAttributes& GetTextureAttributes()const;
+	TextureAttributes& GetTextureAttributes();
 
 	//loaders
 	void InitializeTexture(const std::string& textureFileLocation, const bool& flipOnLoad = false);

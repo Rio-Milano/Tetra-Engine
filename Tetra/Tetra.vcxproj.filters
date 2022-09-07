@@ -233,6 +233,9 @@
     <ClInclude Include="TransparentEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\Shaders\fragment_shader.vs.txt" />
@@ -247,6 +250,8 @@
     <None Include="Data\Shaders\Position-Color.frag" />
     <None Include="Data\Shaders\DiscardAlpha.frag" />
     <None Include="Data\Shaders\DiscardAlpha.vert" />
+    <None Include="Data\Shaders\frameBufferQuad.vert" />
+    <None Include="Data\Shaders\frameBufferQuad.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png">

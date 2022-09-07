@@ -15,6 +15,8 @@
 #include"Grass.h"
 #include"TransparentEntity.h"
 
+#include"Framebuffer.h"
+
 void SandBoxLayer::Start()
 {
 	//add entities to entity vector
@@ -43,6 +45,9 @@ void SandBoxLayer::Start()
 	m_lightManager.SetPointLight(glm::vec3(8.f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f), .5f);//2
 	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, 8.f), glm::vec3(0.0f, 0.0f, 1.0f), .5f);//3
 	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(0.0f, 1.0f, 0.0f), .5f);//4
+
+	//using window size as its same as view port but if view port was smaller then would need to use viewport size not window size
+	m_frameBuffer = std::make_shared<Framebuffer>(m_renderer.GetWindow().GetWindowSize());
 }
 
 
@@ -74,6 +79,11 @@ void SandBoxLayer::Render()
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+
+	m_frameBuffer->SetFrameBuffer();
+	m_frameBuffer->ClearFramebuffer();
+
+
 	//render cubes/oblongs for point/spot lights
 	m_lightManager.DrawLights(m_renderer);
 
@@ -81,7 +91,49 @@ void SandBoxLayer::Render()
 	for (const std::shared_ptr<Entity>& entity : m_entities)
 	{
 		entity->Render(m_renderer);
+	
 	}
+	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
+	
+	
+
+	static std::shared_ptr<Mesh> mesh;
+	if (!mesh)
+	{
+		mesh = std::make_shared<Mesh>();
+		std::vector<glm::vec3> positions
+		{
+			glm::vec3(-1.0f, 1.0f, 0.0f),
+			glm::vec3(-1.0f, -1.0f, 0.0f),
+			glm::vec3(1.0f, -1.0f, 0.0f),
+			glm::vec3(-1.0f, 1.0f, 0.0f),
+			glm::vec3(1.0f, -1.0f, 0.0f),
+			glm::vec3(1.0f, 1.0f, 0.0f)
+		};
+		std::vector<glm::vec2> texCoords
+		{
+			glm::vec2(0.0f, 1.0f),
+			glm::vec2(0.0f, 0.0f),
+			glm::vec2(1.0f, 0.0f),
+			glm::vec2(0.0f, 1.0f),
+			glm::vec2(1.0f, 0.0f),
+			glm::vec2(1.0f, 1.0f)
+		};
+		mesh->GenerateMesh(positions, {}, texCoords, {}, 1, GL_STATIC_DRAW, "frameBufferQuad");
+		mesh->SetFaceCullingFlag(false);
+		std::shared_ptr<Texture> newTex = std::make_shared<Texture>();
+		newTex->GetTextureAttributes().textureID = m_frameBuffer->GetColorBufferID();
+		mesh->GetMaterial()->m_diffuse = newTex;
+		mesh->GetMaterial()->m_diffuse->GetTextureAttributes().validTexture = true;
+	};
+
+	Framebuffer::ResetFrameBuffer();
+
+	glDisable(GL_DEPTH_TEST);
+	m_renderer.RenderMesh(*mesh.get(), glm::mat4(1.0f));
+	glEnable(GL_DEPTH_TEST);
+
+
 }
 
 void SandBoxLayer::End()

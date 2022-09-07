@@ -26,10 +26,11 @@ public:
 	void InitRenderer();
 	//render a construct of geometry
 	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat);
+	void RenderTransparentMeshes(const glm::vec3& cameraPosition);
 	//set clear color and clear color and depth buffers
 	void StartRendering();
 	//swap buffers
-	void EndRendering(const glm::vec3& cameraPosition);
+	void EndRendering();
 
 	//Getters
 	Window& GetWindow();

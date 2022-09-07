@@ -55,6 +55,13 @@ void Window::UpdateWindow()
 		glfwSetWindowShouldClose(m_renderWindow, true);
 }
 
+glm::vec<2, int> Window::GetWindowSize() const
+{
+	int width, height;
+	glfwGetWindowSize(m_renderWindow, &width, &height);
+	return glm::vec<2, int>(width, height);
+}
+
 void Window::Set_GL_Context()
 {
 	//opengl 3.3 core profile

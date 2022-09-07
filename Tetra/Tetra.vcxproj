@@ -196,6 +196,7 @@
     <ClInclude Include="external_libaries\include\imGUI\imstb_textedit.h" />
     <ClInclude Include="external_libaries\include\imGUI\imstb_truetype.h" />
     <ClInclude Include="external_libaries\include\STB_ImageLoader\stb_image.h" />
+    <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Grass.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="InputManager.h" />
@@ -225,6 +226,8 @@
     <None Include="Data\Shaders\defaultVertexShader.vert" />
     <None Include="Data\Shaders\DiscardAlpha.frag" />
     <None Include="Data\Shaders\DiscardAlpha.vert" />
+    <None Include="Data\Shaders\frameBufferQuad.frag" />
+    <None Include="Data\Shaders\frameBufferQuad.vert" />
     <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
     <None Include="Data\Shaders\lightCubeVertexShader.vert" />
     <None Include="Data\Shaders\Position-Color.frag" />

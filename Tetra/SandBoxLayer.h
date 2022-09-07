@@ -2,6 +2,7 @@
 #define SANDBOXLAYER_H
 
 #include"BaseLayer.h"
+class Framebuffer;
 
 class SandBoxLayer : public BaseLayer
 {
@@ -24,6 +25,8 @@ private:
 
 	//entity list
 	std::vector<std::shared_ptr<Entity>> m_entities;
+
+	std::shared_ptr<Framebuffer> m_frameBuffer;
 };
 
 #endif

@@ -182,20 +182,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	glBindVertexArray(0);
 }
 
-
-
-
-
-
-
-void Renderer::StartRendering()
-{
-	glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-}
-
-void Renderer::EndRendering(const glm::vec3& cameraPosition)
+void Renderer::RenderTransparentMeshes(const glm::vec3& cameraPosition)
 {
 	std::sort(m_transparentMeshes.begin(), m_transparentMeshes.end(),
 		[&](const std::pair<const Mesh*, glm::mat4>& lhs, const std::pair<const Mesh*, glm::mat4>& rhs)
@@ -216,8 +203,25 @@ void Renderer::EndRendering(const glm::vec3& cameraPosition)
 		object.first->m_material->m_blendingEnabled = true;
 
 	}
-	
+
 	m_transparentMeshes.clear();
+}
+
+
+
+
+
+
+
+void Renderer::StartRendering()
+{
+	glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+}
+
+void Renderer::EndRendering()
+{
 
 	glfwSwapBuffers(m_window.GetWindowPtr());
 }

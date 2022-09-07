@@ -24,7 +24,7 @@ void Texture::LoadTexture(const std::string& textureFileLocation, const bool& fl
 }
 
 //getters
-const Texture::TextureAttributes& Texture::GetTextureAttributes() const
+Texture::TextureAttributes& Texture::GetTextureAttributes()
 {
 	return m_textureAttributes;
 }
