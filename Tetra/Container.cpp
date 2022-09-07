@@ -32,82 +32,136 @@ void Container::Init()
 {
 	std::vector<glm::vec3> positions
 	{
-		glm::vec3(-0.5f, -0.5f, -0.5f),
+		//back face
+		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
+		glm::vec3(0.5f, -0.5f, -0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
+		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
+		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
+		// front face
+		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-left
+		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, 0.5f), // top-right
+		glm::vec3(0.5f, 0.5f, 0.5f), // top-right
+		glm::vec3(-0.5f, 0.5f, 0.5f), // top-left
+		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-left
+		// left face
+		glm::vec3(-0.5f, 0.5f, 0.5f), // top-right
+		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
+		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
+		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
+		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-right
+		glm::vec3(-0.5f, 0.5f, 0.5f), // top-right
+		// right face
+		glm::vec3(0.5f, 0.5f, 0.5f), // top-left
+		glm::vec3(0.5f, -0.5f, -0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
+		glm::vec3(0.5f, -0.5f, -0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, 0.5f), // top-left
+		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
+		// bottom face
+		glm::vec3(-0.5f, -0.5f, -0.5f), // top-right
+		glm::vec3(0.5f, -0.5f, -0.5f), // top-left
+		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
+		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
+		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-right
+		glm::vec3(-0.5f, -0.5f, -0.5f), // top-right
+		// top face
+		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
+		glm::vec3(0.5f, 0.5f, 0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
+		glm::vec3(0.5f, 0.5f, 0.5f), // bottom-right
+		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
+		glm::vec3(-0.5f, 0.5f, 0.5f), // bottom-left
+
+		/*glm::vec3(-0.5f, -0.5f, -0.5f),
 		glm::vec3(0.5f, -0.5f, -0.5f),
 		glm::vec3(0.5f, 0.5f, -0.5f),
 		glm::vec3(0.5f, 0.5f, -0.5f),
 		glm::vec3(-0.5f, 0.5f, -0.5f),
 		glm::vec3(-0.5f, -0.5f, -0.5f),
+
+
 		glm::vec3(-0.5f, -0.5f, 0.5f),
 		glm::vec3(0.5f, -0.5f, 0.5f) ,
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(-0.5f, 0.5f, 0.5f),
 		glm::vec3(-0.5f, -0.5f, 0.5f),
+
 		glm::vec3(-0.5f, 0.5f, 0.5f),
 		glm::vec3(-0.5f, 0.5f, -0.5f),
 		glm::vec3(-0.5f, -0.5f, -0.5f),
 		glm::vec3(-0.5f, -0.5f, -0.5f),
 		glm::vec3(-0.5f, -0.5f, 0.5f),
 		glm::vec3(-0.5f, 0.5f, 0.5f),
+
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, -0.5f),
 		glm::vec3(0.5f, -0.5f, -0.5f),
 		glm::vec3(0.5f, -0.5f, -0.5f),
 		glm::vec3(0.5f, -0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f),
+
 		glm::vec3(-0.5f, -0.5f, -0.5f),
 		glm::vec3(0.5f, -0.5f, -0.5f),
 		glm::vec3(0.5f, -0.5f, 0.5f),
 		glm::vec3(0.5f, -0.5f, 0.5f),
 		glm::vec3(-0.5f, -0.5f, 0.5f),
 		glm::vec3(-0.5f, -0.5f, -0.5f),
+
 		glm::vec3(-0.5f, 0.5f, -0.5f),
 		glm::vec3(0.5f, 0.5f, -0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(-0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, -0.5f),
+		glm::vec3(-0.5f, 0.5f, -0.5f),*/
 	};
 
 	std::vector<glm::vec2> textureCords
 	{
 		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(0.0f, 1.0f),
+
+		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(0.0f, 1.0f),
 		glm::vec2(0.0f, 0.0f),
-		glm::vec2(0.0f, 0.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(0.0f, 0.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(0.0f, 0.0f),
-		glm::vec2(1.0f, 0.0f),
+
 		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(0.0f, 1.0f),
 		glm::vec2(0.0f, 1.0f),
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
+
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(0.0f, 0.0f),
+
 		glm::vec2(0.0f, 1.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(0.0f, 1.0f),
+
 		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(0.0f, 0.0f),
-		glm::vec2(0.0f, 1.0f)
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f)
 
 	};
 

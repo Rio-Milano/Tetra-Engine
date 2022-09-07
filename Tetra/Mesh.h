@@ -85,11 +85,13 @@ public:
 	const std::string& GetMeshName() const { return m_meshName; };
 	const std::shared_ptr<Material>& GetMaterial()const;
 	const std::string& GetProgramName()const;
+	const bool& GetFaceCullingFlag()const;
 
 	//setters
 	void SetMeshName(const std::string& meshName) { m_meshName = meshName; };
 	void SetMaterial(const std::shared_ptr<Material>& material);
 	void SetProgramName(const std::string& programName);
+	void SetFaceCullingFlag(const bool& flag);
 
 private:
 	//initializes the mesh 
@@ -113,7 +115,7 @@ private:
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };
 	size_t m_vertexCount{0ull};
-			
+	bool m_useCullingCCWBack{true};
 
 	//general mesh data
 	GLuint

@@ -47,6 +47,7 @@ void TransparentEntity::Init()
 	this->m_mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Window");
 	this->m_mesh->GetMaterial()->m_discardLowAlphaFragments = true;
 	this->m_mesh->GetMaterial()->m_blendingEnabled = true;
+	this->m_mesh->SetFaceCullingFlag(false);//dont cull back faces as not closed box
 }
 
 void TransparentEntity::Update(const float& dt)

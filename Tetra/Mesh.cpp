@@ -58,9 +58,19 @@ const std::string& Mesh::GetProgramName()const
 	return m_programName;
 }
 
+const bool& Mesh::GetFaceCullingFlag() const
+{
+	return m_useCullingCCWBack;
+}
+
 void Mesh::SetProgramName(const std::string& programName)
 {
 	m_programName = programName;
+}
+
+void Mesh::SetFaceCullingFlag(const bool& flag)
+{
+	m_useCullingCCWBack = flag;
 }
 
 void Mesh::StartMesh(const GLuint& drawType,const std::string& programName, const std::vector<GLuint>& elements)

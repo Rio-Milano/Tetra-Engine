@@ -38,7 +38,6 @@ void Renderer::InitRenderer()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//set the way we blend the color buffer and fragment shader output
 	glBlendEquation(GL_FUNC_ADD);//destColor * (1 - srcA) ADD sourceColor * srcA
 
-
 }
 
 void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
@@ -140,6 +139,18 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		//otherwise pull the vertex count from the vert vector
 		vertexCount = static_cast<GLsizei>(mesh.m_verticies.size());
 	
+	//apply culling 
+	if (mesh.m_useCullingCCWBack)
+	{
+		glEnable(GL_CULL_FACE);//turn on face culling
+		glFrontFace(GL_CCW);//set the front face winding order to counter clock wise as it is by default
+		glCullFace(GL_BACK);//cull any primitives defined in the clock wise order
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);//turn of culling, idealy used for openbox meshes
+	}
+
 	//decode the draw type of the mesh
 	switch (mesh.m_drawType)
 	{
