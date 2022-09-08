@@ -13,6 +13,25 @@
 #define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
 #define SHADER_LAYOUT_INDEX_NORMAL			2
 
+
+struct RefractiveIndex
+{
+	static const float	Air,
+						Water,
+						Ice,
+						Glass,
+						Diamond;
+};
+
+
+struct ReflectionType
+{
+	static const int	Reflection,
+						Refraction;
+};
+
+
+
 //simple vertex representation
 struct Vertex
 {
@@ -33,6 +52,8 @@ struct Material
 	bool m_discardLowAlphaFragments{ false };
 	bool m_blendingEnabled{false};
 	bool m_mapToEnviroment{ false };
+	int m_reflectionType{ ReflectionType::Reflection };//reflection
+	float m_toRefractiveIndex = RefractiveIndex::Glass;
 
 	//default values
 	float m_ambientIntensity{ 0.1f };//amount of ambient light we can reflect

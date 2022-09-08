@@ -48,6 +48,7 @@ struct Light
 	*/
 };
 
+
 struct Material
 {
 	sampler2D diffuseMap;
@@ -69,6 +70,8 @@ struct Material
 	bool mapToEnviroment;
 	bool hasCubeMap;
 	samplerCube cubeMap;
+	//doing
+	int reflectionType;//0 = reflection, 1 = refraction
 
 };
 
@@ -89,6 +92,8 @@ MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO
 uniform Material material;
 uniform Light lights [NUMBER_OF_LIGHTS];
 uniform vec3 cameraPosition;
+uniform float fromRefractiveIndex;
+uniform float toRefractiveIndex;
 
 /*
 FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS 
@@ -105,47 +110,20 @@ vec3 GetFragmentDiffuse();
 vec3 GetFragmentSpecular();
 vec3 GetFragmentEmission();
 
-
+bool ProcessReflectiveFragment(vec3 normal);
+bool ProcessLowAlphaFragment();
+bool ProcessEmissionFragment();
 
 void main()
 {
+	if(ProcessLowAlphaFragment()) return;
 
-	if(material.discardLowAlphaFragment)
-	{
-		if(material.hasDiffuseMap)
-		{
-			if(texture(material.diffuseMap, varying_textureCord).a < 0.1)
-				discard;
-		}
-	};
-
-
-	//else do normal lighting calculations
-	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
+	vec3 normal = normalize(varying_normal);//re-normalize from scaling
 	
-	if(material.mapToEnviroment && material.hasCubeMap)
-	{
-		vec3 I = cameraPosition - varying_position;
-		vec3 R = reflect(-I, normal);
-		FragColor = texture(material.cubeMap, R);
-		return;
-	};
+	if(ProcessReflectiveFragment(normal)) return;
 
-	//some code amongst the functions is redundant so theres room for optimization if needed
+	if(ProcessEmissionFragment()) return;
 
-	//emission calculations
-	float distanceToEmission = distance(cameraPosition, varying_position);
-	float attenation =  1.0 - smoothstep(0, material.emissionRange, distanceToEmission);
-
-	vec3 emissionColor =  GetFragmentEmission() * attenation;
-
-	if(dot(emissionColor, emissionColor) > 0.0)
-	{
-		FragColor = vec4(emissionColor, 1.0);
-		return;
-	}
-
-	
 	vec3 finalColor;
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)
@@ -176,7 +154,64 @@ void main()
 	FragColor = vec4(finalColor, 1.0);
 }
 
+bool ProcessEmissionFragment()
+{
+	//emission calculations
+	float distanceToEmission = distance(cameraPosition, varying_position);
+	float attenation =  1.0 - smoothstep(0, material.emissionRange, distanceToEmission);
 
+	vec3 emissionColor =  GetFragmentEmission() * attenation;
+
+	if(dot(emissionColor, emissionColor) > 0.0)
+	{
+		FragColor = vec4(emissionColor, 1.0);
+		return true;
+	}
+	return false;
+}
+
+bool ProcessLowAlphaFragment()
+{
+	if(material.discardLowAlphaFragment)
+	{
+		if(material.hasDiffuseMap)
+		{
+			if(texture(material.diffuseMap, varying_textureCord).a < 0.1)
+			{
+				discard;
+				return true;
+			}
+		}
+	};
+	return false;
+}
+
+bool ProcessReflectiveFragment(vec3 normal)
+{
+	if(material.mapToEnviroment && material.hasCubeMap)
+	{
+		vec3 I = normalize(varying_position - cameraPosition);
+		vec3 R = vec3(0.0);
+
+		switch(material.reflectionType)
+		{
+			case 0://reflection
+				R = reflect(I, normal);
+				break;
+
+			case 1://refraction
+				R = refract(I, normal, fromRefractiveIndex / toRefractiveIndex);
+				break;
+
+			default:
+				break;
+				
+		};
+		FragColor = texture(material.cubeMap, R);
+		return true;
+	};
+	return false;
+}
 
 vec3 GetFragmentDiffuse()
 {

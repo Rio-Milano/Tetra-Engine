@@ -43,6 +43,11 @@ void Renderer::InitRenderer()
 
 }
 
+
+
+
+
+
 void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 {
 	if (mesh.m_material->m_blendingEnabled)
@@ -71,6 +76,8 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), meshMaterial->m_specularIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
 	shader.SetUniform1b(shader.GetLocation("material.discardLowAlphaFragment"), meshMaterial->m_discardLowAlphaFragments);
+	shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
+	shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
 
 	//get the tetxure pointer for the mesh diffuse map
 	const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;
@@ -138,6 +145,9 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager.GetSkyBoxCubeMap()->GetCubeMapTextureID());
 		shader.SetUniform1i(shader.GetLocation("material.cubeMap"), 3);
+		shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
+		shader.SetUniform1f(shader.GetLocation("fromRefractiveIndex"), RefractiveIndex::Air);
+		shader.SetUniform1f(shader.GetLocation("toRefractiveIndex"), meshMaterial->m_toRefractiveIndex);
 	}
 	else
 	{

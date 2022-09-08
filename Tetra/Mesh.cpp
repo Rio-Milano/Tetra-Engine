@@ -4,6 +4,15 @@
 
 #include<iostream>
 
+const float RefractiveIndex::Air{ 1.0f };
+const float RefractiveIndex::Water{ 1.33f };
+const float RefractiveIndex::Ice{ 1.309f };
+const float RefractiveIndex::Glass{ 1.52f };
+const float RefractiveIndex::Diamond{ 2.42f };
+
+const int ReflectionType::Reflection{ 0 };
+const int ReflectionType::Refraction{ 1 };
+
 Mesh::Mesh()
 {
 	//create a material for mesh once its been made

@@ -111,6 +111,13 @@ void AquaPig::Init()
 	nwing_right->GetChildren()[0]->SetDrawOutline(1);
 	nhull->GetChildren()[0]->SetDrawOutline(1);
 
+	for (int i = 0; i < nbackPack->GetChildren().size(); i++)
+	{
+		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_reflectionType = ReflectionType::Refraction;
+		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_toRefractiveIndex = RefractiveIndex::Water;
+	}
+
 	SetRoot(nhull);
 }
 
