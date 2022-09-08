@@ -125,9 +125,22 @@ void SandBoxLayer::Render()
 		newTex->GetTextureAttributes().textureID = m_frameBuffer->GetColorBufferID();
 		mesh->GetMaterial()->m_diffuse = newTex;
 		mesh->GetMaterial()->m_diffuse->GetTextureAttributes().validTexture = true;
+		
+
+
+
 	};
 
 	Framebuffer::ResetFrameBuffer();
+	
+	Shader& frameBufferQuadShader = ShaderManager.GetShader("frameBufferQuad");
+	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("invertFragColor"), m_enableColorBufferInversion);
+	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("greyScaleFragColor"), m_enableGreyScaleColorBuffer);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("samplingOffset"), m_sampleOffsetMagnitude);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("sharpenKernel"), m_enableSharpeningKernel);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("weirdKernel"), m_enableWeirdKernel);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("blurKernel"), m_enableBlurKernel);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("edgeDetectionKernel"), m_edgeDetectionKernel);
 
 	glDisable(GL_DEPTH_TEST);
 	m_renderer.RenderMesh(*mesh.get(), glm::mat4(1.0f));
@@ -244,10 +257,20 @@ void SandBoxLayer::ImGUI()
 
 			ImGui::Checkbox("Wireframe", &m_wireframeMode);
 			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
+			
+			ImGui::SliderFloat("Sampling Offset Magnitude", &m_sampleOffsetMagnitude, 1.0f / 100.0f, 1.0f / 300.0f);
+
+			ImGui::Checkbox("Sharpen Kernel", &m_enableSharpeningKernel);
+			ImGui::Checkbox("Blur Kernel", &m_enableBlurKernel);
+			ImGui::Checkbox("Edge Highlight Kernel", &m_edgeDetectionKernel);
+			ImGui::Checkbox("Weird Kernel", &m_enableWeirdKernel);
+			ImGui::Checkbox("Invert Color", &m_enableColorBufferInversion);
+			ImGui::Checkbox("Grey Scale Color", &m_enableGreyScaleColorBuffer);
+
+
 			ImGui::End();
 		}
 	}
-
 
 	///Control ImGui
 	{

@@ -22,6 +22,13 @@ private:
 	//Imgui flags used in layer update and rendering
 	bool m_wireframeMode{false};
 	bool m_pauseSimulation{false};
+	float m_sampleOffsetMagnitude{ 1.0f / 300.0f };
+	bool m_enableSharpeningKernel{ false };
+	bool m_enableWeirdKernel{ false };
+	bool m_enableBlurKernel{ false };
+	bool m_edgeDetectionKernel{ false };
+	bool m_enableColorBufferInversion{ false };
+	bool m_enableGreyScaleColorBuffer{ false };
 
 	//entity list
 	std::vector<std::shared_ptr<Entity>> m_entities;
