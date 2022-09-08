@@ -211,7 +211,7 @@ void Container::Init()
 	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Box");
 	mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");
 	mesh->GetMaterial()->m_emission = TextureManager.GetTexture("BoxEmission");
-
+	mesh->GetMaterial()->m_mapToEnviroment = true;
 
 	std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(glm::mat4(1.0f), "Box");
 	modelNode_1->AddMesh(mesh);

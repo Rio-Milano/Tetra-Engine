@@ -66,6 +66,10 @@ struct Material
 	float ambientIntensity;
 	float specularIntensity;
 
+	bool mapToEnviroment;
+	bool hasCubeMap;
+	samplerCube cubeMap;
+
 };
 
 
@@ -86,7 +90,6 @@ uniform Material material;
 uniform Light lights [NUMBER_OF_LIGHTS];
 uniform vec3 cameraPosition;
 
-
 /*
 FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS 
 */
@@ -106,6 +109,7 @@ vec3 GetFragmentEmission();
 
 void main()
 {
+
 	if(material.discardLowAlphaFragment)
 	{
 		if(material.hasDiffuseMap)
@@ -115,6 +119,17 @@ void main()
 		}
 	};
 
+
+	//else do normal lighting calculations
+	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
+	
+	if(material.mapToEnviroment && material.hasCubeMap)
+	{
+		vec3 I = cameraPosition - varying_position;
+		vec3 R = reflect(-I, normal);
+		FragColor = texture(material.cubeMap, R);
+		return;
+	};
 
 	//some code amongst the functions is redundant so theres room for optimization if needed
 
@@ -130,8 +145,7 @@ void main()
 		return;
 	}
 
-	//else do normal lighting calculations
-	vec3 normal = normalize(varying_normal);//check on why normal must be renormalized... scaling in vertex shader??
+	
 	vec3 finalColor;
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)

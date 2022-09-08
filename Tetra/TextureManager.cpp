@@ -3,6 +3,7 @@
 #include<iostream>
 
 #include"Texture.h"
+#include"CubeMap.h"
 
 TextureManager& TextureManager::GetInstance()
 {
@@ -10,6 +11,18 @@ TextureManager& TextureManager::GetInstance()
     static TextureManager instance;
     return instance;
 }
+
+
+void TextureManager::SetActiveSkyBoxCubeMap(const std::shared_ptr<CubeMap>& cubeMap)
+{
+    m_activeSkyBoxCubeMap = cubeMap;
+}
+
+const std::shared_ptr<CubeMap>& TextureManager::GetSkyBoxCubeMap()const
+{
+    return m_activeSkyBoxCubeMap;
+}
+
 
 void TextureManager::AddTexture(const std::string& textureName, const std::shared_ptr<Texture>& textureObj)
 {

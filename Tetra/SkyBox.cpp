@@ -2,6 +2,8 @@
 #include"Mesh.h"
 #include"CubeMap.h"
 #include"Renderer.h"
+#include"TextureManager.h"
+#define TextureManager TextureManager::GetInstance()
 
 SkyBox::SkyBox(const std::string& entityName)
 	:Entity(entityName)
@@ -74,6 +76,7 @@ void SkyBox::Init()
 	m_cubeMapForSkyBox = std::make_shared<CubeMap>();
 	m_cubeMapForSkyBox->InitializeCubeMap(m_faceLocations);
 
+	TextureManager.SetActiveSkyBoxCubeMap(m_cubeMapForSkyBox);
 }
 
 void SkyBox::Update(const float& dt)

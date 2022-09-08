@@ -6,6 +6,9 @@
 #include"ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 #include"Texture.h"
+#include"CubeMap.h"
+#include"TextureManager.h"
+#define TextureManager TextureManager::GetInstance()
 
 void Renderer::CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)
 {
@@ -128,6 +131,21 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		shader.SetUniform1b(shader.GetLocation("material.hasEmissionMap"), false);
 	}
 
+	if (mesh.GetMaterial()->m_mapToEnviroment && TextureManager.GetSkyBoxCubeMap())
+	{
+		shader.SetUniform1b(shader.GetLocation("material.mapToEnviroment"), true);
+		shader.SetUniform1b(shader.GetLocation("material.hasCubeMap"), true);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager.GetSkyBoxCubeMap()->GetCubeMapTextureID());
+		shader.SetUniform1i(shader.GetLocation("material.cubeMap"), 3);
+	}
+	else
+	{
+		shader.SetUniform1b(shader.GetLocation("material.mapToEnviroment"), false);
+		shader.SetUniform1b(shader.GetLocation("material.hasCubeMap"), false);
+
+	}
+
 	//bind to the vertex array of the mesh
 	glBindVertexArray(mesh.m_VAO);
 
@@ -175,6 +193,8 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	//set default texture unit
 	glActiveTexture(GL_TEXTURE0);
 

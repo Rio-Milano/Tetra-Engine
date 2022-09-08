@@ -19,6 +19,8 @@ public:
 	void Render(Renderer& renderer) override final;
 
 	void SetFaceLocations(const std::vector<std::string>& faceLocations);
+	const std::shared_ptr<CubeMap>& GetActiveCubeMap()const;
+
 private:
 	std::vector<std::string> m_faceLocations{};
 	std::shared_ptr<Mesh> m_skyBoxMesh{nullptr};
