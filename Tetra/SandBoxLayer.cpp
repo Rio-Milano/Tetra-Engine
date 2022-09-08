@@ -136,7 +136,8 @@ void SandBoxLayer::Render()
 	Shader& frameBufferQuadShader = ShaderManager.GetShader("frameBufferQuad");
 	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("invertFragColor"), m_enableColorBufferInversion);
 	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("greyScaleFragColor"), m_enableGreyScaleColorBuffer);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("samplingOffset"), m_sampleOffsetMagnitude);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("XsamplingOffset"), m_XsampleOffsetMagnitude);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("YsamplingOffset"), m_YsampleOffsetMagnitude);
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("sharpenKernel"), m_enableSharpeningKernel);
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("weirdKernel"), m_enableWeirdKernel);
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("blurKernel"), m_enableBlurKernel);
@@ -258,7 +259,8 @@ void SandBoxLayer::ImGUI()
 			ImGui::Checkbox("Wireframe", &m_wireframeMode);
 			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
 			
-			ImGui::SliderFloat("Sampling Offset Magnitude", &m_sampleOffsetMagnitude, 1.0f / 100.0f, 1.0f / 300.0f);
+			ImGui::SliderFloat("X Sampling Offset Magnitude", &m_XsampleOffsetMagnitude, 1.0f, 1.0f / 1920.0f);
+			ImGui::SliderFloat("Y Sampling Offset Magnitude", &m_YsampleOffsetMagnitude, 1.0f, 1.0f / 1080.0f);
 
 			ImGui::Checkbox("Sharpen Kernel", &m_enableSharpeningKernel);
 			ImGui::Checkbox("Blur Kernel", &m_enableBlurKernel);

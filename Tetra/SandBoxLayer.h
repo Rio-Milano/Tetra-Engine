@@ -22,7 +22,8 @@ private:
 	//Imgui flags used in layer update and rendering
 	bool m_wireframeMode{false};
 	bool m_pauseSimulation{false};
-	float m_sampleOffsetMagnitude{ 1.0f / 300.0f };
+	float m_XsampleOffsetMagnitude{ 1.0f / 1920.0f };
+	float m_YsampleOffsetMagnitude{ 1.0f / 1080.0f };
 	bool m_enableSharpeningKernel{ false };
 	bool m_enableWeirdKernel{ false };
 	bool m_enableBlurKernel{ false };

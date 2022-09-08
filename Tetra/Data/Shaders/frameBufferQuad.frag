@@ -18,7 +18,8 @@ uniform bool invertFragColor;
 uniform bool greyScaleFragColor;
 
 //convolution based post processing effects
-uniform float samplingOffset;
+uniform float XsamplingOffset;
+uniform float YsamplingOffset;
 uniform bool sharpenKernel;
 uniform bool weirdKernel;
 uniform bool blurKernel;
@@ -126,7 +127,7 @@ void main()
 				}
 				
 				//get the texture coord for the surrounding fragment
-				vec2 newTexCoord = vec2(samplingOffset * x, samplingOffset * y) + varying_texCoord;
+				vec2 newTexCoord = vec2(XsamplingOffset * x, YsamplingOffset * y) + varying_texCoord;
 				//get the fragment color of surrounding fragment
 				vec3 newFragColor = texture(material.diffuseMap, + newTexCoord).xyz;
 				//apply kernel effect on surrounding fragment and add to overall frag color
