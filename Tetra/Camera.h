@@ -38,6 +38,10 @@ public:
 	void Update(const float& dt);
 	//get the perspective matrix
 	glm::mat4 GetPerspectiveViewMat4()const;
+
+	glm::mat4 GetViewMat4()const;
+	glm::mat4 GetPerspectiveMat4()const;
+
 	//camera position
 	const glm::vec3& GetPosition()const;
 	//camera forward vector

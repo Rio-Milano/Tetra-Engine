@@ -23,7 +23,7 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	//create default shaders
 	CreateShader();
 	//setup camera with attributes
-	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 4.0f), m_renderer.GetWindow().GetWindowPtr());
+	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 0.0f), m_renderer.GetWindow().GetWindowPtr());
 	//output gl state
 	Helper::Status::DisplayUsefulInfo();
 	//init gui lib
@@ -67,7 +67,7 @@ void BaseLayer::BaseUpdate(const float& dt)
 	//update camera
 	m_camera.Update(dt);
 	//update generic shader uniforms
-	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveViewMat4(), m_camera.GetPosition());
+	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveMat4(), m_camera.GetViewMat4(), m_camera.GetPosition());
 	//update layer
 	Update(dt);
 
@@ -116,5 +116,9 @@ void BaseLayer::CreateShader()
 	Shader shader_4;
 	shader_4.Create("Data/Shaders/frameBufferQuad.vert", "Data/Shaders/frameBufferQuad.frag");
 	ShaderManager.AddShader("frameBufferQuad", shader_4);
+
+	Shader shader_5;
+	shader_5.Create("Data/Shaders/SkyBox.vert", "Data/Shaders/SkyBox.frag");
+	ShaderManager.AddShader("SkyBox", shader_5);
 
 }

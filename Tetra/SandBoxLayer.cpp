@@ -14,6 +14,7 @@
 #include"Plane.h"
 #include"Grass.h"
 #include"TransparentEntity.h"
+#include"SkyBox.h"
 
 #include"Framebuffer.h"
 
@@ -30,6 +31,18 @@ void SandBoxLayer::Start()
 	m_entities.emplace_back(std::make_shared<Grass>());
 
 	m_entities.emplace_back(std::make_shared<TransparentEntity>());
+
+	//must come last for optimization
+	std::shared_ptr<SkyBox> skyBox = std::make_shared<SkyBox>();
+	skyBox->SetFaceLocations({
+			"Data/Images/SkyBox/posx.jpg",
+			"Data/Images/SkyBox/negx.jpg",
+			"Data/Images/SkyBox/posy.jpg",
+			"Data/Images/SkyBox/negy.jpg",
+			"Data/Images/SkyBox/posz.jpg",
+			"Data/Images/SkyBox/negz.jpg"
+		});
+	m_entities.emplace_back(skyBox);
 
 	//init entities
 	for (const std::shared_ptr<Entity>& entity : m_entities)

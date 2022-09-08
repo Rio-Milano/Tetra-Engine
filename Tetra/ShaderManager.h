@@ -21,7 +21,7 @@ public:
 	Shader& GetShader(const std::string& programName);
 
 	//update projection_view uniforms
-	void UpdateAllShaders(const glm::mat4& projection_x_view_mat, glm::vec3 cameraPosition);
+	void UpdateAllShaders(const glm::mat4& projection_mat, const glm::mat4& view_mat, glm::vec3 cameraPosition);
 	//clean up data store
 	void DeleteAllShaders();
 

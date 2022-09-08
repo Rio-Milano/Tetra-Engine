@@ -171,6 +171,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SandBoxLayer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="BaseGrid.h" />
     <ClInclude Include="BaseLayer.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CubeMap.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="external_libaries\include\imGUI\imconfig.h" />
     <ClInclude Include="external_libaries\include\imGUI\imgui.h" />
@@ -211,6 +213,7 @@
     <ClInclude Include="SandBoxLayer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Container.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="TransparentEntity.h" />
@@ -232,6 +235,8 @@
     <None Include="Data\Shaders\lightCubeVertexShader.vert" />
     <None Include="Data\Shaders\Position-Color.frag" />
     <None Include="Data\Shaders\Position-Color.vert" />
+    <None Include="Data\Shaders\SkyBox.frag" />
+    <None Include="Data\Shaders\SkyBox.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png" />

@@ -38,15 +38,23 @@ Shader& ShaderManager::GetShader(const std::string& programName)
 	return m_programNameProgramIDMap[programName];
 }
 
-void ShaderManager::UpdateAllShaders(const glm::mat4& projection_x_view_mat, glm::vec3 cameraPosition)
+void ShaderManager::UpdateAllShaders(const glm::mat4& projection_mat, const glm::mat4& view_mat, glm::vec3 cameraPosition)
 {
+	glm::mat4 projection_x_view_mat = projection_mat * view_mat;
+	glm::mat4 projection_x_view_nt_mat = projection_mat * glm::mat4(glm::mat3(view_mat));
+
 	//loop all key-value pairs in data store
 	for (std::unordered_map<std::string, Shader>::iterator i = m_programNameProgramIDMap.begin(); i != m_programNameProgramIDMap.end(); i++)
 	{
 		//get value
 		Shader& shader = i->second;
+		
 		//update standard uniforms
-		shader.SetUniformMat4f(shader.GetLocation("Projection_X_View"), projection_x_view_mat);
+		if (i->first == "SkyBox")
+			shader.SetUniformMat4f(shader.GetLocation("Projection_X_View"), projection_x_view_nt_mat);
+		else
+			shader.SetUniformMat4f(shader.GetLocation("Projection_X_View"), projection_x_view_mat);
+		
 		shader.SetUniform3fv(shader.GetLocation("cameraPosition"), cameraPosition);
 	}
 }

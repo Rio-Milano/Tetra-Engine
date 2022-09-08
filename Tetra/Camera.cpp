@@ -112,6 +112,16 @@ glm::mat4 Camera::GetPerspectiveViewMat4() const
 	return mm4_projectionMat * mm4_viewMat;
 }
 
+glm::mat4 Camera::GetViewMat4()const
+{
+	return mm4_viewMat;
+};
+
+glm::mat4 Camera::GetPerspectiveMat4()const
+{
+	return mm4_projectionMat;
+};
+
 const glm::vec3& Camera::GetPosition() const
 {
 	return mv3_position;

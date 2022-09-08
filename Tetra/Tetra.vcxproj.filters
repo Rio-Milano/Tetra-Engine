@@ -126,6 +126,9 @@
     <ClCompile Include="TransparentEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -236,6 +239,12 @@
     <ClInclude Include="Framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\Shaders\fragment_shader.vs.txt" />
@@ -252,6 +261,8 @@
     <None Include="Data\Shaders\DiscardAlpha.vert" />
     <None Include="Data\Shaders\frameBufferQuad.vert" />
     <None Include="Data\Shaders\frameBufferQuad.frag" />
+    <None Include="Data\Shaders\SkyBox.vert" />
+    <None Include="Data\Shaders\SkyBox.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png">
