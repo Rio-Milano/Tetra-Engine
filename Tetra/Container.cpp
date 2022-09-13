@@ -30,7 +30,7 @@ Container::Container(const std::string& containerName)
 
 void Container::Init()
 {
-	static std::vector<glm::vec3> positions
+	std::vector<glm::vec3>* positionsPtr = new std::vector<glm::vec3>
 	{
 		//back face
 		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
@@ -76,7 +76,7 @@ void Container::Init()
 		glm::vec3(-0.5f, 0.5f, 0.5f), // bottom-left
 	};
 
-	static std::vector<glm::vec2> textureCords
+	std::vector<glm::vec2>* texCordsPtr = new std::vector<glm::vec2>
 	{
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
@@ -122,7 +122,7 @@ void Container::Init()
 
 	};
 
-	static std::vector<glm::vec3> normals
+	std::vector<glm::vec3>* normalsPtr = new std::vector<glm::vec3>
 	{
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
@@ -163,7 +163,7 @@ void Container::Init()
 	};
 
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-	mesh->GenerateMesh(&positions, &normals, &textureCords);
+	mesh->GenerateMesh(positionsPtr, normalsPtr, texCordsPtr);
 	//make material for container
 	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Box");
 	mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");

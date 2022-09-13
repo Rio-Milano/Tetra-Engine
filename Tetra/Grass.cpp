@@ -19,7 +19,7 @@ Grass::Grass(const std::string& entityName)
 
 void Grass::Init()
 {
-	static std::vector<glm::vec3> positions
+	std::vector<glm::vec3>* positions = new std::vector<glm::vec3>
 	{
 		glm::vec3(-1.0f, 2.0f, 0.0f),//top left 0
 		glm::vec3(1.0f, 2.0f, 0.0f),//top right 1
@@ -29,7 +29,7 @@ void Grass::Init()
 
 
 
-	static std::vector<glm::vec2> textureCoords
+	std::vector<glm::vec2>* textureCoords = new std::vector<glm::vec2>
 	{
 		glm::vec2(0.0f, 1.0f),
 		glm::vec2(1.0f, 1.0f),
@@ -37,14 +37,15 @@ void Grass::Init()
 		glm::vec2(1.0f, 0.0f),
 	};
 
-	static std::vector<unsigned int> elements
+	std::vector<unsigned int>* elements = new std::vector<unsigned int>
 	{
 		2, 1, 0,
 		2, 3, 1
 	};
 
 	this->m_mesh = std::make_shared<Mesh>();
-	this->m_mesh->GenerateMesh(&positions, {}, &textureCoords, &elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
+	this->m_mesh->GenerateMesh(positions, {}, textureCoords, elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
+	
 	this->m_mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Grass");
 	this->m_mesh->GetMaterial()->m_discardLowAlphaFragments = true;
 	this->m_mesh->SetFaceCullingFlag(false);

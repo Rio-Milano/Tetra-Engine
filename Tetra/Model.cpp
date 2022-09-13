@@ -357,39 +357,48 @@ std::shared_ptr<ModelNode> Model::PullAssimpMeshFromNode(aiNode* node, const aiS
 #define TRIANGLE_PRIMITIVE_SIZE 3//number of vertices per face
 std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, const aiScene* scene, const std::string& localPath)
 {
-	//define a vector of verticies and resize
-	std::vector<Vertex> verticies;
-	verticies.resize(assimpMesh->mNumVertices);
+	//create vectors on heap for each vertex attribute
+	std::vector<glm::vec3>* positionsPtr = new std::vector<glm::vec3>;
+	std::vector<glm::vec3>* normalsPtr = new std::vector<glm::vec3>;
+	std::vector<glm::vec2>* texCoordsPtr = new std::vector<glm::vec2>;
+
+	//resize each vector to match assimp vertex count
+	positionsPtr->resize(assimpMesh->mNumVertices);
+	texCoordsPtr->resize(assimpMesh->mNumVertices);
+	normalsPtr->resize(assimpMesh->mNumVertices);
 
 	//define a vector of elements and resize
-	std::vector<GLuint> elements;
-	elements.resize(TRIANGLE_PRIMITIVE_SIZE * assimpMesh->mNumFaces);
+	std::vector<GLuint>* elementsPtr = new std::vector<unsigned int>;
+	elementsPtr->resize(TRIANGLE_PRIMITIVE_SIZE * assimpMesh->mNumFaces);
 
 
 	//convert the vertex data from assimp structure to my structure
 	for (size_t i = 0; i < assimpMesh->mNumVertices; i++)
 	{
-		//grab a referance of current vertex from vertex vector
-		Vertex& vertex = verticies[i];
-
+		//grab a referance of current position
+		glm::vec3& position = (*positionsPtr)[i];
 		//provess positions
 		const aiVector3D& assimpVertexPosition = assimpMesh->mVertices[i];
-		vertex.position.x = assimpVertexPosition.x;
-		vertex.position.y = assimpVertexPosition.y;
-		vertex.position.z = assimpVertexPosition.z;
+		position.x = assimpVertexPosition.x;
+		position.y = assimpVertexPosition.y;
+		position.z = assimpVertexPosition.z;
 
+		//get current normal
+		glm::vec3& normal = (*normalsPtr)[i];
 		//process normals
 		const aiVector3D& assimpVertexNormal = assimpMesh->mNormals[i];
-		vertex.normal.x = assimpVertexNormal.x;
-		vertex.normal.y = assimpVertexNormal.y;
-		vertex.normal.z = assimpVertexNormal.z;
+		normal.x = assimpVertexNormal.x;
+		normal.y = assimpVertexNormal.y;
+		normal.z = assimpVertexNormal.z;
 
 		//provess texture cords only if has them
 		if (assimpMesh->HasTextureCoords(0))
 		{
+			//get current texcoord
+			glm::vec2& textureCord = (*texCoordsPtr)[i];
 			//process texture cords
-			vertex.textureCord.x = assimpMesh->mTextureCoords[0][i].x;
-			vertex.textureCord.y = assimpMesh->mTextureCoords[0][i].y;
+			textureCord.x = assimpMesh->mTextureCoords[0][i].x;
+			textureCord.y = assimpMesh->mTextureCoords[0][i].y;
 		}
 	}
 
@@ -407,7 +416,7 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 			for (size_t j = 0; j < face.mNumIndices; j++)
 			{
 				//add face index to elements
-				elements[elementIndex++] = face.mIndices[j];
+				(*elementsPtr)[elementIndex++] = face.mIndices[j];
 			}
 		}
 	}
@@ -415,7 +424,8 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 	//finally create a mesh
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 	//load vertex data into mesh
-	mesh->GenerateMesh(verticies, elements, 0);
+	mesh->GenerateMesh(positionsPtr, normalsPtr, texCoordsPtr, elementsPtr, 0);
+	//set flag to tell mesh to delete vertex attributes on heap when deconstructor called
 	//set mesh name using assimp mesh name
 	mesh->SetMeshName(std::string(assimpMesh->mName.C_Str()));
 

@@ -19,6 +19,15 @@ Mesh::Mesh()
 	m_material = std::make_shared<Material>();
 }
 
+Mesh::~Mesh()
+{
+	delete m_positions;
+	delete m_normals;
+	delete m_texCoords;
+	delete m_elements;
+	delete m_colors;
+}
+
 
 //manual mesh creation initializer
 void Mesh::GenerateMesh
@@ -59,6 +68,7 @@ const bool& Mesh::GetFaceCullingFlag() const
 	return m_useCullingCCWBack;
 }
 
+
 void Mesh::SetProgramName(const std::string& programName)
 {
 	m_programName = programName;
@@ -68,6 +78,8 @@ void Mesh::SetFaceCullingFlag(const bool& flag)
 {
 	m_useCullingCCWBack = flag;
 }
+
+
 
 void Mesh::StartMesh(const GLuint& drawType, const std::string& programName,
 	std::vector<glm::vec3>* positions,
@@ -127,7 +139,7 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 	EndBuffer(GL_ARRAY_BUFFER);
 
 	//set up elements
-	CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_elements->size(), m_elements->data(), GL_STATIC_DRAW);
+	if(m_elements) CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_elements->size(), m_elements->data(), GL_STATIC_DRAW);
 
 	//unbind VAO then unbind elements
 	EndVAO();

@@ -10,7 +10,7 @@ void LightManager::Initialize()
 	m_lights.resize(NUMBER_OF_LIGHTS);
 
 	//define custom vertz for the light mesh
-	static std::vector<glm::vec3> positions
+	std::vector<glm::vec3>* positions = new std::vector<glm::vec3>
 	{
 		//back face
 		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
@@ -65,8 +65,7 @@ void LightManager::Initialize()
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 
 	//generate the mesh used for drawing the lights
-	m_meshForLight.GenerateMesh(&positions, {}, {}, {}, 1, GL_STATIC_DRAW, "lightCubeShader");
-
+	m_meshForLight.GenerateMesh(positions, {}, {}, {}, 1, GL_STATIC_DRAW, "lightCubeShader");
 }
 
 void LightManager::SetShader(Shader* shader)

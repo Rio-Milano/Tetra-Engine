@@ -77,7 +77,7 @@ class Mesh
 public:
 	//ctors/dtors
 	Mesh();
-	~Mesh() = default;
+	~Mesh();
 
 	//for generating a user defined mesh
 	void GenerateMesh
@@ -105,6 +105,12 @@ public:
 	void SetProgramName(const std::string& programName);
 	void SetFaceCullingFlag(const bool& flag);
 
+	std::vector<glm::vec3>* m_colors{ nullptr };
+	std::vector<glm::vec3>* m_positions{ nullptr };
+	std::vector<glm::vec3>* m_normals{ nullptr };
+	std::vector<glm::vec2>* m_texCoords{ nullptr };
+	std::vector<GLuint>* m_elements{ nullptr };
+
 private:
 	//initializes the mesh 
 	void StartMesh
@@ -126,13 +132,6 @@ private:
 	void CreateBuffer(const GLenum& target, const GLsizeiptr& size, void* data, const GLenum& usage);
 	void EndBuffer(const GLenum& target);
 	void CreateVertexAttributePointer(const GLenum& target, const GLuint& index, const GLint& componentSize, const GLenum& componentType, const GLenum& normalized, const GLsizei& stride, void* offset);
-
-	//mesh vertices and indexing
-	//std::vector<Vertex> m_verticies;
-	std::vector<glm::vec3>* m_positions{nullptr};
-	std::vector<glm::vec3>* m_normals{ nullptr };
-	std::vector<glm::vec2>* m_texCoords{ nullptr };
-	std::vector<GLuint>* m_elements{ nullptr };
 
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };
