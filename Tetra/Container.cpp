@@ -30,7 +30,7 @@ Container::Container(const std::string& containerName)
 
 void Container::Init()
 {
-	std::vector<glm::vec3> positions
+	static std::vector<glm::vec3> positions
 	{
 		//back face
 		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
@@ -74,52 +74,9 @@ void Container::Init()
 		glm::vec3(0.5f, 0.5f, 0.5f), // bottom-right
 		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
 		glm::vec3(-0.5f, 0.5f, 0.5f), // bottom-left
-
-		/*glm::vec3(-0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, 0.5f, -0.5f),
-		glm::vec3(0.5f, 0.5f, -0.5f),
-		glm::vec3(-0.5f, 0.5f, -0.5f),
-		glm::vec3(-0.5f, -0.5f, -0.5f),
-
-
-		glm::vec3(-0.5f, -0.5f, 0.5f),
-		glm::vec3(0.5f, -0.5f, 0.5f) ,
-		glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, -0.5f, 0.5f),
-
-		glm::vec3(-0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, -0.5f),
-		glm::vec3(-0.5f, -0.5f, -0.5f),
-		glm::vec3(-0.5f, -0.5f, -0.5f),
-		glm::vec3(-0.5f, -0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, 0.5f),
-
-		glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(0.5f, 0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, 0.5f),
-		glm::vec3(0.5f, 0.5f, 0.5f),
-
-		glm::vec3(-0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, -0.5f),
-		glm::vec3(0.5f, -0.5f, 0.5f),
-		glm::vec3(0.5f, -0.5f, 0.5f),
-		glm::vec3(-0.5f, -0.5f, 0.5f),
-		glm::vec3(-0.5f, -0.5f, -0.5f),
-
-		glm::vec3(-0.5f, 0.5f, -0.5f),
-		glm::vec3(0.5f, 0.5f, -0.5f),
-		glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, 0.5f),
-		glm::vec3(-0.5f, 0.5f, -0.5f),*/
 	};
 
-	std::vector<glm::vec2> textureCords
+	static std::vector<glm::vec2> textureCords
 	{
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
@@ -165,7 +122,7 @@ void Container::Init()
 
 	};
 
-	std::vector<glm::vec3> normals
+	static std::vector<glm::vec3> normals
 	{
 		glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
@@ -206,7 +163,7 @@ void Container::Init()
 	};
 
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-	mesh->GenerateMesh(positions, normals, textureCords);
+	mesh->GenerateMesh(&positions, &normals, &textureCords);
 	//make material for container
 	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Box");
 	mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");

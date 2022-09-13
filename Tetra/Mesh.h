@@ -33,12 +33,12 @@ struct ReflectionType
 
 
 //simple vertex representation
-struct Vertex
-{
-	glm::vec3 position{ 0.0f, 0.0f, 0.0f };
-	glm::vec2 textureCord{0.0f, 0.0f};
-	glm::vec3 normal{0.0f, 0.0f, 0.0f};
-};
+//struct Vertex
+//{
+//	glm::vec3 position{ 0.0f, 0.0f, 0.0f };
+//	glm::vec2 textureCord{0.0f, 0.0f};
+//	glm::vec3 normal{0.0f, 0.0f, 0.0f};
+//};
 
 
 //all materials encapsulated 
@@ -82,26 +82,16 @@ public:
 	//for generating a user defined mesh
 	void GenerateMesh
 	(
-		const std::vector<glm::vec3>& positions = {},
-		const std::vector<glm::vec3>& normals = {},
-		const std::vector<glm::vec2>& textureCords = {},
-		const std::vector<GLuint>& elements = {},
+		std::vector<glm::vec3>* positions =  nullptr,
+		std::vector<glm::vec3>* normals = nullptr,
+		std::vector<glm::vec2>* texCoords = nullptr,
+		std::vector<GLuint>* elements = nullptr,
 
 		const GLuint& drawType = 1,
 		const GLenum& usage = GL_STATIC_DRAW,
 		const std::string& programName = "main"
 	);
 
-	//for generating an assimp defined mesh
-	void GenerateMesh
-	(
-		const std::vector<Vertex>& verticies = {},
-		const std::vector<GLuint>& elements = {},
-
-		const GLuint& drawType = 1,
-		const GLenum& usage = GL_STATIC_DRAW,
-		const std::string& programName = "main"
-	);
 
 	//getters
 	const std::string& GetMeshName() const { return m_meshName; };
@@ -117,10 +107,17 @@ public:
 
 private:
 	//initializes the mesh 
-	void StartMesh(const GLuint& drawType, const std::string& programName, const std::vector<GLuint>& elements);
+	void StartMesh
+	( 
+		const GLuint& drawType, 
+		const std::string& programName,
+		std::vector<glm::vec3>* positions,
+		std::vector<glm::vec3>* normals,
+		std::vector<glm::vec2>* texCoords,
+		std::vector<GLuint>* elements
+	);
 
 	//turns raw vertex attributes into verticies vector
-	void ConstructVerticiesFromRawData(const std::vector<glm::vec3>& positions = {}, const std::vector<glm::vec2>& textureCords = {}, const std::vector<glm::vec3>& normals = {});
 	void SendVertexDataToGPU(const GLenum& usage = GL_STATIC_DRAW);
 
 	//internal helpers for setting up a VAO and configuring it
@@ -131,8 +128,11 @@ private:
 	void CreateVertexAttributePointer(const GLenum& target, const GLuint& index, const GLint& componentSize, const GLenum& componentType, const GLenum& normalized, const GLsizei& stride, void* offset);
 
 	//mesh vertices and indexing
-	std::vector<Vertex> m_verticies;
-	std::vector<GLuint> m_elements;
+	//std::vector<Vertex> m_verticies;
+	std::vector<glm::vec3>* m_positions{nullptr};
+	std::vector<glm::vec3>* m_normals{ nullptr };
+	std::vector<glm::vec2>* m_texCoords{ nullptr };
+	std::vector<GLuint>* m_elements{ nullptr };
 
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };

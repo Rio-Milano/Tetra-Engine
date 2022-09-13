@@ -165,7 +165,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 		vertexCount = static_cast<GLsizei>(mesh.m_vertexCount);//use the vertex count of the mesh
 	else
 		//otherwise pull the vertex count from the vert vector
-		vertexCount = static_cast<GLsizei>(mesh.m_verticies.size());
+		vertexCount = static_cast<GLsizei>(mesh.m_positions->size());
 	
 	//apply culling 
 	if (mesh.m_useCullingCCWBack)
@@ -183,7 +183,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	switch (mesh.m_drawType)
 	{
 	case 0://if drawing triangles and using indexed buffer then render using elements
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements.size()), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements->size()), GL_UNSIGNED_INT, 0);
 		break;
 	case 1://if drawing triangles and using raw verticies
 		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(vertexCount));

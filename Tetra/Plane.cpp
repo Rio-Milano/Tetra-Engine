@@ -45,7 +45,7 @@ void Plane::Init()
 	planeMesh->CreateBuffer(GL_ARRAY_BUFFER, colors.size() * sizeof(glm::vec3), colors.data(), GL_STATIC_DRAW);
 	planeMesh->CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 
-	planeMesh->m_elements = elements;
+	planeMesh->m_elements = &elements;
 	planeMesh->CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(unsigned int), elements.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);

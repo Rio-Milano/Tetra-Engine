@@ -23,7 +23,7 @@ void SkyBox::SetFaceLocations(const std::vector<std::string>& faceLocations)
 void SkyBox::Init()
 {
 	//thease position vectors will also be used as direction vectors for sampling the cube map
-	std::vector<glm::vec3> positions
+	static std::vector<glm::vec3> positions
 	{
 		//back face
 		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
@@ -70,7 +70,7 @@ void SkyBox::Init()
 	};
 
 	m_skyBoxMesh = std::make_shared<Mesh>();
-	m_skyBoxMesh->GenerateMesh(positions, {}, {}, {}, 1, GL_STATIC_DRAW, "SkyBox");
+	m_skyBoxMesh->GenerateMesh(&positions, {}, {}, {}, 1, GL_STATIC_DRAW, "SkyBox");
 	m_skyBoxMesh->SetFaceCullingFlag(false);
 
 	m_cubeMapForSkyBox = std::make_shared<CubeMap>();
