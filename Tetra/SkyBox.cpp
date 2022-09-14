@@ -70,7 +70,7 @@ void SkyBox::Init()
 	};
 
 	m_skyBoxMesh = std::make_shared<Mesh>();
-	m_skyBoxMesh->GenerateMesh(positions, {}, {}, {}, 1, GL_STATIC_DRAW, "SkyBox");
+	m_skyBoxMesh->GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW, "SkyBox");
 	m_skyBoxMesh->SetFaceCullingFlag(false);
 
 	m_cubeMapForSkyBox = std::make_shared<CubeMap>();

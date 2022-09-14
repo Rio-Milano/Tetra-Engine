@@ -44,7 +44,7 @@ void Grass::Init()
 	};
 
 	this->m_mesh = std::make_shared<Mesh>();
-	this->m_mesh->GenerateMesh(positions, {}, textureCoords, elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
+	this->m_mesh->GenerateMesh(positions, {}, textureCoords, {}, elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
 	
 	this->m_mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Grass");
 	this->m_mesh->GetMaterial()->m_discardLowAlphaFragments = true;

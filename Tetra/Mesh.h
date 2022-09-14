@@ -11,6 +11,7 @@
 
 #define SHADER_LAYOUT_INDEX_POSITION		0
 #define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
+#define SHADER_LAYOUT_INDEX_COLOR			1
 #define SHADER_LAYOUT_INDEX_NORMAL			2
 
 
@@ -67,6 +68,25 @@ struct Material
 
 
 
+enum class Attributes
+{
+	Positions	=		1 << 0,
+	TexCords	=		1 << 1,
+	Colors		=		1 << 2,
+	Normals		=		1 << 3,
+	Elements	=		1 << 4
+};
+
+inline Attributes operator |(const Attributes& a, const Attributes& b)
+{
+	return static_cast<Attributes>(static_cast<unsigned int>(a) | static_cast<unsigned int>(b));
+}
+
+inline Attributes operator &(const Attributes& a, const Attributes& b)
+{
+	return static_cast<Attributes>(static_cast<unsigned int>(a) & static_cast<unsigned int>(b));
+}
+
 //class for representing a collection of attributes opengl can use to display something
 class Mesh
 {
@@ -85,6 +105,7 @@ public:
 		std::vector<glm::vec3>* positions =  nullptr,
 		std::vector<glm::vec3>* normals = nullptr,
 		std::vector<glm::vec2>* texCoords = nullptr,
+		std::vector<glm::vec3>* colors = nullptr,
 		std::vector<GLuint>* elements = nullptr,
 
 		const GLuint& drawType = 1,
@@ -104,6 +125,8 @@ public:
 	void SetMaterial(const std::shared_ptr<Material>& material);
 	void SetProgramName(const std::string& programName);
 	void SetFaceCullingFlag(const bool& flag);
+	
+	void MakeAttributes(const Attributes& attributes);
 
 	std::vector<glm::vec3>* m_colors{ nullptr };
 	std::vector<glm::vec3>* m_positions{ nullptr };
@@ -120,6 +143,7 @@ private:
 		std::vector<glm::vec3>* positions,
 		std::vector<glm::vec3>* normals,
 		std::vector<glm::vec2>* texCoords,
+		std::vector<glm::vec3>* colors,
 		std::vector<GLuint>* elements
 	);
 

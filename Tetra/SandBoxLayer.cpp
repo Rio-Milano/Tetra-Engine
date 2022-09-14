@@ -110,7 +110,7 @@ void SandBoxLayer::Render()
 	
 	
 
-	static std::shared_ptr<Mesh> mesh;
+	static std::shared_ptr<Mesh> mesh = nullptr;
 	if (!mesh)
 	{
 		mesh = std::make_shared<Mesh>();
@@ -132,7 +132,7 @@ void SandBoxLayer::Render()
 			glm::vec2(1.0f, 0.0f),
 			glm::vec2(1.0f, 1.0f)
 		};
-		mesh->GenerateMesh(&positions, {}, &texCoords, {}, 1, GL_STATIC_DRAW, "frameBufferQuad");
+		mesh->GenerateMesh(&positions, {}, &texCoords, {}, {}, 1, GL_STATIC_DRAW, "frameBufferQuad");
 		mesh->SetFaceCullingFlag(false);
 		std::shared_ptr<Texture> newTex = std::make_shared<Texture>();
 		newTex->GetTextureAttributes().textureID = m_frameBuffer->GetColorBufferID();

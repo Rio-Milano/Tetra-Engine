@@ -35,22 +35,22 @@ void Mesh::GenerateMesh
 		std::vector<glm::vec3>* positions,
 		std::vector<glm::vec3>* normals,
 		std::vector<glm::vec2>* texCoords,
+		std::vector<glm::vec3>* colors,
 		std::vector<GLuint>* elements,
 		const GLuint& drawType, 
 		const GLenum& usage,
 		const std::string& programName
 	)
 {
-	//upgrade to glBufferSubData at some point
-	
+	//the vertex attribute vector may have been set before call so use member as passed
+	if (positions == nullptr) positions = m_positions;
+	if (normals == nullptr) normals = m_normals;
+	if (texCoords == nullptr) texCoords = m_texCoords;
+	if (colors == nullptr) colors = m_colors;
+	if (elements == nullptr) elements = m_elements;
+
 	//assign attributes to mesh
-	StartMesh(drawType, programName, positions, normals, texCoords, elements);
-
-
-
-	//convert the raw verticies into the vertex representation
-	//ConstructVerticiesFromRawData(positions, textureCords, normals);
-	//load local data into the gpu
+	StartMesh(drawType, programName, positions, normals, texCoords, colors, elements);
 	
 	SendVertexDataToGPU(usage);
 }
@@ -81,10 +81,23 @@ void Mesh::SetFaceCullingFlag(const bool& flag)
 
 
 
+void Mesh::MakeAttributes(const Attributes& attributes)
+{
+
+
+	if (static_cast<unsigned int>(attributes & Attributes::Positions))m_positions = new std::vector<glm::vec3>;
+	if (static_cast<unsigned int>(attributes & Attributes::TexCords))m_texCoords = new std::vector<glm::vec2>;
+	if (static_cast<unsigned int>(attributes & Attributes::Colors))m_colors = new std::vector<glm::vec3>;
+	if (static_cast<unsigned int>(attributes & Attributes::Normals))m_normals = new std::vector<glm::vec3>;
+	if (static_cast<unsigned int>(attributes & Attributes::Elements))m_elements = new std::vector<unsigned int>;
+
+}
+
 void Mesh::StartMesh(const GLuint& drawType, const std::string& programName,
 	std::vector<glm::vec3>* positions,
 	std::vector<glm::vec3>* normals,
 	std::vector<glm::vec2>* texCoords,
+	std::vector<glm::vec3>* colors,
 	std::vector<GLuint>* elements)
 {
 	//assign general mesh data
@@ -99,6 +112,7 @@ void Mesh::StartMesh(const GLuint& drawType, const std::string& programName,
 	m_positions = positions;
 	m_normals = normals;
 	m_texCoords = texCoords;
+	m_colors = colors;
 	m_elements = elements;
 
 }
@@ -110,9 +124,17 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 
 	//buffer sizes
 	const size_t positionsBufferSize = m_positions->size() * sizeof(glm::vec3);
-	const size_t texCoordsBufferSize = m_positions->size() * sizeof(glm::vec2);
+	
+	//determine if using color buffer or texture cords buffer and adjust color buffer size accordingly
+	size_t colorBufferSize = 0;
+	if(m_texCoords != nullptr)
+		colorBufferSize = m_positions->size() * sizeof(glm::vec2);
+	else if (m_colors != nullptr)
+		colorBufferSize = m_positions->size() * sizeof(glm::vec3);
+
 	const size_t normalsBufferSize =  m_positions->size() * sizeof(glm::vec3);
-	const size_t vertexBufferSizeSum =	positionsBufferSize + texCoordsBufferSize + normalsBufferSize;
+
+	const size_t vertexBufferSizeSum =	positionsBufferSize + colorBufferSize + normalsBufferSize;
 
 	//allocate buffer memory
 	CreateBuffer(GL_ARRAY_BUFFER, vertexBufferSizeSum, nullptr , usage);
@@ -122,18 +144,20 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 	
 	//position buffer
 	glBufferSubData(GL_ARRAY_BUFFER, 0, positionsBufferSize, (void*)m_positions->data());
-	if (m_texCoords) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, texCoordsBufferSize, (void*)m_texCoords->data());
-	if (m_normals) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize + texCoordsBufferSize, normalsBufferSize, (void*)m_normals->data());
+	if (m_texCoords) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, colorBufferSize, (void*)m_texCoords->data());
+	else if (m_colors) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, colorBufferSize, (void*)m_colors->data());
+	if (m_normals) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize + colorBufferSize, normalsBufferSize, (void*)m_normals->data());
 
 
 	//setup position stream
 	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 
-	//setup texture cord stream
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TEXTURE_CORD, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)positionsBufferSize);
+	//setup color stream
+	if(m_texCoords != nullptr)CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TEXTURE_CORD, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)positionsBufferSize);
+	else if(m_colors != nullptr)CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)positionsBufferSize);
 
 	//setup normal stream
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(positionsBufferSize + texCoordsBufferSize));
+	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(positionsBufferSize + colorBufferSize));
 
 	//unbind buffer
 	EndBuffer(GL_ARRAY_BUFFER);

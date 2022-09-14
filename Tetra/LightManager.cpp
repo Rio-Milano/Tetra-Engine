@@ -65,7 +65,7 @@ void LightManager::Initialize()
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 
 	//generate the mesh used for drawing the lights
-	m_meshForLight.GenerateMesh(positions, {}, {}, {}, 1, GL_STATIC_DRAW, "lightCubeShader");
+	m_meshForLight.GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW, "lightCubeShader");
 }
 
 void LightManager::SetShader(Shader* shader)
