@@ -21,7 +21,7 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-	delete m_positions;
+ 	delete m_positions;
 	delete m_normals;
 	delete m_texCoords;
 	delete m_elements;

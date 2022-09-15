@@ -6,6 +6,7 @@
 #include "external_libaries/include/imGUI/imgui.h"
 #include"MeshManager.h"
 #define MeshManager MeshManager::GetInstance()
+#include"PostProcessing.h"
 
 #include"AquaPig.h"
 #include"Container.h"
@@ -60,7 +61,7 @@ void SandBoxLayer::Start()
 	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(0.0f, 1.0f, 0.0f), .5f);//4
 
 	//using window size as its same as view port but if view port was smaller then would need to use viewport size not window size
-	m_frameBuffer = std::make_shared<Framebuffer>(m_renderer.GetWindow().GetWindowSize());
+	m_postProcessing = std::make_shared<PostProcessing>(m_renderer.GetWindow().GetWindowSize());
 }
 
 
@@ -93,8 +94,7 @@ void SandBoxLayer::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-	m_frameBuffer->SetFrameBuffer();
-	m_frameBuffer->ClearFramebuffer();
+	m_postProcessing->Render_To_Off_Screen_Buffer();
 
 
 	//render cubes/oblongs for point/spot lights
@@ -109,57 +109,7 @@ void SandBoxLayer::Render()
 	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
 	
 	
-
-	static std::shared_ptr<Mesh> mesh = nullptr;
-	if (!mesh)
-	{
-		mesh = std::make_shared<Mesh>();
-		static std::vector<glm::vec3> positions
-		{
-			glm::vec3(-1.0f, 1.0f, 0.0f),
-			glm::vec3(-1.0f, -1.0f, 0.0f),
-			glm::vec3(1.0f, -1.0f, 0.0f),
-			glm::vec3(-1.0f, 1.0f, 0.0f),
-			glm::vec3(1.0f, -1.0f, 0.0f),
-			glm::vec3(1.0f, 1.0f, 0.0f)
-		};
-		static std::vector<glm::vec2> texCoords
-		{
-			glm::vec2(0.0f, 1.0f),
-			glm::vec2(0.0f, 0.0f),
-			glm::vec2(1.0f, 0.0f),
-			glm::vec2(0.0f, 1.0f),
-			glm::vec2(1.0f, 0.0f),
-			glm::vec2(1.0f, 1.0f)
-		};
-		mesh->GenerateMesh(&positions, {}, &texCoords, {}, {}, 1, GL_STATIC_DRAW, "frameBufferQuad");
-		mesh->SetFaceCullingFlag(false);
-		std::shared_ptr<Texture> newTex = std::make_shared<Texture>();
-		newTex->GetTextureAttributes().textureID = m_frameBuffer->GetColorBufferID();
-		mesh->GetMaterial()->m_diffuse = newTex;
-		mesh->GetMaterial()->m_diffuse->GetTextureAttributes().validTexture = true;
-		
-
-
-
-	};
-
-	Framebuffer::ResetFrameBuffer();
-	
-	Shader& frameBufferQuadShader = ShaderManager.GetShader("frameBufferQuad");
-	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("invertFragColor"), m_enableColorBufferInversion);
-	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("greyScaleFragColor"), m_enableGreyScaleColorBuffer);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("XsamplingOffset"), m_XsampleOffsetMagnitude);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("YsamplingOffset"), m_YsampleOffsetMagnitude);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("sharpenKernel"), m_enableSharpeningKernel);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("weirdKernel"), m_enableWeirdKernel);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("blurKernel"), m_enableBlurKernel);
-	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("edgeDetectionKernel"), m_edgeDetectionKernel);
-
-	glDisable(GL_DEPTH_TEST);
-	m_renderer.RenderMesh(*mesh.get(), glm::mat4(1.0f));
-	glEnable(GL_DEPTH_TEST);
-
+	m_postProcessing->Render_FrameBuffer(m_renderer);
 
 }
 
@@ -272,15 +222,18 @@ void SandBoxLayer::ImGUI()
 			ImGui::Checkbox("Wireframe", &m_wireframeMode);
 			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
 			
-			ImGui::SliderFloat("X Sampling Offset Magnitude", &m_XsampleOffsetMagnitude, 1.0f, 1.0f / 1920.0f);
-			ImGui::SliderFloat("Y Sampling Offset Magnitude", &m_YsampleOffsetMagnitude, 1.0f, 1.0f / 1080.0f);
+			PostProcessing::Config& ppConfig = m_postProcessing->m_config;
+			
 
-			ImGui::Checkbox("Sharpen Kernel", &m_enableSharpeningKernel);
-			ImGui::Checkbox("Blur Kernel", &m_enableBlurKernel);
-			ImGui::Checkbox("Edge Highlight Kernel", &m_edgeDetectionKernel);
-			ImGui::Checkbox("Weird Kernel", &m_enableWeirdKernel);
-			ImGui::Checkbox("Invert Color", &m_enableColorBufferInversion);
-			ImGui::Checkbox("Grey Scale Color", &m_enableGreyScaleColorBuffer);
+			ImGui::SliderFloat("X Sampling Offset Magnitude", &ppConfig.m_XsampleOffsetMagnitude, 1.0f, 1.0f / 1920.0f);
+			ImGui::SliderFloat("Y Sampling Offset Magnitude", &ppConfig.m_YsampleOffsetMagnitude, 1.0f, 1.0f / 1080.0f);
+
+			ImGui::Checkbox("Sharpen Kernel", &ppConfig.m_enableSharpeningKernel);
+			ImGui::Checkbox("Blur Kernel", &ppConfig.m_enableBlurKernel);
+			ImGui::Checkbox("Edge Highlight Kernel", &ppConfig.m_edgeDetectionKernel);
+			ImGui::Checkbox("Weird Kernel", &ppConfig.m_enableWeirdKernel);
+			ImGui::Checkbox("Invert Color", &ppConfig.m_enableColorBufferInversion);
+			ImGui::Checkbox("Grey Scale Color", &ppConfig.m_enableGreyScaleColorBuffer);
 
 
 			ImGui::End();

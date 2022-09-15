@@ -167,6 +167,7 @@
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PostProcessing.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SandBoxLayer.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="PostProcessing.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SandBoxLayer.h" />

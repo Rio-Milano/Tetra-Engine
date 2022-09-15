@@ -68,20 +68,17 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	};
 
-	void ClearFramebuffer()
-	{
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	}
-
 	~Framebuffer()
 	{
 		glDeleteFramebuffers(1, &m_frameBufferID);
+		glDeleteRenderbuffers(1, &m_depthStencilRenderbufferID);
+		glDeleteTextures(1, &m_colourBufferID);
 	};
 
 	void SetFrameBuffer()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferID);
+		ClearFramebuffer();
 	};
 
 	static void ResetFrameBuffer()
@@ -98,6 +95,12 @@ public:
 
 
 private:
+	void ClearFramebuffer()
+	{
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	}
+
 	GLuint m_frameBufferID{0};
 	GLuint m_colourBufferID{0};
 	GLuint m_depthStencilRenderbufferID{0};
