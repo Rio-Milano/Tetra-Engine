@@ -3,9 +3,12 @@
 /*
  IN IN IN IN IN IN IN IN IN IN IN IN IN IN IN IN
 */
-in vec2 varying_textureCord;
-in vec3 varying_normal;
-in vec3 varying_position;
+in Varying
+{
+	vec2 textureCord;
+	vec3 normal;
+	vec3 position;
+} inData;
 
 
 
@@ -118,7 +121,7 @@ void main()
 {
 	if(ProcessLowAlphaFragment()) return;
 
-	vec3 normal = normalize(varying_normal);//re-normalize from scaling
+	vec3 normal = normalize(inData.normal);//re-normalize from scaling
 	
 	if(ProcessReflectiveFragment(normal)) return;
 
@@ -157,7 +160,7 @@ void main()
 bool ProcessEmissionFragment()
 {
 	//emission calculations
-	float distanceToEmission = distance(cameraPosition, varying_position);
+	float distanceToEmission = distance(cameraPosition, inData.position);
 	float attenation =  1.0 - smoothstep(0, material.emissionRange, distanceToEmission);
 
 	vec3 emissionColor =  GetFragmentEmission() * attenation;
@@ -176,7 +179,7 @@ bool ProcessLowAlphaFragment()
 	{
 		if(material.hasDiffuseMap)
 		{
-			if(texture(material.diffuseMap, varying_textureCord).a < 0.1)
+			if(texture(material.diffuseMap, inData.textureCord).a < 0.1)
 			{
 				discard;
 				return true;
@@ -190,7 +193,7 @@ bool ProcessReflectiveFragment(vec3 normal)
 {
 	if(material.mapToEnviroment && material.hasCubeMap)
 	{
-		vec3 I = normalize(varying_position - cameraPosition);
+		vec3 I = normalize(inData.position - cameraPosition);
 		vec3 R = vec3(0.0);
 
 		switch(material.reflectionType)
@@ -216,7 +219,7 @@ bool ProcessReflectiveFragment(vec3 normal)
 vec3 GetFragmentDiffuse()
 {
 	if(material.hasDiffuseMap)
-		return texture(material.diffuseMap, varying_textureCord).xyz;
+		return texture(material.diffuseMap, inData.textureCord).xyz;
 	else
 		return material.defaultDiffuseColor;
 };
@@ -224,7 +227,7 @@ vec3 GetFragmentDiffuse()
 vec3 GetFragmentSpecular()
 {
 	if(material.hasSpecularMap)
-		return texture(material.specularMap, varying_textureCord).xyz;
+		return texture(material.specularMap, inData.textureCord).xyz;
 	else
 	{
 		if(material.hasDiffuseMap)
@@ -237,7 +240,7 @@ vec3 GetFragmentSpecular()
 vec3 GetFragmentEmission()
 {
 	if(material.hasEmissionMap)
-		return texture(material.emissionMap, varying_textureCord).xyz;
+		return texture(material.emissionMap, inData.textureCord).xyz;
 	else	
 		return vec3(0.0);
 }
@@ -245,7 +248,7 @@ vec3 GetFragmentEmission()
 
 float CalculateAttenuation(int i)
 {
-	float distanceToLight = distance(lights[i].position, varying_position);//find distance between light position and surface position
+	float distanceToLight = distance(lights[i].position, inData.position);//find distance between light position and surface position
 	return 1.0 - smoothstep(0, lights[i].range, distanceToLight);//use hermite interpolation to get a strength of light basssed on distance
 }
 
@@ -260,8 +263,8 @@ float CalculateDiffuse(vec3 dirToLight, vec3 normal)
 
 float CalculateSpecular(int i, vec3 normal)
 {
-	vec3 dirToCamera = normalize(cameraPosition - varying_position);//Surface -> Eye
-	vec3 dirToLight = normalize(lights[i].position - varying_position);//Surface -> Light
+	vec3 dirToCamera = normalize(cameraPosition - inData.position);//Surface -> Eye
+	vec3 dirToLight = normalize(lights[i].position - inData.position);//Surface -> Light
 
 	vec3 reflected = reflect(-dirToLight, normal);//reflect Surface->Light over surface normal
 
@@ -298,7 +301,7 @@ vec3 CalculatePointLight(int i, vec3 normal)
 	vec3 fragmentColor = GetFragmentDiffuse();
 	vec3 specularColor = GetFragmentSpecular();
 
-	vec3 dirToLight = normalize(lights[i].position - varying_position);//get vector from surface to light
+	vec3 dirToLight = normalize(lights[i].position - inData.position);//get vector from surface to light
 	float attenuation = CalculateAttenuation(i);//calculate light fall off
 
 	vec3 ambient = fragmentColor * material.ambientIntensity * attenuation;
@@ -316,7 +319,7 @@ vec3 CalculateSpotLight(int i, vec3 normal)
 	vec3 fragmentColor = GetFragmentDiffuse();
 	vec3 specularColor = GetFragmentSpecular();
 
-	vec3 dirToLight = normalize(lights[i].position - varying_position);//vector from surface to light
+	vec3 dirToLight = normalize(lights[i].position - inData.position);//vector from surface to light
 	float theta = dot(-dirToLight, normalize(lights[i].direction));//calculate angle of -light direction and the fragment->light
 	float attenuation = CalculateAttenuation(i);//calculte light fall off
 	
