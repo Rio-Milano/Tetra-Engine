@@ -2,7 +2,11 @@
 
 layout(location = 0) in vec3 position;
 
-uniform mat4 Projection_X_View;
+layout(std140) uniform Matricies
+{
+	mat4 Projection_X_View;
+};
+
 uniform mat4 worldMat;
 
 void main()

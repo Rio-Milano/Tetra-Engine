@@ -20,6 +20,8 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	//init the renderer
 	m_renderer.InitRenderer();
 	InputManager.InitializeInputManager(m_renderer.GetWindow().GetWindowPtr());
+	//
+	CreateUniformBuffers();
 	//create default shaders
 	CreateShader();
 	//setup camera with attributes
@@ -30,6 +32,7 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	InitializeImGui();
 
 }
+
 
 void BaseLayer::InitializeImGui()
 {
@@ -66,11 +69,33 @@ void BaseLayer::BaseUpdate(const float& dt)
 	m_renderer.GetWindow().UpdateWindow();
 	//update camera
 	m_camera.Update(dt);
-	//update generic shader uniforms
-	ShaderManager.UpdateAllShaders(m_camera.GetPerspectiveMat4(), m_camera.GetViewMat4(), m_camera.GetPosition());
+	
+	UpdateUniformBuffers();
+	
+	Shader& skyBoxShader = ShaderManager.GetShader("SkyBox");
+	glm::mat4 Projection_X_View_nt = m_camera.GetPerspectiveMat4() * glm::mat4(glm::mat3(m_camera.GetViewMat4()));
+	skyBoxShader.SetUniformMat4f(skyBoxShader.GetLocation("Projection_X_View"), Projection_X_View_nt);
+
 	//update layer
 	Update(dt);
 
+}
+
+void BaseLayer::UpdateUniformBuffers()
+{
+	//Update the matrix UBO
+	{
+		const std::shared_ptr<UniformBufferObject>& Matricies = ShaderManager.GetUniformBufferObject("Matricies");
+		glm::mat4 Projection_X_View = m_camera.GetPerspectiveMat4() * m_camera.GetViewMat4();
+		Matricies->SetBufferElement("Projection_X_View", glm::value_ptr(Projection_X_View));
+	}
+}
+
+void BaseLayer::CreateUniformBuffers()
+{
+	std::shared_ptr<UniformBufferObject> Matricies = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(sizeof(glm::mat4)), 0, "Matricies");
+	Matricies->SetElementData("Projection_X_View", UniformBufferObject::Element{sizeof(glm::mat4), 0});
+	ShaderManager.AddUniformBufferObject("Matricies", Matricies);
 }
 
 void BaseLayer::BaseimGUI()

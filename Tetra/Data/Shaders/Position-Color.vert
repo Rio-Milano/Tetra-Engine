@@ -4,7 +4,11 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 color;
 
 uniform mat4 worldMat;//not used
-uniform mat4 Projection_X_View;
+
+layout(std140) uniform Matricies
+{
+	mat4 Projection_X_View;
+};
 
 out vec3 varying_color;
 

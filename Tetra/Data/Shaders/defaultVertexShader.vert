@@ -11,8 +11,12 @@ out Varying
 	vec3 position;
 } outData;
 
+layout(std140) uniform Matricies
+{
+	mat4 Projection_X_View;
+};
+
 uniform mat4 worldMat;
-uniform mat4 Projection_X_View;
 uniform mat3 normalMat;
 
 void main()

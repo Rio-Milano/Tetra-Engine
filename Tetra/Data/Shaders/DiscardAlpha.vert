@@ -6,7 +6,11 @@ layout(location = 1) in vec2 inTexCoord;
 out vec2 varying_texCoord;
 
 uniform mat4 worldMat;
-uniform mat4 Projection_X_View;
+
+layout(std140) uniform Matricies
+{
+	mat4 Projection_X_View;
+};
 
 void main()
 {

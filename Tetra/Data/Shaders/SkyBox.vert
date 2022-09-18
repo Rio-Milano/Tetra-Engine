@@ -6,6 +6,7 @@ out vec3 varying_texture_coord;
 
 uniform mat4 Projection_X_View;
 
+
 void main()
 {
 	varying_texture_coord = inPosition;

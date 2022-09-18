@@ -31,6 +31,7 @@ protected:
 private:
 	//internal helpers
 	void CreateLayer(const glm::vec<2, int> windowSize, const std::string& windowName);
+	void CreateUniformBuffers();
 	void InitializeImGui();
 	void DestroyLayer();
 	void BaseRender();
@@ -38,6 +39,7 @@ private:
 	void BaseimGUI();
 	void InitGLAD();
 	void CreateShader();
+	void UpdateUniformBuffers();
 
 };
 
