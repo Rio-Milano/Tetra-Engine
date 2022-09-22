@@ -57,7 +57,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	}
 	//get the shader for the mesh
 	Shader& shader = ShaderManager.GetShader(mesh.m_programName);
-	
+
 	//set the word matrix for the mesh
 	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
 	
@@ -76,7 +76,6 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 	shader.SetUniform1f(shader.GetLocation("material.specularIntensity"), meshMaterial->m_specularIntensity);
 	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
 	shader.SetUniform1b(shader.GetLocation("material.discardLowAlphaFragment"), meshMaterial->m_discardLowAlphaFragments);
-	shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
 	shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
 
 	//get the tetxure pointer for the mesh diffuse map

@@ -33,7 +33,6 @@ void ShaderManager::AddShader(const std::string& programName, const Shader& shad
 		glUniformBlockBinding(shaderObject, uniformBlockIndex, ubo->m_bindingPoint);
 	}
 
-	//else add shader to data store
 	m_programNameProgramIDMap[programName] = shader;
 }
 

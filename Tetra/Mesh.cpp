@@ -13,6 +13,7 @@ const float RefractiveIndex::Diamond{ 2.42f };
 const int ReflectionType::Reflection{ 0 };
 const int ReflectionType::Refraction{ 1 };
 
+
 Mesh::Mesh()
 {
 	//create a material for mesh once its been made

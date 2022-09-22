@@ -16,6 +16,7 @@
 #include"Grass.h"
 #include"TransparentEntity.h"
 #include"SkyBox.h"
+#include"Backpack.h"
 
 #include"Framebuffer.h"
 
@@ -28,6 +29,8 @@ void SandBoxLayer::Start()
 	m_entities.emplace_back(std::make_shared<BaseGrid>());
 
 	m_entities.emplace_back(std::make_shared<Plane>());
+
+	m_entities.emplace_back(std::make_shared<BackPack>("BackPack"));
 
 	m_entities.emplace_back(std::make_shared<Grass>());
 
@@ -75,6 +78,9 @@ void SandBoxLayer::Update(float dt)
 		m_lightManager.GetLight(9).m_drawLight = false;
 
 		//update 
+		m_lightManager.SetShader(&ShaderManager.GetShader("main"));
+		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
+		m_lightManager.SetShader(&ShaderManager.GetShader("explode"));
 		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
 
 		//loop entitys

@@ -135,6 +135,9 @@
     <ClCompile Include="UniformBufferObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Backpack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -257,6 +260,9 @@
     <ClInclude Include="UniformBufferObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Backpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\Shaders\fragment_shader.vs.txt" />
@@ -275,6 +281,8 @@
     <None Include="Data\Shaders\frameBufferQuad.frag" />
     <None Include="Data\Shaders\SkyBox.vert" />
     <None Include="Data\Shaders\SkyBox.frag" />
+    <None Include="Data\Shaders\defaultGeometryShader.geom" />
+    <None Include="Data\Shaders\explodingGeometryShader.geom" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png">

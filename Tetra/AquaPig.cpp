@@ -22,6 +22,7 @@ AquaPig::AquaPig(const std::string& aquaPigName)
 
 void AquaPig::Init()
 {
+
 	//load in the seperate .obj files
 	std::shared_ptr<Model>
 		gun = std::make_shared<Model>("Data/Models/AquaPig/gun.obj"),
@@ -29,8 +30,8 @@ void AquaPig::Init()
 		hull = std::make_shared<Model>("Data/Models/AquaPig/hull.obj"),
 		propeller = std::make_shared<Model>("Data/Models/AquaPig/propeller.obj"),
 		wing_left = std::make_shared<Model>("Data/Models/AquaPig/wing_left.obj"),
-		wing_right = std::make_shared<Model>("Data/Models/AquaPig/wing_right.obj"),
-		backPack = std::make_shared<Model>("Data/Models/backpack/backpack.obj");//back pack is an optional extension
+		wing_right = std::make_shared<Model>("Data/Models/AquaPig/wing_right.obj");
+	
 
 	//make sure all models loaded
 	if (!(gun && gun_base && hull && propeller && wing_left && wing_left))
@@ -43,11 +44,10 @@ void AquaPig::Init()
 		nhull = hull->GetRoot(),
 		npropeller = propeller->GetRoot(),
 		nwing_left = wing_left->GetRoot(),
-		nwing_right = wing_right->GetRoot(),
-		nbackPack = backPack->GetRoot();
+		nwing_right = wing_right->GetRoot();
 
 	//construct hirearchy
-	nhull->AddChildren({ nwing_left, nwing_right, npropeller, ngun_base , nbackPack });
+	nhull->AddChildren({ nwing_left, nwing_right, npropeller, ngun_base });
 	ngun_base->AddChild(ngun);
 
 	//construct transform hirearchy
@@ -74,11 +74,6 @@ void AquaPig::Init()
 	Tgun = glm::translate(Tgun, glm::vec3(0, 1.506, 0.644));
 	ngun->SetAssimpNodeTransform(Tgun);
 
-	glm::mat4 TbackPack(1.0f);
-	TbackPack = glm::translate(TbackPack, glm::vec3(-0.5f, 1.0f, 1.0f));
-	TbackPack = glm::rotate(TbackPack, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	TbackPack = glm::scale(TbackPack, glm::vec3(0.4f));
-	nbackPack->SetAssimpNodeTransform(TbackPack);
 
 	std::shared_ptr<Texture> aquaPigDiffuse = TextureManager.GetTexture("AquaPigDiffuse");
 
@@ -111,13 +106,7 @@ void AquaPig::Init()
 	nwing_right->GetChildren()[0]->SetDrawOutline(1);
 	nhull->GetChildren()[0]->SetDrawOutline(1);
 
-	for (int i = 0; i < nbackPack->GetChildren().size(); i++)
-	{
-		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
-		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_reflectionType = ReflectionType::Refraction;
-		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_toRefractiveIndex = RefractiveIndex::Water;
-	}
-
+	
 	SetRoot(nhull);
 }
 
@@ -138,3 +127,5 @@ void AquaPig::Render(Renderer& renderer)
 {
 	static_cast<Model*>(this)->Render(renderer);
 }
+
+

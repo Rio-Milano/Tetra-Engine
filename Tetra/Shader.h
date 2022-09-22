@@ -14,7 +14,7 @@ public:
 	~Shader() = default;
 
 	//takes in paths to shaders to create program
-	void Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+	void Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath = "NULL");
 	//tell opengl to make the current shader the context
 	void Use()const;
 	//delete the shader once its no longer needed
@@ -39,7 +39,7 @@ private:
 
 	//internal helpers
 	GLuint CreateShader(const std::string& shaderCode, const GLenum& shaderType);
-	void LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& fragmentShaderID);
+	void LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& fragmentShaderID, const GLuint& geometryShaderID);
 };
 
 #endif

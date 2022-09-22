@@ -127,11 +127,10 @@ void main()
 
 	if(ProcessEmissionFragment()) return;
 
-	vec3 finalColor;
+	vec3 finalColor = vec3(0.0);
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
-
 		if(!lights[i].inUse)
 			continue;
 

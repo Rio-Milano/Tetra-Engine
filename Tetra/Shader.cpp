@@ -28,7 +28,7 @@ void LoadStringFromFile(const std::string& fileLocation, std::string& data)
 };
 
 
-void Shader::Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+void Shader::Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath)
 {
 	//get shader source and create shader for vertex and fragment
 	std::string vertexShaderSource;
@@ -39,8 +39,15 @@ void Shader::Create(const std::string& vertexShaderPath, const std::string& frag
 	LoadStringFromFile(fragmentShaderPath, fragmentShaderSource);
 	GLuint fragmentShaderID = CreateShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
+	GLuint geometryShaderID = 0;
+	if (geometryShaderPath != "NULL")
+	{
+		std::string geometryShaderSource;
+		LoadStringFromFile(geometryShaderPath, geometryShaderSource);
+		geometryShaderID =  CreateShader(geometryShaderSource, GL_GEOMETRY_SHADER);
+	}
 	//link shaders above
-	LinkShadersIntoProgram(vertexShaderID, fragmentShaderID);
+	LinkShadersIntoProgram(vertexShaderID, fragmentShaderID, geometryShaderID);
 }
 
 void Shader::Use() const
@@ -149,7 +156,7 @@ GLuint Shader::CreateShader(const std::string& shaderCode, const GLenum& shaderT
 	return shaderID;
 }
 
-void Shader::LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& fragmentShaderID)
+void Shader::LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& fragmentShaderID, const GLuint& geometryShaderID)
 {
 	//create program
 	m_programID = glCreateProgram();
@@ -158,12 +165,16 @@ void Shader::LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& 
 	glAttachShader(m_programID, vertexShaderID);
 	glAttachShader(m_programID, fragmentShaderID);
 
+	if (geometryShaderID) glAttachShader(m_programID, geometryShaderID);
+
 	//link the program
 	glLinkProgram(m_programID);
 
 	//delete shaders as no longer needed
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
+	if (geometryShaderID) glDeleteShader(geometryShaderID);
+
 
 	//link success flag
 	int linkStatus;

@@ -89,6 +89,10 @@ void BaseLayer::UpdateUniformBuffers()
 		glm::mat4 Projection_X_View = m_camera.GetPerspectiveMat4() * m_camera.GetViewMat4();
 		Matricies->SetBufferElement("Projection_X_View", glm::value_ptr(Projection_X_View));
 	}
+
+	const std::shared_ptr<UniformBufferObject> World = ShaderManager.GetUniformBufferObject("World");
+	float time = static_cast<float>(glfwGetTime());
+	World->SetBufferElement("time", static_cast<void*>(&time));
 }
 
 void BaseLayer::CreateUniformBuffers()
@@ -96,6 +100,10 @@ void BaseLayer::CreateUniformBuffers()
 	std::shared_ptr<UniformBufferObject> Matricies = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(sizeof(glm::mat4)), 0, "Matricies");
 	Matricies->SetElementData("Projection_X_View", UniformBufferObject::Element{sizeof(glm::mat4), 0});
 	ShaderManager.AddUniformBufferObject("Matricies", Matricies);
+
+	std::shared_ptr<UniformBufferObject> World = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(sizeof(float)), 1, "World");
+	World->SetElementData("time", UniformBufferObject::Element{sizeof(float), 0});
+	ShaderManager.AddUniformBufferObject("World", World);
 }
 
 void BaseLayer::BaseimGUI()
@@ -127,8 +135,12 @@ void BaseLayer::CreateShader()
 	//create default shaders
 
 	Shader shader;
-	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag");
+	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag", "Data/Shaders/defaultGeometryShader.geom");
 	ShaderManager.AddShader("main", shader);
+
+	Shader explode;
+	explode.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag", "Data/Shaders/explodingGeometryShader.geom");
+	ShaderManager.AddShader("explode", explode);
 
 	Shader shader_2;
 	shader_2.Create("Data/Shaders/Position-Color.vert", "Data/Shaders/Position-Color.frag");
@@ -145,5 +157,6 @@ void BaseLayer::CreateShader()
 	Shader shader_5;
 	shader_5.Create("Data/Shaders/SkyBox.vert", "Data/Shaders/SkyBox.frag");
 	ShaderManager.AddShader("SkyBox", shader_5);
+
 
 }

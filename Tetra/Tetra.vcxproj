@@ -148,6 +148,7 @@
     <ClCompile Include="BaseGrid.cpp" />
     <ClCompile Include="BaseLayer.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Backpack.cpp" />
     <ClCompile Include="external_libaries\include\imGUI\imgui.cpp" />
     <ClCompile Include="external_libaries\include\imGUI\imgui_demo.cpp" />
     <ClCompile Include="external_libaries\include\imGUI\imgui_draw.cpp" />
@@ -185,6 +186,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AquaPig.h" />
+    <ClInclude Include="Backpack.h" />
     <ClInclude Include="BaseGrid.h" />
     <ClInclude Include="BaseLayer.h" />
     <ClInclude Include="Camera.h" />
@@ -230,9 +232,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\defaultFragmentShader.frag" />
+    <None Include="Data\Shaders\defaultGeometryShader.geom" />
     <None Include="Data\Shaders\defaultVertexShader.vert" />
     <None Include="Data\Shaders\DiscardAlpha.frag" />
     <None Include="Data\Shaders\DiscardAlpha.vert" />
+    <None Include="Data\Shaders\explodingGeometryShader.geom" />
     <None Include="Data\Shaders\frameBufferQuad.frag" />
     <None Include="Data\Shaders\frameBufferQuad.vert" />
     <None Include="Data\Shaders\lightCubeFragmentShader.frag" />

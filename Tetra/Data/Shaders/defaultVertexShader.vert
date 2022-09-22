@@ -11,22 +11,18 @@ out Varying
 	vec3 position;
 } outData;
 
-layout(std140) uniform Matricies
-{
-	mat4 Projection_X_View;
-};
 
-uniform mat4 worldMat;
+
+
+
 uniform mat3 normalMat;
 
 void main()
 {
+	//pass vertex data to geometry shader
 	outData.textureCord = inTextureCord;
+	outData.normal = normalMat * inNormal;
+	outData.position = inPos;
 
-	//varying_normal =  mat3(worldMat) * inNormal;//only works for balanced scaling
-	outData.normal = normalMat * inNormal;//works with both ballanced and unbalanced scaling !!look into how this works
-
-	outData.position = (worldMat * vec4(inPos, 1)).xyz;//translate position in world space
-
-	gl_Position = Projection_X_View * worldMat * vec4(inPos, 1.0);
+	gl_Position = vec4(inPos, 1.0);
 }
