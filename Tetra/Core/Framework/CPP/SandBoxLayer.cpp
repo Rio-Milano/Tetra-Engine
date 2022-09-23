@@ -88,18 +88,17 @@ void SandBoxLayer::Update(float dt)
 
 void SandBoxLayer::Render()
 {
-	m_postProcessing->Render_To_Off_Screen_Buffer();
-
-	/*
-	* 
-	* Dosen't work when rendering to offscreen buffer
-	* 
-	if (m_wireframeMode)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
+	if (!m_wireframeMode)
+	{
+		m_postProcessing->Render_To_Off_Screen_Buffer();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	*/
-	
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	}
+
 	//render cubes/oblongs for point/spot lights
 	m_lightManager.DrawLights(m_renderer);
 
@@ -109,7 +108,7 @@ void SandBoxLayer::Render()
 	
 	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
 	
-	m_postProcessing->Render_FrameBuffer(m_renderer);
+	if(!m_wireframeMode)m_postProcessing->Render_FrameBuffer(m_renderer);
 
 }
 
