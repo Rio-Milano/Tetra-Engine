@@ -1,4 +1,4 @@
-#include "Container.h"
+#include "../H/Container.h"
 
 Container::Container(const std::string& containerName)
 	:Entity(containerName)
@@ -6,21 +6,21 @@ Container::Container(const std::string& containerName)
 	if (TextureManager.GetTexture("Box") == nullptr)
 	{
 		std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
-		diffuseTexture->InitializeTexture("Data/Images/Box.png");
+		diffuseTexture->InitializeTexture("Data/Textures/Box.png");
 		TextureManager.AddTexture("Box", diffuseTexture);
 	}
 
 	if (TextureManager.GetTexture("BoxSpec") == nullptr)
 	{
 		std::shared_ptr<Texture> specularTexture = std::make_shared<Texture>();
-		specularTexture->InitializeTexture("Data/Images/BoxSpec.png");
+		specularTexture->InitializeTexture("Data/Textures/BoxSpec.png");
 		TextureManager.AddTexture("BoxSpec", specularTexture);
 	}
 
 	if (TextureManager.GetTexture("BoxEmission") == nullptr)
 	{
 		std::shared_ptr<Texture> emissionTexture = std::make_shared<Texture>();
-		emissionTexture->InitializeTexture("Data/Images/BoxEmission.png");
+		emissionTexture->InitializeTexture("Data/Textures/BoxEmission.png");
 		TextureManager.AddTexture("BoxEmission", emissionTexture);
 	}
 

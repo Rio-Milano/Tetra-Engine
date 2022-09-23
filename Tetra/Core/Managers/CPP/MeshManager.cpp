@@ -1,7 +1,7 @@
 #include<crtdbg.h>
 #include<iostream>
-#include"MeshManager.h"
-#include"Mesh.h"
+#include"../H/MeshManager.h"
+#include"../../Structure/H/Mesh.h"
 
 //singleton function
 MeshManager & MeshManager::GetInstance()

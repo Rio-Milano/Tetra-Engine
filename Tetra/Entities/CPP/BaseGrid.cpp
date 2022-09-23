@@ -1,5 +1,5 @@
-#include "BaseGrid.h"
-#include"Renderer.h"
+#include "../H/BaseGrid.h"
+#include"../../Core/Graphics/H/Renderer.h"
 
 void BaseGrid::Init()
 {

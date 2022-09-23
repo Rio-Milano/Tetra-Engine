@@ -1,4 +1,4 @@
-#include "Line.h"
+#include "../H/Line.h"
 
 //void Line::AddVertex(const glm::vec3& position, const glm::vec3& color)
 //{
@@ -52,8 +52,8 @@
 //}
 
 
-#include "Line.h"
-#include"Renderer.h"
+#include "../H/Line.h"
+#include"../../Core/Graphics/H/Renderer.h"
 
 
 

@@ -1,7 +1,7 @@
-#include "PostProcessing.h"
-#include"Mesh.h"
-#include"Renderer.h"
-#include"ShaderManager.h"
+#include "../H/PostProcessing.h"
+#include"../../Core/Structure/H/Mesh.h"
+#include"../../Core/Graphics/H/Renderer.h"
+#include"../../Core/Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 
 #include<vector>

@@ -2,11 +2,12 @@
 #define CONTAINER_H
 
 #include"Entity.h"
-#include"Renderer.h"
-#include"Model.h"
+#include"../../Core/Graphics/H/Renderer.h"
+#include"../../Core/Structure/H/Model.h"
+
 #include<iostream>
 
-#include"TextureManager.h"
+#include"../../Core/Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 
 class Container: public Entity, public Model

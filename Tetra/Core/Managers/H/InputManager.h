@@ -2,7 +2,7 @@
 #define INPUTMANAGER_H
 
 #include<GLFW/glfw3.h>
-#include"glmIncludes.h"
+#include"../../Requirements/glmIncludes.h"
 
 class InputManager
 {
@@ -15,14 +15,14 @@ public:
 
 	//holds state of last event
 	glm::vec2
-		m_currentMousePosition;
+		m_currentMousePosition{0, 0};
 	float
-		m_mouseScrollY;
+		m_mouseScrollY{0};
 
 	//used to prevent large vector when mouse first enters screen
 	bool
-		m_firstMouseEvent = false,
-		m_seccondMouseEvent = false;
+		m_firstMouseEvent{false},
+		m_seccondMouseEvent{ false };
 
 private: 
 	//singleton
@@ -36,7 +36,7 @@ private:
 	static void mouse_callback(GLFWwindow* windowPtr, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* windowPtr, double xoffset, double yoffset);
 
-	GLFWwindow* targetWindowPtr;
+	GLFWwindow* targetWindowPtr{nullptr};
 
 };
 

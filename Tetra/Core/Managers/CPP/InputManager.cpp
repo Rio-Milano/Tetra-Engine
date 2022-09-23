@@ -1,4 +1,4 @@
-#include "InputManager.h"
+#include "../H/InputManager.h"
 
 InputManager& InputManager::GetInstance()
 {

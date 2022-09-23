@@ -4,8 +4,8 @@
 #include<glad/glad.h>
 #include<string>
 
-#include"glmIncludes.h"
-#include"ShaderManager.h"
+#include"../../Requirements/glmIncludes.h"
+#include"../../Core/Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 
 

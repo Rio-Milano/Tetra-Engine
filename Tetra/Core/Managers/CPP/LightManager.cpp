@@ -1,6 +1,6 @@
-#include "LightManager.h"
+#include "../H/LightManager.h"
 
-#include"ShaderManager.h"
+#include"../../Core/Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 
 
@@ -191,10 +191,10 @@ void LightManager::UpdateShader(const float& dt)
 	
 
 	//loop each light
-	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
+	for (size_t i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
 		//get light number
-		const size_t lightNumber = i + 1;
+		const size_t lightNumber = i + 1ull;
 		
 		//get light string prefix
 		std::string prefix = "Light:" + std::to_string(lightNumber) + ":";

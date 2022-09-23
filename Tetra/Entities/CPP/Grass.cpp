@@ -1,10 +1,10 @@
-#include "Grass.h"
+#include "../H/Grass.h"
 
-#include"TextureManager.h"
+#include"../../Core/Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
-#include"Texture.h"
-#include"Mesh.h"
-#include"Renderer.h"
+#include"../../Core/Structure/H/Texture.h"
+#include"../../Core/Structure/H/Mesh.h"
+#include"../../Core/Graphics/H/Renderer.h"
 
 Grass::Grass(const std::string& entityName)
 	:Entity(entityName)
@@ -12,7 +12,7 @@ Grass::Grass(const std::string& entityName)
 	if (TextureManager.GetTexture("Grass") == nullptr)
 	{
 		std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();
-		newTexture->InitializeTexture("Data/Images/Grass.png", true);
+		newTexture->InitializeTexture("Data/Textures/Grass.png", true);
 		TextureManager.AddTexture("Grass", newTexture);
 	}
 }

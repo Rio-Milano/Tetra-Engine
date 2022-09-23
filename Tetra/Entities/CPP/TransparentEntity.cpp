@@ -1,9 +1,9 @@
-#include "TransparentEntity.h"
-#include"TextureManager.h"
+#include "../H/TransparentEntity.h"
+#include"../../Core/Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
-#include"Texture.h"
-#include"Mesh.h"
-#include"Renderer.h"
+#include"../../Core/Structure/H/Texture.h"
+#include"../../Core/Structure/H/Mesh.h"
+#include"../../Core/Graphics/H/Renderer.h"
 
 TransparentEntity::TransparentEntity(const std::string& entityName)
 	:Entity(entityName)
@@ -11,7 +11,7 @@ TransparentEntity::TransparentEntity(const std::string& entityName)
 	if (TextureManager.GetTexture("Window") == nullptr)
 	{
 		std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();
-		newTexture->InitializeTexture("Data/Images/Window.png", true);
+		newTexture->InitializeTexture("Data/Textures/Window.png", true);
 		TextureManager.AddTexture("Window", newTexture);
 	}
 }

@@ -1,4 +1,4 @@
-#include "XInput_Wrapper.h"
+#include "../H/XInput_Wrapper.h"
 
 #include<iostream>
 #include<string>

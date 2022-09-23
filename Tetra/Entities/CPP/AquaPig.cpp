@@ -1,4 +1,4 @@
-#include "AquaPig.h"
+#include "../H/AquaPig.h"
 
 AquaPig::AquaPig(const std::string& aquaPigName)
 	:Entity(aquaPigName)

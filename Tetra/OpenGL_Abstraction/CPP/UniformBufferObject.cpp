@@ -1,5 +1,5 @@
-#include "UniformBufferObject.h"
-#include"glmIncludes.h"
+#include "../H/UniformBufferObject.h"
+#include"../../Requirements/glmIncludes.h"
 #include<iostream>
 UniformBufferObject::UniformBufferObject(const GLsizei& bufferSize, const GLuint& bindingPoint, const std::string& uniformBlockName)
 	:

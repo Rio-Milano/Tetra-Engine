@@ -1,5 +1,5 @@
-#include "Mesh.h"
-#include"TextureManager.h"
+#include "../H/Mesh.h"
+#include"../../Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 
 #include<iostream>

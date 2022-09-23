@@ -1,9 +1,9 @@
-#include "TextureManager.h"
+#include "../H/TextureManager.h"
 
 #include<iostream>
 
-#include"Texture.h"
-#include"CubeMap.h"
+#include"../../Structure/H/Texture.h"
+#include"../../OpenGL_Abstraction/H/CubeMap.h"
 
 TextureManager& TextureManager::GetInstance()
 {

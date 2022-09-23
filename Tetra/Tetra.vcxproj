@@ -157,8 +157,8 @@
     <ClCompile Include="external_libaries\include\imGUI\imgui_tables.cpp" />
     <ClCompile Include="external_libaries\include\imGUI\imgui_widgets.cpp" />
     <ClCompile Include="external_libaries\include\STB_ImageLoader\stb_image.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="glmIncludes.h" />
+    <ClCompile Include="Requirements\glad.c" />
+    <ClCompile Include="Requirements\glmIncludes.h" />
     <ClCompile Include="Entities\CPP\Grass.cpp" />
     <ClCompile Include="Misc\CPP\Helper.cpp" />
     <ClCompile Include="Core\Managers\CPP\InputManager.cpp" />
@@ -222,7 +222,7 @@
     <ClInclude Include="Core\Structure\H\Texture.h" />
     <ClInclude Include="Core\Managers\H\TextureManager.h" />
     <ClInclude Include="Entities\H\TransparentEntity.h" />
-    <ClInclude Include="OpenGL_Abstraction\CPP\UniformBufferObject.h" />
+    <ClInclude Include="OpenGL_Abstraction\H\UniformBufferObject.h" />
     <ClInclude Include="Core\Graphics\H\Window.h" />
     <ClInclude Include="Core\Wrapper\H\XInput_Wrapper.h" />
   </ItemGroup>

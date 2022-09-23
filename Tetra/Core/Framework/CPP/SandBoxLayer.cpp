@@ -1,24 +1,24 @@
-#include "SandBoxLayer.h"
-#include"TextureManager.h"
+#include "../H/SandBoxLayer.h"
+#include"../../Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
-#include"InputManager.h"
+#include"../../Managers/H/InputManager.h"
 #define InputManager InputManager::GetInstance()
-#include "external_libaries/include/imGUI/imgui.h"
-#include"MeshManager.h"
+#include "../../external_libaries/include/imGUI/imgui.h"
+#include"../../Managers/H/MeshManager.h"
 #define MeshManager MeshManager::GetInstance()
-#include"PostProcessing.h"
+#include"../../Graphics/H/PostProcessing.h"
 
-#include"AquaPig.h"
-#include"Container.h"
-#include"Line.h"
-#include"BaseGrid.h"
-#include"Plane.h"
-#include"Grass.h"
-#include"TransparentEntity.h"
-#include"SkyBox.h"
-#include"Backpack.h"
+#include"../../Entities/H/AquaPig.h"
+#include"../../Entities/H/Container.h"
+#include"../../Entities/H/Line.h"
+#include"../../Entities/H/BaseGrid.h"
+#include"../../Entities/H/Plane.h"
+#include"../../Entities/H/Grass.h"
+#include"../../Entities/H/TransparentEntity.h"
+#include"../../Entities/H/SkyBox.h"
+#include"../../Entities/H/Backpack.h"
 
-#include"Framebuffer.h"
+#include"../../OpenGL_Abstraction/H/Framebuffer.h"
 
 void SandBoxLayer::Start()
 {
@@ -39,12 +39,12 @@ void SandBoxLayer::Start()
 	//must come last for optimization
 	std::shared_ptr<SkyBox> skyBox = std::make_shared<SkyBox>();
 	skyBox->SetFaceLocations({
-			"Data/Images/SkyBox/posx.jpg",
-			"Data/Images/SkyBox/negx.jpg",
-			"Data/Images/SkyBox/posy.jpg",
-			"Data/Images/SkyBox/negy.jpg",
-			"Data/Images/SkyBox/posz.jpg",
-			"Data/Images/SkyBox/negz.jpg"
+			"Data/Textures/SkyBox/posx.jpg",
+			"Data/Textures/SkyBox/negx.jpg",
+			"Data/Textures/SkyBox/posy.jpg",
+			"Data/Textures/SkyBox/negy.jpg",
+			"Data/Textures/SkyBox/posz.jpg",
+			"Data/Textures/SkyBox/negz.jpg"
 		});
 	m_entities.emplace_back(skyBox);
 

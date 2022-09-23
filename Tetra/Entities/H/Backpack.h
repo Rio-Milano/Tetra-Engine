@@ -2,14 +2,14 @@
 #define BACKPACK_H
 
 #include"Entity.h"
-#include"Renderer.h"
-#include"Model.h"
+#include"../../Core/Graphics/H/Renderer.h"
+#include"../../Core/Structure/H/Model.h"
 #include<iostream>
 
-#include"TextureManager.h"
+#include"../../Core/Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 
-#include"MeshManager.h"
+#include"../../Core/Managers/H/MeshManager.h"
 #define MeshManager MeshManager::GetInstance()
 
 class BackPack : public Entity, public Model

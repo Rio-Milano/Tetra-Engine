@@ -1,12 +1,12 @@
-#include "BaseLayer.h"
-#include"ShaderManager.h"
+#include "../H/BaseLayer.h"
+#include"../../Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
-#include"InputManager.h"
+#include"../../Managers/H/InputManager.h"
 #define InputManager InputManager::GetInstance()
-#include "external_libaries/include/imGUI/imgui.h"
-#include "external_libaries/include/imGUI/imgui_impl_glfw.h"
-#include "external_libaries/include/imGUI/imgui_impl_opengl3.h"
-#include"Helper.h"
+#include "../../../external_libaries/include/imGUI/imgui.h"
+#include "../../../external_libaries/include/imGUI/imgui_impl_glfw.h"
+#include "../../../external_libaries/include/imGUI/imgui_impl_opengl3.h"
+#include"../../Misc/H/Helper.h"
 
 #include<chrono>
 #include<thread>

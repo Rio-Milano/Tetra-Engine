@@ -1,5 +1,5 @@
-#include "Plane.h"
-#include"Renderer.h"
+#include "../H/Plane.h"
+#include"../../Core/Graphics/H/Renderer.h"
 #include<vector>
 
 Plane::Plane(const std::string& entityName) 

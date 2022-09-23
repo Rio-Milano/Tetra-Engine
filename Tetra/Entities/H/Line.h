@@ -2,7 +2,8 @@
 #define LINE_H
 
 #include"Entity.h"
-#include"Model.h"
+#include"../../Core/Structure/H/Model.h"
+
 
 class Line : public Entity, public Model
 {

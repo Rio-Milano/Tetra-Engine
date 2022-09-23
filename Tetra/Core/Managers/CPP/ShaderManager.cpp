@@ -1,7 +1,7 @@
-#include "ShaderManager.h"
+#include "../H/ShaderManager.h"
 #include<fstream>
 #include<iostream>
-#include"Shader.h"
+#include"../../OpenGL_Abstraction/H/Shader.h"
 
 
 ShaderManager& ShaderManager::GetInstance()

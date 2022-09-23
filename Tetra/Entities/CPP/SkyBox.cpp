@@ -1,8 +1,8 @@
-#include "SkyBox.h"
-#include"Mesh.h"
-#include"CubeMap.h"
-#include"Renderer.h"
-#include"TextureManager.h"
+#include "../H/SkyBox.h"
+#include"../../Core/Structure/H/Mesh.h"
+#include"../../OpenGL_Abstraction/H/CubeMap.h"
+#include"../../Core/Graphics/H/Renderer.h"
+#include"../../Core/Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 
 SkyBox::SkyBox(const std::string& entityName)

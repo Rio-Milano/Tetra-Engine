@@ -1,13 +1,13 @@
 #ifndef BASELAYER_H
 #define BASELAYER_H
 
-#include"Window.h"
-#include"Camera.h"
-#include"Renderer.h"
-#include"glmIncludes.h"
-#include"Shader.h"
-#include"Entity.h"
-#include"LightManager.h"
+#include"../../Graphics/H/Window.h"
+#include"../../Structure/H/Camera.h"
+#include"../../Graphics/H/Renderer.h"
+#include"../../../Requirements/glmIncludes.h"
+#include"../../../OpenGL_Abstraction/H/Shader.h"
+#include"../../../Entities/H/Entity.h"
+#include"../../Managers/H/LightManager.h"
 
 #include<string>
 #include<vector>

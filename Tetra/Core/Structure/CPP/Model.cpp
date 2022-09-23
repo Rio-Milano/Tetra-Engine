@@ -1,12 +1,12 @@
-#include "Model.h"
+#include "../H/Model.h"
 
-#include"MeshManager.h"
+#include"../../Managers/H/MeshManager.h"
 #define MeshManager MeshManager::GetInstance()
 
-#include"TextureManager.h"
+#include"../../Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 
-#include"ShaderManager.h"
+#include"../../Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 
 #include <assimp/Importer.hpp>

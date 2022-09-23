@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "../H/Texture.h"
 
 #include<iostream>
 
@@ -56,7 +56,7 @@ void Texture::GenerateTextureBuffer(const std::string& textureFileLocation)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	//decode file type
-	GLenum imageType_EN;
+	GLint imageType_EN = 0;
 	std::string extension = textureFileLocation.substr(textureFileLocation.find_last_of('.') + 1, textureFileLocation.size() - 1);
 	if (extension == "png")
 		imageType_EN = GL_RGBA;

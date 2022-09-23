@@ -1,7 +1,7 @@
-#include"XInput_Wrapper.h"
+#include"../../Wrapper/H/XInput_Wrapper.h"
 
-#include "Camera.h"
-#include"InputManager.h"
+#include "../H/Camera.h"
+#include"../../Managers/H/InputManager.h"
 #define InputManager InputManager::GetInstance()
 #include<iostream>
 #include<assert.h>

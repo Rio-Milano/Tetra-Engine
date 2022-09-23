@@ -8,8 +8,8 @@
 #include<GLFW/glfw3.h>
 #include<memory>
 
-#include"glmIncludes.h"
-#include"UniformBufferObject.h"
+#include"../../Requirements/glmIncludes.h"
+#include"../../OpenGL_Abstraction/H/UniformBufferObject.h"
 
 class Shader;
 

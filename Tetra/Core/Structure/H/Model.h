@@ -7,8 +7,8 @@
 #include <assimp/scene.h>
 
 #include"Mesh.h"
-#include"glmIncludes.h"
-#include"Renderer.h"
+#include"../../Requirements/glmIncludes.h"
+#include"../../Graphics/H/Renderer.h"
 
 
 class ModelNode

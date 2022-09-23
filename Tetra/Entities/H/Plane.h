@@ -2,7 +2,7 @@
 #define PLANE_H
 
 #include"Entity.h"
-#include"Model.h"
+#include"../../Core/Structure/H/Model.h"
 
 class Plane : public Entity, private Model
 {

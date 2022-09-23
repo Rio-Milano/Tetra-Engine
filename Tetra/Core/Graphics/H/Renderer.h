@@ -6,11 +6,10 @@
 #include<GLFW/glfw3.h>
 #include<string>
 #include<vector>
-#include"Mesh.h"
-#include"Window.h"
-#include"Shader.h"
-#include"Camera.h"
-#include<map>
+#include"../../Core/Structure/H/Mesh.h"
+#include"../../Core/Graphics/H/Window.h"
+#include"../../OpenGL_Abstraction/H/Shader.h"
+#include"../../Core/Structure/H/Camera.h"
 
 
 

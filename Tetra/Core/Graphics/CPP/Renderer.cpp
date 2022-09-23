@@ -1,13 +1,13 @@
-#include "Renderer.h"
-#include"Entity.h"
+#include "../H/Renderer.h"
+#include"../../Entities/H/Entity.h"
 #include<iostream>
 #include<vector>
 #include<algorithm>
-#include"ShaderManager.h"
+#include"../../Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
-#include"Texture.h"
-#include"CubeMap.h"
-#include"TextureManager.h"
+#include"../../Structure/H/Texture.h"
+#include"../../OpenGL_Abstraction/H/CubeMap.h"
+#include"../../Managers/H/TextureManager.h"
 #define TextureManager TextureManager::GetInstance()
 
 void Renderer::CreateWindowGLFW(const int& renderWindowWidth, const int& renderWindowHeight, const std::string& renderWindowName)

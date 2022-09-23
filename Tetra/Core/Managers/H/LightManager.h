@@ -17,11 +17,11 @@
 #include<iostream>
 #include<string>
 
-#include"Shader.h"
-#include"glmIncludes.h"
-#include"Mesh.h"
+#include"../../OpenGL_Abstraction/H/Shader.h"
+#include"../../Requirements/glmIncludes.h"
+#include"../../Structure/H/Mesh.h"
 
-#include"Renderer.h"
+#include"../../Graphics/H/Renderer.h"
 
 //types of light
 enum class LightType
@@ -34,20 +34,20 @@ enum class LightType
 //deffinition of a light
 struct Light
 {
-	glm::vec3 m_position;
-	glm::vec3 m_direction;
-	glm::vec3 m_lightColor;
-	float m_lightIntensity;
-	float m_innerCutOffAngle;
-	float m_outerCutOffAngle;
-	LightType m_lightType;
-	bool m_inUse;
-	float m_range;
+	glm::vec3 m_position{};
+	glm::vec3 m_direction{};
+	glm::vec3 m_lightColor{};
+	float m_lightIntensity{};
+	float m_innerCutOffAngle{};
+	float m_outerCutOffAngle{};
+	LightType m_lightType{};
+	bool m_inUse{};
+	float m_range{};
 
-	bool simulateLight = false;
-		float lightAngle = 0.0f;
-		float radius = 10.f;
-		float rotationSpeed = 2.0f;
+	bool simulateLight{ false };
+	float lightAngle{ 0.0f };
+		float radius{ 10.0f };
+		float rotationSpeed{ 2.0f };
 
 	bool m_drawLight{true};
 };

@@ -33,7 +33,7 @@
     <ClCompile Include="Core\Managers\CPP\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glmIncludes.h">
+    <ClCompile Include="Requirements\glmIncludes.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Misc\CPP\Helper.cpp">
@@ -93,7 +93,7 @@
     <ClCompile Include="Core\Wrapper\CPP\XInput_Wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="Requirements\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Structure\CPP\Mesh.cpp">
@@ -257,7 +257,7 @@
     <ClInclude Include="Core\Graphics\H\PostProcessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL_Abstraction\CPP\UniformBufferObject.h">
+    <ClInclude Include="OpenGL_Abstraction\H\UniformBufferObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entities\H\Backpack.h">
