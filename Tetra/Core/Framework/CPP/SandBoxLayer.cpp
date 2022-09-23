@@ -72,7 +72,8 @@ void SandBoxLayer::Update(float dt)
 	//only update if simulation is not paused
 	if (!m_pauseSimulation)
 	{
-		m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), glm::vec3(1.0f), 1.0f, 9);
+		Light& light = m_lightManager.GetLight(9);
+		m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), light.m_lightColor, light.m_lightIntensity, 9, light.m_innerCutOffAngle, light.m_outerCutOffAngle, light.m_range);
 		m_lightManager.GetLight(9).m_drawLight = false;
 
 		//update 

@@ -19,7 +19,7 @@ void BackPack::Init()
 	
 
 	glm::mat4 TbackPack(1.0f);
-	TbackPack = glm::translate(TbackPack, glm::vec3(-10.f, 0.f, -10.0f));
+	TbackPack = glm::translate(TbackPack, glm::vec3(-10.f, 1.f, -10.0f));
 	TbackPack = glm::rotate(TbackPack, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	TbackPack = glm::scale(TbackPack, glm::vec3(0.4f));
 	nbackPack->SetAssimpNodeTransform(TbackPack);

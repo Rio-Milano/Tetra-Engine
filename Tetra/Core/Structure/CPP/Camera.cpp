@@ -102,7 +102,7 @@ void Camera::Update(const float& dt)
 
 	//process controller input
 	mv3_position += (mv3_forward * controller0->GetLeftStickY() + mv3_right * controller0->GetLeftStickX()) * mf_cameraSpeed * dt;
-
+	mv3_position.y = 2;
 	//compute view matrix from camera directions
 	ComputeViewMatrix();
 }
@@ -265,8 +265,12 @@ void Camera::KeyboardInput(const float& dt)
 	if (glfwGetKey(m_windowPtr, GLFW_KEY_D) == GLFW_PRESS)
 		direction += mv3_right;
 
-	if(glm::dot(direction, direction) > 0)
+	if (glm::dot(direction, direction) > 0)
+	{
 		direction = glm::normalize(direction) * mf_cameraSpeed * dt;
+		if (glfwGetKey(m_windowPtr, GLFW_KEY_LEFT_SHIFT))
+			direction *= 4.f;
+	}
 	
 	glm::vec3 prevPos = mv3_position;
 	mv3_position += direction;
