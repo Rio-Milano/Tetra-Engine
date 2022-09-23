@@ -31,7 +31,7 @@ PostProcessing::PostProcessing(const glm::vec2& viewPortSize)
 	};
 
 	//generate the mesh for the quad
-	m_quad->GenerateMesh(positions, {}, texCoords, {}, {}, 1, GL_STATIC_DRAW, "frameBufferQuad");
+	m_quad->GenerateMesh(positions, {}, texCoords, {}, {}, 1, GL_STATIC_DRAW);
 	//give it a name
 	m_quad->SetMeshName("Quad");
 
@@ -48,6 +48,7 @@ void PostProcessing::Render_To_Off_Screen_Buffer()
 {
 	//set the frame buffer as current frame buffer
 	m_frameBuffer.SetFrameBuffer();
+
 
 	//any render calls made directly after this call will be rendered to the framebuffer
 }
@@ -69,7 +70,8 @@ void PostProcessing::Render_FrameBuffer(Renderer& renderer)
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("blurKernel"), m_config.m_enableBlurKernel);
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("edgeDetectionKernel"), m_config.m_edgeDetectionKernel);
 
-	renderer.RenderMesh(*m_quad.get(), glm::mat4(1.0f));
+	Shader& shader = ShaderManager.GetShader("frameBufferQuad");
+	renderer.RenderMesh(*m_quad.get(), glm::mat4(1.0f), shader);
 }
 
 

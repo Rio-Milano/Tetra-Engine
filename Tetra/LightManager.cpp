@@ -65,7 +65,7 @@ void LightManager::Initialize()
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 
 	//generate the mesh used for drawing the lights
-	m_meshForLight.GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW, "lightCubeShader");
+	m_meshForLight.GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW);
 
 	
 
@@ -262,6 +262,8 @@ void LightManager::DrawLights(Renderer& renderer)
 		//if light is on
 		if (light.m_inUse && light.m_drawLight)
 		{
+			Shader& shader = ShaderManager.GetShader("lightCubeShader");
+
 			//if light a point or spot light
 			if (light.m_lightType != LightType::Directional)
 			{
@@ -308,7 +310,7 @@ void LightManager::DrawLights(Renderer& renderer)
 					glm::vec3 overallLightColor = light.m_lightColor * light.m_lightIntensity;
 					shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);//set bulb color to light color
 					//render the bulb
-					renderer.RenderMesh(m_meshForLight, transform_2);
+					renderer.RenderMesh(m_meshForLight, transform_2, shader);
 
 				}
 				else
@@ -321,7 +323,7 @@ void LightManager::DrawLights(Renderer& renderer)
 				//set bulb holder color
 				shader.SetUniform3fv(shader.GetLocation("cubeColor"), overallLightColor);
 				//render bulb holder
-				renderer.RenderMesh(m_meshForLight, transform);
+				renderer.RenderMesh(m_meshForLight, transform, shader);
 				
 			}
 		}

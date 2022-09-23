@@ -172,7 +172,7 @@ void Container::Init()
 	mesh->GetMaterial()->m_toRefractiveIndex = RefractiveIndex::Glass;
 	mesh->GetMaterial()->m_reflectionType = ReflectionType::Reflection;*/
 
-	std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(glm::mat4(1.0f), "Box");
+	std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(glm::mat4(1.0f));
 	modelNode_1->AddMesh(mesh);
 
 
@@ -188,9 +188,10 @@ void Container::Update(const float& dt)
 
 void Container::Render(Renderer& renderer)
 {
+	Shader& shader = ShaderManager.GetShader("main");
 	for (int i = 0; i < cubePositions.size(); i++)
 	{
 		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), m_rot, glm::vec3(1.0f)));
-		GetRoot()->Render(renderer);
+		GetRoot()->Render(renderer, shader);
 	}
 }

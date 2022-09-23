@@ -22,8 +22,8 @@ public:
 	~ModelNode() = default;
 
 	//recursively search the hirearchy and render each node
-	void Render(Renderer& renderer, const glm::mat4& worldPrevious = glm::mat4(1.0f));
-	void DrawOutline(Mesh& mesh, Renderer& renderer, const glm::mat4& worldPrevious = glm::mat4(1.0f));
+	void Render(Renderer& renderer, Shader& shader, const glm::mat4& worldPrevious = glm::mat4(1.0f));
+	void DrawOutline(Mesh& mesh, Renderer& renderer, Shader& shader, const glm::mat4& worldPrevious = glm::mat4(1.0f));
 
 	//add a mesh to the current node by using a name to pull a mesh from the mesh manager
 	void AddMesh(const std::string& meshName);
@@ -47,6 +47,8 @@ public:
 	void SetAssimpNodeTransform(const glm::mat4& transform);
 	void SetDrawOutline(const bool& flag);
 	const bool& GetDrawOutline()const;
+
+	static bool DrawNormals;
 
 private:
 	glm::mat4 m_assimpTransform;
@@ -72,7 +74,7 @@ public:
 	void LoadModel(const std::string& modelPath);
 
 	//render the model by starting at root of hirearchy
-	void Render(Renderer& renderer);
+	void Render(Renderer& renderer, Shader& shader);
 	
 	//utility functions for finding nodes and meshes within the hirearchy
 	std::shared_ptr<ModelNode> FindNode(const std::string& nodeName, std::shared_ptr<ModelNode> node = nullptr)const;

@@ -44,7 +44,7 @@ void Grass::Init()
 	};
 
 	this->m_mesh = std::make_shared<Mesh>();
-	this->m_mesh->GenerateMesh(positions, {}, textureCoords, {}, elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
+	this->m_mesh->GenerateMesh(positions, {}, textureCoords, {}, elements, 0, GL_STATIC_DRAW);
 	
 	this->m_mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Grass");
 	this->m_mesh->GetMaterial()->m_discardLowAlphaFragments = true;
@@ -82,24 +82,26 @@ void Grass::Render(Renderer& renderer)
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
 
+		Shader& shader = ShaderManager.GetShader("DiscardAlpha");
+
 		glm::mat4 t1 = glm::scale(transform, scale);
 		t1 = glm::rotate(t1, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
-		renderer.RenderMesh(*m_mesh.get(), t1);
+		renderer.RenderMesh(*m_mesh.get(), t1, shader);
 
 		glm::mat4 t2 = glm::rotate(transform, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		t2 = glm::scale(t2, scale);
 		t2 = glm::rotate(t2, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
-		renderer.RenderMesh(*m_mesh.get(), t2);
+		renderer.RenderMesh(*m_mesh.get(), t2, shader);
 
 		glm::mat4 t3 = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		t3 = glm::scale(t3, scale);
 		t3 = glm::rotate(t3, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
-		renderer.RenderMesh(*m_mesh.get(), t3);
+		renderer.RenderMesh(*m_mesh.get(), t3, shader);
 
 		glm::mat4 t4 = glm::rotate(transform, glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		t4 = glm::scale(t4, scale);
 		t4 = glm::rotate(t4, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
-		renderer.RenderMesh(*m_mesh.get(), t4);
+		renderer.RenderMesh(*m_mesh.get(), t4, shader);
 	}
 	theta += static_cast<float>(sin(glfwGetTime()) / 2.0 + 0.5);
 	if (theta >= 360.0f)

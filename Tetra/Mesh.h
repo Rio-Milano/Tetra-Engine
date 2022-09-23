@@ -109,21 +109,18 @@ public:
 		std::vector<GLuint>* elements = nullptr,
 
 		const GLuint& drawType = 1,
-		const GLenum& usage = GL_STATIC_DRAW,
-		const std::string& programName = "main"
+		const GLenum& usage = GL_STATIC_DRAW
 	);
 
 
 	//getters
 	const std::string& GetMeshName() const { return m_meshName; };
 	const std::shared_ptr<Material>& GetMaterial()const;
-	const std::string& GetProgramName()const;
 	const bool& GetFaceCullingFlag()const;
 
 	//setters
 	void SetMeshName(const std::string& meshName) { m_meshName = meshName; };
 	void SetMaterial(const std::shared_ptr<Material>& material);
-	void SetProgramName(const std::string& programName);
 	void SetFaceCullingFlag(const bool& flag);
 	
 	void MakeAttributes(const Attributes& attributes);
@@ -138,8 +135,7 @@ private:
 	//initializes the mesh 
 	void StartMesh
 	( 
-		const GLuint& drawType, 
-		const std::string& programName,
+		const GLuint& drawType,
 		std::vector<glm::vec3>* positions,
 		std::vector<glm::vec3>* normals,
 		std::vector<glm::vec2>* texCoords,
@@ -168,8 +164,6 @@ private:
 		m_drawType;
 
 	std::string
-		//shader link
-		m_programName,
 		//used for searching for a mesh in a hirearchy
 		m_meshName;
 

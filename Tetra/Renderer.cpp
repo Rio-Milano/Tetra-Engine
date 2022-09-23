@@ -48,16 +48,13 @@ void Renderer::InitRenderer()
 
 
 
-void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
+void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& shader)
 {
 	if (mesh.m_material->m_blendingEnabled)
 	{
-		m_transparentMeshes.emplace_back(std::make_pair<const Mesh*, glm::mat4>(&mesh, glm::mat4(worldMat)));
+		m_transparentMeshes.emplace_back(MeshDrawCallInfo{ &mesh, worldMat, &shader });
 		return;
 	}
-	//get the shader for the mesh
-	Shader& shader = ShaderManager.GetShader(mesh.m_programName);
-
 	//set the word matrix for the mesh
 	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
 	
@@ -214,22 +211,23 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat)
 void Renderer::RenderTransparentMeshes(const glm::vec3& cameraPosition)
 {
 	std::sort(m_transparentMeshes.begin(), m_transparentMeshes.end(),
-		[&](const std::pair<const Mesh*, glm::mat4>& lhs, const std::pair<const Mesh*, glm::mat4>& rhs)
+		[&](const MeshDrawCallInfo& lhs, const MeshDrawCallInfo& rhs)
 		{
-			glm::vec3 lhsPos = glm::vec3(lhs.second[3]);
+			glm::vec3 lhsPos = glm::vec3(lhs.worldMat[3]);
 			float lhsDistance = glm::length(lhsPos - cameraPosition);
 
-			glm::vec3 rhsPos = glm::vec3(rhs.second[3]);
+			glm::vec3 rhsPos = glm::vec3(rhs.worldMat[3]);
 			float rhsDistance = glm::length(rhsPos - cameraPosition);
 
 			return (lhsDistance > rhsDistance) ? true : false;
 		});
 
-	for (const std::pair<const Mesh*, glm::mat4>& object : m_transparentMeshes)
+	for (const MeshDrawCallInfo& object : m_transparentMeshes)
 	{
-		object.first->m_material->m_blendingEnabled = false;
-		this->RenderMesh(*object.first, object.second);
-		object.first->m_material->m_blendingEnabled = true;
+		object.mesh->m_material->m_blendingEnabled = false;
+		this->RenderMesh(*object.mesh, object.worldMat, *object.shader);
+		object.mesh->m_material->m_blendingEnabled = true;
+
 
 	}
 

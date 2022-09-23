@@ -77,11 +77,12 @@ void Line::AddVertex(const glm::vec3& position, const glm::vec3& color)
 
 void Line::Init()
 {
-	GetRoot()->GetMeshes()[0]->GenerateMesh({}, {}, {}, {}, {}, 2, GL_STATIC_DRAW, "Position-Color");
+	GetRoot()->GetMeshes()[0]->GenerateMesh({}, {}, {}, {}, {}, 2, GL_STATIC_DRAW);
 	GetRoot()->GetMeshes()[0]->m_meshName = "Line";
 }
 
 void Line::Render(Renderer& renderer)
 {
-	GetRoot()->Render(renderer);
+	Shader& shader = ShaderManager.GetShader("Position-Color");
+	GetRoot()->Render(renderer, shader);
 }

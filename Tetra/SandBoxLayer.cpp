@@ -50,9 +50,7 @@ void SandBoxLayer::Start()
 
 	//init entities
 	for (const std::shared_ptr<Entity>& entity : m_entities)
-	{
 		entity->Init();
-	}
 
 	m_lightManager.Initialize();
 	m_lightManager.SetShader(&ShaderManager.GetShader("main"));
@@ -90,27 +88,26 @@ void SandBoxLayer::Update(float dt)
 
 void SandBoxLayer::Render()
 {
-	//wireframe context ON/OFF
+	m_postProcessing->Render_To_Off_Screen_Buffer();
+
+	/*
+	* 
+	* Dosen't work when rendering to offscreen buffer
+	* 
 	if (m_wireframeMode)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
-	m_postProcessing->Render_To_Off_Screen_Buffer();
-
-
+	*/
+	
 	//render cubes/oblongs for point/spot lights
 	m_lightManager.DrawLights(m_renderer);
 
 	//loop entities
 	for (const std::shared_ptr<Entity>& entity : m_entities)
-	{
 		entity->Render(m_renderer);
 	
-	}
 	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
-	
 	
 	m_postProcessing->Render_FrameBuffer(m_renderer);
 
@@ -224,7 +221,7 @@ void SandBoxLayer::ImGUI()
 
 			ImGui::Checkbox("Wireframe", &m_wireframeMode);
 			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
-			
+			ImGui::Checkbox("Draw Normals", &ModelNode::DrawNormals);
 			PostProcessing::Config& ppConfig = m_postProcessing->m_config;
 			
 

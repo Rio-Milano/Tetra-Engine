@@ -55,7 +55,6 @@ void Plane::Init()
 	planeMesh->EndBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
 	//configure mesh
-	planeMesh->m_programName = "Position-Color";
 	planeMesh->m_meshName = "Plane";
 	planeMesh->m_drawType = 0;
 	planeMesh->customVertex = true;
@@ -73,5 +72,6 @@ void Plane::Update(const float& dt)
 
 void Plane::Render(Renderer& renderer)
 {
-	GetRoot()->Render(renderer);
+	Shader& shader = ShaderManager.GetShader("Position-Color");
+	GetRoot()->Render(renderer, shader);
 }

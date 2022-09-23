@@ -236,6 +236,9 @@
     <None Include="Data\Shaders\defaultVertexShader.vert" />
     <None Include="Data\Shaders\DiscardAlpha.frag" />
     <None Include="Data\Shaders\DiscardAlpha.vert" />
+    <None Include="Data\Shaders\draw_normals.frag" />
+    <None Include="Data\Shaders\draw_normals.geom" />
+    <None Include="Data\Shaders\draw_normals.vert" />
     <None Include="Data\Shaders\explodingGeometryShader.geom" />
     <None Include="Data\Shaders\frameBufferQuad.frag" />
     <None Include="Data\Shaders\frameBufferQuad.vert" />

@@ -209,5 +209,10 @@ void BaseLayer::CreateShader()
 	shader_5.Create("Data/Shaders/SkyBox.vert", "Data/Shaders/SkyBox.frag");
 	ShaderManager.AddShader("SkyBox", shader_5);
 
+	{
+		Shader draw_normals_shader;
+		draw_normals_shader.Create("Data/Shaders/draw_normals.vert", "Data/Shaders/draw_normals.frag", "Data/Shaders/draw_normals.geom");
+		ShaderManager.AddShader("Draw-Normals", draw_normals_shader);
+	}
 
 }

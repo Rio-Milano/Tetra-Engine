@@ -39,8 +39,7 @@ void Mesh::GenerateMesh
 		std::vector<glm::vec3>* colors,
 		std::vector<GLuint>* elements,
 		const GLuint& drawType, 
-		const GLenum& usage,
-		const std::string& programName
+		const GLenum& usage
 	)
 {
 	//the vertex attribute vector may have been set before call so use member as passed
@@ -51,7 +50,7 @@ void Mesh::GenerateMesh
 	if (elements == nullptr) elements = m_elements;
 
 	//assign attributes to mesh
-	StartMesh(drawType, programName, positions, normals, texCoords, colors, elements);
+	StartMesh(drawType, positions, normals, texCoords, colors, elements);
 	
 	SendVertexDataToGPU(usage);
 }
@@ -59,10 +58,6 @@ void Mesh::GenerateMesh
 
 
 
-const std::string& Mesh::GetProgramName()const
-{
-	return m_programName;
-}
 
 const bool& Mesh::GetFaceCullingFlag() const
 {
@@ -70,10 +65,6 @@ const bool& Mesh::GetFaceCullingFlag() const
 }
 
 
-void Mesh::SetProgramName(const std::string& programName)
-{
-	m_programName = programName;
-}
 
 void Mesh::SetFaceCullingFlag(const bool& flag)
 {
@@ -94,7 +85,7 @@ void Mesh::MakeAttributes(const Attributes& attributes)
 
 }
 
-void Mesh::StartMesh(const GLuint& drawType, const std::string& programName,
+void Mesh::StartMesh(const GLuint& drawType,
 	std::vector<glm::vec3>* positions,
 	std::vector<glm::vec3>* normals,
 	std::vector<glm::vec2>* texCoords,
@@ -107,8 +98,7 @@ void Mesh::StartMesh(const GLuint& drawType, const std::string& programName,
 	m_VAO = StartVAO();
 	//set draw type so renderer knows what opengl call to make to draw it
 	m_drawType = drawType;
-	//assign it a shader program name
-	m_programName = programName;
+
 	//assign buffers
 	m_positions = positions;
 	m_normals = normals;

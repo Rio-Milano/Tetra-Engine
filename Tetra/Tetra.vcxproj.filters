@@ -283,6 +283,9 @@
     <None Include="Data\Shaders\SkyBox.frag" />
     <None Include="Data\Shaders\defaultGeometryShader.geom" />
     <None Include="Data\Shaders\explodingGeometryShader.geom" />
+    <None Include="Data\Shaders\draw_normals.vert" />
+    <None Include="Data\Shaders\draw_normals.geom" />
+    <None Include="Data\Shaders\draw_normals.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png">

@@ -125,7 +125,9 @@ void AquaPig::Update(const float& dt)
 
 void AquaPig::Render(Renderer& renderer)
 {
-	static_cast<Model*>(this)->Render(renderer);
+	Shader& shader = ShaderManager.GetShader("main");
+
+	static_cast<Model*>(this)->Render(renderer, shader);
 }
 
 

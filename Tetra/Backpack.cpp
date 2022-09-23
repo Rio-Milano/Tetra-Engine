@@ -24,11 +24,6 @@ void BackPack::Init()
 	TbackPack = glm::scale(TbackPack, glm::vec3(0.4f));
 	nbackPack->SetAssimpNodeTransform(TbackPack);
 
-	
-	for (size_t i = 0; i < nbackPack->GetChildren().size(); i++)
-	{
-		nbackPack->GetChildren()[i]->GetMeshes()[0]->SetProgramName("explode");
-	}
 
 	SetRoot(nbackPack);
 }
@@ -39,5 +34,7 @@ void BackPack::Update(const float& dt)
 
 void BackPack::Render(Renderer& renderer)
 {
-	static_cast<Model*>(this)->Render(renderer);
+	Shader& shader = ShaderManager.GetShader("main");
+
+	static_cast<Model*>(this)->Render(renderer, shader);
 }

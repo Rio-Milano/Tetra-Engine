@@ -43,7 +43,7 @@ void TransparentEntity::Init()
 	};
 
 	this->m_mesh = std::make_shared<Mesh>();
-	this->m_mesh->GenerateMesh(positions, {}, textureCoords, {}, elements, 0, GL_STATIC_DRAW, "DiscardAlpha");
+	this->m_mesh->GenerateMesh(positions, {}, textureCoords, {}, elements, 0, GL_STATIC_DRAW);
 	
 
 	this->m_mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Window");
@@ -66,31 +66,33 @@ void TransparentEntity::Render(Renderer& renderer)
 		glm::vec3(0.0f, 0.0f, 10.0f)
 	};
 
+	Shader& shader = ShaderManager.GetShader("DiscardAlpha");
+
 	for (const glm::vec3& pos : windowPositions)
 	{
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, pos);
-		renderer.RenderMesh(*this->m_mesh.get(), transform);
+		renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
 
 	}
 
 	glm::mat4 transform(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
 	
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, -1.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
 	
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(-1.0f, 0.0f, 0.0f));
 	transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
 	
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(1.0f, 0.0f, 0.0f));
 	transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
 
 
 }

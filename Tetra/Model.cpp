@@ -17,6 +17,8 @@
 ModelNode
 */
 
+bool ModelNode::DrawNormals = false;
+
 ModelNode::ModelNode(const glm::mat4& transform)
 	:
 	m_assimpTransform(transform),
@@ -43,30 +45,34 @@ const bool& ModelNode::GetDrawOutline()const
 	return m_drawOutline;
 }
 
-void ModelNode::Render(Renderer& renderer, const glm::mat4& worldPrevious)
+void ModelNode::Render(Renderer& renderer, Shader& shader, const glm::mat4& worldPrevious)
 {
 	//apply the user set transform then the assimp transform then the previous transform which goes back up the hirearchy
 	glm::mat4 worldFinal = worldPrevious * m_assimpTransform * m_transform;
 
 	//loop the nodes meshes
-	for (const std::shared_ptr<Mesh>& mesh : m_meshes)
+	for (/*const*/ std::shared_ptr<Mesh>& mesh : m_meshes)
 	{
 		if (this->m_drawOutline)
-			DrawOutline(*mesh.get(), renderer, worldFinal);
+			DrawOutline(*mesh.get(), renderer, shader, worldFinal);
 		else
-			renderer.RenderMesh(*mesh.get(), worldFinal);//render each mesh with the current world transform
+			renderer.RenderMesh(*mesh.get(), worldFinal, shader);//render each mesh with the current world transform
+
+		if(DrawNormals)
+			renderer.RenderMesh(*mesh.get(), worldFinal, ShaderManager.GetShader("Draw-Normals"));//render each mesh with the current world transform
+
 	}
 
 	//loop the nodes children
 	for (const std::shared_ptr<ModelNode>& modelNode : m_children)
 		//render each child
-		modelNode->Render(renderer, worldFinal);
+		modelNode->Render(renderer, shader, worldFinal);
 
 }
 
 #define DEFAULT_OUTLINE_COLOR glm::vec3(1.0f)
 #define DEFAULT_OUTLINE_SCALE glm::vec3(1.04f)
-void ModelNode::DrawOutline(Mesh& mesh, Renderer& renderer, const glm::mat4& transform)
+void ModelNode::DrawOutline(Mesh& mesh, Renderer& renderer, Shader& shader, const glm::mat4& transform)
 {
 	glEnable(GL_STENCIL_TEST);//enable the stencil buffer
 
@@ -75,18 +81,17 @@ void ModelNode::DrawOutline(Mesh& mesh, Renderer& renderer, const glm::mat4& tra
 
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);//allways pass fragment no matter value
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);//replace every stencil value with referance value => 1
-	renderer.RenderMesh(mesh, transform);//render the base mesh
+	renderer.RenderMesh(mesh, transform, shader);//render the base mesh
 
 	glm::mat4 newTransform = glm::scale(transform, DEFAULT_OUTLINE_SCALE);//define scaled the mesh transform
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);//for each fragment if the stencil value is not equal to 1 then pass the test (now only fragment edges of scaled mesh will pass stencil test)
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);//for every passed test set stencil value to referance => 1
-	std::string meshProgramName = mesh.GetProgramName();//hold name of current mesh program name
-	mesh.SetProgramName("lightCubeShader");//use a different shader to draw outline
-	Shader& shader = ShaderManager.GetShader("lightCubeShader");//get shader for outline
-	shader.SetUniform3fv(shader.GetLocation("cubeColor"), DEFAULT_OUTLINE_COLOR);//set uniform color in shader
-	renderer.RenderMesh(mesh, newTransform);//render the scaled mesh with new transform and new rules applied to the stencil buffer
+	
+	Shader& new_shader = ShaderManager.GetShader("lightCubeShader");//get shader for outline
+	new_shader.SetUniform3fv(new_shader.GetLocation("cubeColor"), DEFAULT_OUTLINE_COLOR);//set uniform color in shader
+	
+	renderer.RenderMesh(mesh, newTransform, new_shader);//render the scaled mesh with new transform and new rules applied to the stencil buffer
 
-	mesh.SetProgramName(meshProgramName);//reset the mesh program name
 
 	glClear(GL_STENCIL_BUFFER_BIT);//clear stencil buffer
 	glDisable(GL_STENCIL_TEST);//disable stencil buffer as no longer needed
@@ -181,12 +186,12 @@ const std::shared_ptr<ModelNode>& Model::GetRoot()const
 	return m_rootModelNode;
 }
 
-void Model::Render(Renderer& renderer)
+void Model::Render(Renderer& renderer, Shader& shader)
 {
 	//trigger break point if root is null
 	_ASSERT(m_rootModelNode != nullptr);
 	//else render hirearchy
-	m_rootModelNode->Render(renderer);
+	m_rootModelNode->Render(renderer, shader);
 }
 
 std::shared_ptr<ModelNode> Model::FindNode(const std::string& nodeName, std::shared_ptr<ModelNode> node)const

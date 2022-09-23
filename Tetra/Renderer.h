@@ -27,7 +27,7 @@ public:
 	//init viewport, set window size change view port resize call back and eneble depth test
 	void InitRenderer();
 	//render a construct of geometry
-	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat);
+	void RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& shader);
 	void RenderTransparentMeshes(const glm::vec3& cameraPosition);
 	//set clear color and clear color and depth buffers
 	void StartRendering();
@@ -48,7 +48,14 @@ private:
 	//http://www.rgbtool.com
 	glm::vec4 m_clearColor{ 0.f, 0.f, 0.f, 1.f};//default window clear color
 
-	std::vector<std::pair<const Mesh*, glm::mat4>> m_transparentMeshes;
+	struct MeshDrawCallInfo
+	{
+		const Mesh* mesh;
+		glm::mat4 worldMat;
+		Shader* shader;
+	};
+
+	std::vector<MeshDrawCallInfo> m_transparentMeshes;
 };
 
 #endif

@@ -70,7 +70,7 @@ void SkyBox::Init()
 	};
 
 	m_skyBoxMesh = std::make_shared<Mesh>();
-	m_skyBoxMesh->GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW, "SkyBox");
+	m_skyBoxMesh->GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW);
 	m_skyBoxMesh->SetFaceCullingFlag(false);
 
 	m_cubeMapForSkyBox = std::make_shared<CubeMap>();
@@ -92,7 +92,8 @@ void SkyBox::Render(Renderer& renderer)
 	skyBoxShader.SetUniform1i(skyBoxShader.GetLocation("cubeMap"), 0);
 	
 	glDepthFunc(GL_LEQUAL);
-	renderer.RenderMesh(*m_skyBoxMesh.get(), glm::mat4(1.0f));
+	Shader& shader = ShaderManager.GetShader("SkyBox");
+	renderer.RenderMesh(*m_skyBoxMesh.get(), glm::mat4(1.0f), shader);
 	glDepthFunc(GL_LESS);
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
