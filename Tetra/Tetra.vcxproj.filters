@@ -24,46 +24,46 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="Core\Graphics\CPP\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="Core\Graphics\CPP\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
+    <ClCompile Include="Core\Managers\CPP\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="glmIncludes.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Helper.cpp">
+    <ClCompile Include="Misc\CPP\Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Core\Structure\CPP\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="OpenGL_Abstraction\CPP\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
+    <ClCompile Include="Core\Managers\CPP\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseLayer.cpp">
+    <ClCompile Include="Core\Framework\CPP\BaseLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="Core\Framework\CPP\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SandBoxLayer.cpp">
+    <ClCompile Include="Core\Framework\CPP\SandBoxLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="Core\Structure\CPP\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="Core\Managers\CPP\TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightManager.cpp">
+    <ClCompile Include="Core\Managers\CPP\LightManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="external_libaries\include\STB_ImageLoader\stb_image.cpp">
@@ -90,102 +90,102 @@
     <ClCompile Include="external_libaries\include\imGUI\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XInput_Wrapper.cpp">
+    <ClCompile Include="Core\Wrapper\CPP\XInput_Wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="Core\Structure\CPP\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="Core\Structure\CPP\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
+    <ClCompile Include="Core\Managers\CPP\MeshManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Line.cpp">
+    <ClCompile Include="Entities\CPP\Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Container.cpp">
+    <ClCompile Include="Entities\CPP\Container.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AquaPig.cpp">
+    <ClCompile Include="Entities\CPP\AquaPig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseGrid.cpp">
+    <ClCompile Include="Entities\CPP\BaseGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Plane.cpp">
+    <ClCompile Include="Entities\CPP\Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Grass.cpp">
+    <ClCompile Include="Entities\CPP\Grass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransparentEntity.cpp">
+    <ClCompile Include="Entities\CPP\TransparentEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SkyBox.cpp">
+    <ClCompile Include="Entities\CPP\SkyBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PostProcessing.cpp">
+    <ClCompile Include="Core\Graphics\CPP\PostProcessing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UniformBufferObject.cpp">
+    <ClCompile Include="OpenGL_Abstraction\CPP\UniformBufferObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Backpack.cpp">
+    <ClCompile Include="Entities\CPP\Backpack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="Core\Graphics\H\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="Core\Graphics\H\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderManager.h">
+    <ClInclude Include="Core\Managers\H\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Helper.h">
+    <ClInclude Include="Misc\H\Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
+    <ClInclude Include="Entities\H\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container.h">
+    <ClInclude Include="Entities\H\Container.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Core\Structure\H\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
+    <ClInclude Include="OpenGL_Abstraction\H\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
+    <ClInclude Include="Core\Managers\H\InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseLayer.h">
+    <ClInclude Include="Core\Framework\H\BaseLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
+    <ClInclude Include="Core\Framework\H\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SandBoxLayer.h">
+    <ClInclude Include="Core\Framework\H\SandBoxLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Core\Structure\H\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="Core\Structure\H\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="Core\Managers\H\TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightManager.h">
+    <ClInclude Include="Core\Managers\H\LightManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="external_libaries\include\STB_ImageLoader\stb_image.h">
@@ -218,49 +218,49 @@
     <ClInclude Include="external_libaries\include\imGUI\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XInput_Wrapper.h">
+    <ClInclude Include="Core\Wrapper\H\XInput_Wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="Core\Structure\H\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MeshManager.h">
+    <ClInclude Include="Core\Managers\H\MeshManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Line.h">
+    <ClInclude Include="Entities\H\Line.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AquaPig.h">
+    <ClInclude Include="Entities\H\AquaPig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseGrid.h">
+    <ClInclude Include="Entities\H\BaseGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plane.h">
+    <ClInclude Include="Entities\H\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Grass.h">
+    <ClInclude Include="Entities\H\Grass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransparentEntity.h">
+    <ClInclude Include="Entities\H\TransparentEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Framebuffer.h">
+    <ClInclude Include="OpenGL_Abstraction\H\Framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SkyBox.h">
+    <ClInclude Include="Entities\H\SkyBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CubeMap.h">
+    <ClInclude Include="OpenGL_Abstraction\H\CubeMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PostProcessing.h">
+    <ClInclude Include="Core\Graphics\H\PostProcessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UniformBufferObject.h">
+    <ClInclude Include="OpenGL_Abstraction\CPP\UniformBufferObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Backpack.h">
+    <ClInclude Include="Entities\H\Backpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -288,13 +288,13 @@
     <None Include="Data\Shaders\Explosion\explode_primitives.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Data\Images\Box.png">
+    <Image Include="Data\Textures\Box.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Data\Images\BoxEmission.png">
+    <Image Include="Data\Textures\BoxEmission.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Data\Images\BoxSpec.png">
+    <Image Include="Data\Textures\BoxSpec.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
