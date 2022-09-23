@@ -27,10 +27,10 @@ public:
 	//this takes and stores size and offset data about an element that the ubo will hold
 	void SetElementData(const std::string& elementName, const Element& element);
 
-private:
 	GLuint 
 		m_ubo,//buffer object id
 		m_bindingPoint;//index to bind to
+private:
 
 	std::string m_uniformBlockName;//the name of the uniform block in the shader
 	

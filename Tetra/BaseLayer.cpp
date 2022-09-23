@@ -70,6 +70,8 @@ void BaseLayer::BaseUpdate(const float& dt)
 	//update camera
 	m_camera.Update(dt);
 	
+	ShaderManager.UpdateAllShaders(m_camera.GetPosition());
+
 	UpdateUniformBuffers();
 	
 	Shader& skyBoxShader = ShaderManager.GetShader("SkyBox");
@@ -104,6 +106,55 @@ void BaseLayer::CreateUniformBuffers()
 	std::shared_ptr<UniformBufferObject> World = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(sizeof(float)), 1, "World");
 	World->SetElementData("time", UniformBufferObject::Element{sizeof(float), 0});
 	ShaderManager.AddUniformBufferObject("World", World);
+
+	size_t ubo_size = 80 * NUMBER_OF_LIGHTS;
+
+
+	std::shared_ptr<UniformBufferObject> ubo = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(ubo_size), 2, "Lights");
+
+	GLsizei offset = 0;
+	for (size_t i = 0; i < NUMBER_OF_LIGHTS; i++)
+	{
+		const size_t lightNumber = i + 1;
+
+		//position
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Position", UniformBufferObject::Element{ 12, offset });
+		
+		//Color
+		offset += 16;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Color", UniformBufferObject::Element{ 12, offset});
+		
+		//Direction
+		offset += 16;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Direction", UniformBufferObject::Element{ 12, offset });
+
+		//Intensity
+		offset += 12;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Intensity", UniformBufferObject::Element{ 4, offset });
+		
+		//Range
+		offset += 4;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Range", UniformBufferObject::Element{ 4, offset });
+		
+		//Inner Cutoff
+		offset += 4;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":InnerCutoff", UniformBufferObject::Element{ 4, offset });
+		
+		//Inner Cutoff
+		offset += 4;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":OuterCutoff", UniformBufferObject::Element{ 4, offset });
+
+		//Type
+		offset += 4;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Type", UniformBufferObject::Element{ 4, offset });
+		
+		//In Use
+		offset += 4;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":InUse", UniformBufferObject::Element{ 4, offset });
+
+		offset += 16;
+	}
+	ShaderManager.AddUniformBufferObject("Lights", ubo);
 }
 
 void BaseLayer::BaseimGUI()

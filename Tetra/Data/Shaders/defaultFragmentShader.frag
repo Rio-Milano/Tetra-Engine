@@ -28,19 +28,24 @@ out vec4 FragColor;
 */
 struct Light
 {
-	vec3 
-		position,
-		color,
-		direction;
+	//Block 1
+	vec3 position; //offset 0, size 16 bytes with 4 bytes of padding
 	
+	//Block 2
+	vec3 color;	//offset 16 bytes, size 16 bytes with 4 bytes of padding
+
+	//Block 3
+	vec3 direction;//offset 32 bytes, size 12 bytes with 0 padding
+	float intensity;//offset 44 bytes, size 4 bytes with 0 padding
+	
+	//Block 4
 	float 
-		intensity,
 		range,
 		innerCutOffAngle,
 		outerCutOffAngle;
-
 	int type;
-
+	
+	//Block 5
 	bool inUse;
 
 	/*
@@ -51,6 +56,11 @@ struct Light
 	*/
 };
 
+#define NUMBER_OF_LIGHTS 10
+layout(std140) uniform Lights
+{
+	Light lights[NUMBER_OF_LIGHTS];
+};
 
 struct Material
 {
@@ -78,22 +88,22 @@ struct Material
 
 };
 
-
-
 /*
 MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO
 */
-#define NUMBER_OF_LIGHTS 10
+
+
+
+
 #define SPECULAR_POWER 32
-
-
-
 
 /*
  UNIFORM UNIFORM UNIFORM UNIFORM UNIFORM UNIFORM
 */
 uniform Material material;
-uniform Light lights [NUMBER_OF_LIGHTS];
+
+
+
 uniform vec3 cameraPosition;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
@@ -127,10 +137,11 @@ void main()
 
 	if(ProcessEmissionFragment()) return;
 
-	vec3 finalColor = vec3(0.0);
+	vec3 finalColor;
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
+
 		if(!lights[i].inUse)
 			continue;
 

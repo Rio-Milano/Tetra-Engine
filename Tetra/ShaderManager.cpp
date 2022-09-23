@@ -52,6 +52,14 @@ const std::shared_ptr<UniformBufferObject>& ShaderManager::GetUniformBufferObjec
 	return m_uniformBufferObjects[uboName];
 }
 
+void ShaderManager::UpdateAllShaders(glm::vec3 cameraPosition)
+{
+	for (std::unordered_map<std::string, Shader>::iterator i = m_programNameProgramIDMap.begin(); i != m_programNameProgramIDMap.end(); i++)
+	{
+		i->second.SetUniform3fv(i->second.GetLocation("cameraPosition"), cameraPosition);
+	}
+}
+
 Shader& ShaderManager::GetShader(const std::string& programName)
 {
 	//if shader with passed name not in data store then report error

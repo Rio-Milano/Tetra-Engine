@@ -78,9 +78,6 @@ void SandBoxLayer::Update(float dt)
 		m_lightManager.GetLight(9).m_drawLight = false;
 
 		//update 
-		m_lightManager.SetShader(&ShaderManager.GetShader("main"));
-		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
-		m_lightManager.SetShader(&ShaderManager.GetShader("explode"));
 		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
 
 		//loop entitys

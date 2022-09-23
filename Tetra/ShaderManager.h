@@ -26,6 +26,8 @@ public:
 	void AddUniformBufferObject(const std::string& uboName, const std::shared_ptr<UniformBufferObject>& ubo);
 	const std::shared_ptr<UniformBufferObject>& GetUniformBufferObject(const std::string& uboName);
 
+	void UpdateAllShaders(glm::vec3 cameraPosition);
+
 	//clean up data store
 	void DeleteAllShaders();
 

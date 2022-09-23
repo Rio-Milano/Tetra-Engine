@@ -11,10 +11,6 @@ out Varying
 	vec3 position;
 } outData;
 
-
-
-
-
 uniform mat3 normalMat;
 
 void main()

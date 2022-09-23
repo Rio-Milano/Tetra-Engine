@@ -1,5 +1,6 @@
 #include "UniformBufferObject.h"
-
+#include"glmIncludes.h"
+#include<iostream>
 UniformBufferObject::UniformBufferObject(const GLsizei& bufferSize, const GLuint& bindingPoint, const std::string& uniformBlockName)
 	:
 		m_ubo(NULL),
@@ -44,5 +45,6 @@ void UniformBufferObject::SetBufferElement(const std::string& elementName, void*
 	glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 
 }

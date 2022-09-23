@@ -66,6 +66,9 @@ void LightManager::Initialize()
 
 	//generate the mesh used for drawing the lights
 	m_meshForLight.GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW, "lightCubeShader");
+
+	
+
 }
 
 void LightManager::SetShader(Shader* shader)
@@ -175,39 +178,50 @@ Light& LightManager::GetLight(const int& index)
 
 void LightManager::UpdateShader(const float& dt)
 {
-	//throw break pont if shader is nullptr
-	_ASSERT(m_shader);
 
-	//loop lights
+	//get the uniform buffer object
+	std::shared_ptr<UniformBufferObject> lights_ubo = ShaderManager.GetUniformBufferObject("Lights");
+	
+	//validate ubo
+	_ASSERT(lights_ubo != nullptr);
+
+	
+	//offset in bytes for current element
+	GLsizei offset = 0;
+	
+
+	//loop each light
 	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
-		//set prefix used for getting location of light attributes from shader
-		std::string prefix = "lights[" + std::to_string(i) + "].";
-
-		//get each light attribute location
-		GLuint lightPosLoc = m_shader->GetLocation(prefix + "position");
-		GLuint innerLightCutOffAngleLoc = m_shader->GetLocation(prefix + "innerCutOffAngle");
-		GLuint outerLightCutoffAngleLoc = m_shader->GetLocation(prefix + "outerCutOffAngle");
-		GLuint lightColorLoc = m_shader->GetLocation(prefix + "color");
-		GLuint lightIntensityLoc = m_shader->GetLocation(prefix + "intensity");
-		GLuint lightTypeLoc = m_shader->GetLocation(prefix + "type");
-		GLuint lightInUseLoc = m_shader->GetLocation(prefix + "inUse");
-		GLuint lightDirLoc = m_shader->GetLocation(prefix + "direction");
-		GLuint lightRangeLoc = m_shader->GetLocation(prefix + "range");
+		//get light number
+		const size_t lightNumber = i + 1;
+		
+		//get light string prefix
+		std::string prefix = "Light:" + std::to_string(lightNumber) + ":";
 
 		//get current light
 		Light& light = m_lights[i];
 
-		//set each light attribute location in shader to light attribute in memory
-		m_shader->SetUniform3fv(lightColorLoc, light.m_lightColor);
-		m_shader->SetUniform1f(lightIntensityLoc, light.m_lightIntensity);
-		m_shader->SetUniform1b(lightInUseLoc, light.m_inUse);
-		m_shader->SetUniform1i(lightTypeLoc, static_cast<int>(light.m_lightType));
-		m_shader->SetUniform3fv(lightDirLoc, light.m_direction);
-		m_shader->SetUniform3fv(lightPosLoc, light.m_position);
-		m_shader->SetUniform1f(lightRangeLoc, light.m_range);
-		m_shader->SetUniform1f(innerLightCutOffAngleLoc, static_cast<float>(cos(glm::radians(light.m_innerCutOffAngle))));
-		m_shader->SetUniform1f(outerLightCutoffAngleLoc, static_cast<float>(cos(glm::radians(light.m_outerCutOffAngle))));
+		//set elements
+		lights_ubo->SetBufferElement(prefix + "Position", &light.m_position);
+		lights_ubo->SetBufferElement(prefix + "Color", &light.m_lightColor);
+		lights_ubo->SetBufferElement(prefix + "Direction", &light.m_direction);
+		lights_ubo->SetBufferElement(prefix + "Intensity", &light.m_lightIntensity);
+		lights_ubo->SetBufferElement(prefix + "Range", &light.m_range);
+		
+		float innerCutoff = static_cast<float>(cos(glm::radians(light.m_innerCutOffAngle)));
+		lights_ubo->SetBufferElement(prefix + "InnerCutoff",&innerCutoff);
+		
+		float outerCutoff = static_cast<float>(cos(glm::radians(light.m_outerCutOffAngle)));
+		lights_ubo->SetBufferElement(prefix + "OuterCutoff", &outerCutoff);
+		
+		lights_ubo->SetBufferElement(prefix + "Type", &light.m_lightType);
+		lights_ubo->SetBufferElement(prefix + "InUse", &light.m_inUse);
+														
+		
+
+
+
 
 		//if light is a spot light
 		if (light.m_lightType == LightType::Spot)
@@ -230,7 +244,8 @@ void LightManager::UpdateShader(const float& dt)
 			}
 		}
 	}
-
+	glUnmapBuffer(GL_UNIFORM_BUFFER);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void LightManager::DrawLights(Renderer& renderer)
