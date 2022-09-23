@@ -60,7 +60,7 @@ void LightManager::Initialize()
 
 	//create a shader to draw the lights
 	Shader cubeShader;
-	cubeShader.Create("Data/Shaders/lightCubeVertexShader.vert", "Data/Shaders/lightCubeFragmentShader.frag");
+	cubeShader.Create("Data/Shaders/Basic Position uColor/lightCubeVertexShader.vert", "Data/Shaders/Basic Position uColor/lightCubeFragmentShader.frag");
 	//add the shader to storage
 	ShaderManager.AddShader("lightCubeShader", cubeShader);
 

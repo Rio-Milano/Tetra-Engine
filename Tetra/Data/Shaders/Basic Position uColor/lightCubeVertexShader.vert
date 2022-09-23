@@ -11,7 +11,5 @@ uniform mat4 worldMat;
 
 void main()
 {
-
 	gl_Position = Projection_X_View * worldMat * vec4(position, 1.0);
-
 }

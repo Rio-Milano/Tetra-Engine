@@ -185,33 +185,52 @@ void BaseLayer::CreateShader()
 {
 	//create default shaders
 
-	Shader shader;
-	shader.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag", "Data/Shaders/defaultGeometryShader.geom");
-	ShaderManager.AddShader("main", shader);
+	//Main Shader
+	{
+		Shader shader;
+		shader.Create("Data/Shaders/Main/defaultVertexShader.vert", "Data/Shaders/Main/defaultFragmentShader.frag");
+		ShaderManager.AddShader("main", shader);
+	}
 
-	Shader explode;
-	explode.Create("Data/Shaders/defaultVertexShader.vert", "Data/Shaders/defaultFragmentShader.frag", "Data/Shaders/explodingGeometryShader.geom");
-	ShaderManager.AddShader("explode", explode);
+	//Explode Shader
+	{
+		Shader explode;
+		explode.Create("Data/Shaders/Explosion/explode_primitives.vert", "Data/Shaders/Main/defaultFragmentShader.frag", "Data/Shaders/Explosion/explode_primitives.geom");
+		ShaderManager.AddShader("explode", explode);
+	}
 
-	Shader shader_2;
-	shader_2.Create("Data/Shaders/Position-Color.vert", "Data/Shaders/Position-Color.frag");
-	ShaderManager.AddShader("Position-Color", shader_2);
+	//Position Color
+	{
+		Shader shader_2;
+		shader_2.Create("Data/Shaders/Basic Position Color/Position-Color.vert", "Data/Shaders/Basic Position Color/Position-Color.frag");
+		ShaderManager.AddShader("Position-Color", shader_2);
+	}
 
-	Shader shader_3;
-	shader_3.Create("Data/Shaders/DiscardAlpha.vert", "Data/Shaders/DiscardAlpha.frag");
-	ShaderManager.AddShader("DiscardAlpha", shader_3);
+	//Low Alpha Discard Shader
+	{
+		Shader shader_3;
+		shader_3.Create("Data/Shaders/Discard Alpha/DiscardAlpha.vert", "Data/Shaders/Discard Alpha/DiscardAlpha.frag");
+		ShaderManager.AddShader("DiscardAlpha", shader_3);
+	}
 
-	Shader shader_4;
-	shader_4.Create("Data/Shaders/frameBufferQuad.vert", "Data/Shaders/frameBufferQuad.frag");
-	ShaderManager.AddShader("frameBufferQuad", shader_4);
+	//Post Processing Shader
+	{
+		Shader shader_4;
+		shader_4.Create("Data/Shaders/Post Processing/frameBufferQuad.vert", "Data/Shaders/Post Processing/frameBufferQuad.frag");
+		ShaderManager.AddShader("frameBufferQuad", shader_4);
+	}
 
-	Shader shader_5;
-	shader_5.Create("Data/Shaders/SkyBox.vert", "Data/Shaders/SkyBox.frag");
-	ShaderManager.AddShader("SkyBox", shader_5);
+	//SkyBox Shader
+	{
+		Shader shader_5;
+		shader_5.Create("Data/Shaders/SkyBox/SkyBox.vert", "Data/Shaders/SkyBox/SkyBox.frag");
+		ShaderManager.AddShader("SkyBox", shader_5);
+	}
 
+	//Draw Normals Shader
 	{
 		Shader draw_normals_shader;
-		draw_normals_shader.Create("Data/Shaders/draw_normals.vert", "Data/Shaders/draw_normals.frag", "Data/Shaders/draw_normals.geom");
+		draw_normals_shader.Create("Data/Shaders/Draw Normals/draw_normals.vert", "Data/Shaders/Draw Normals/draw_normals.frag", "Data/Shaders/Draw Normals/draw_normals.geom");
 		ShaderManager.AddShader("Draw-Normals", draw_normals_shader);
 	}
 

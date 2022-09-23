@@ -1,67 +1,37 @@
 #version 330 core
 
-/*
- IN IN IN IN IN IN IN IN IN IN IN IN IN IN IN IN
-*/
+//IN
 in Varying
 {
-	vec2 textureCord;
-	vec3 normal;
 	vec3 position;
+	vec2 texCoord;
+	vec3 normal;
 } inData;
 
 
-
-
-
-/*
- OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT OUT
-*/
+//OUT
 out vec4 FragColor;
 
-
-
-
-
-/*
- STRUCT STRUCT STRUCT STRUCT STRUCT STRUCT STRUCT
-*/
+//STRUCTS
 struct Light
 {
-	//Block 1
-	vec3 position; //offset 0, size 16 bytes with 4 bytes of padding
-	
-	//Block 2
-	vec3 color;	//offset 16 bytes, size 16 bytes with 4 bytes of padding
+	/*
+	LIGHT TYPE :  = Directional
+	LIGHT TYPE : 2 = Point
+	LIGHT TYPE : 3 = Spot
+	*/
 
-	//Block 3
-	vec3 direction;//offset 32 bytes, size 12 bytes with 0 padding
-	float intensity;//offset 44 bytes, size 4 bytes with 0 padding
-	
-	//Block 4
+	vec3 position;
+	vec3 color;
+	vec3 direction;
+	float intensity;
 	float 
 		range,
 		innerCutOffAngle,
 		outerCutOffAngle;
 	int type;
-	
-	//Block 5
 	bool inUse;
-
-	/*
-	LIGHT TYPE : 0 = Amient
-	LIGHT TYPE : 1 = Directional
-	LIGHT TYPE : 2 = Point
-	LIGHT TYPE : 3 = Spot
-	*/
 };
-
-#define NUMBER_OF_LIGHTS 10
-layout(std140) uniform Lights
-{
-	Light lights[NUMBER_OF_LIGHTS];
-};
-
 struct Material
 {
 	sampler2D diffuseMap;
@@ -83,34 +53,28 @@ struct Material
 	bool mapToEnviroment;
 	bool hasCubeMap;
 	samplerCube cubeMap;
-	//doing
 	int reflectionType;//0 = reflection, 1 = refraction
-
 };
 
-/*
-MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO MACRO
-*/
 
-
-
-
+//MACROs
 #define SPECULAR_POWER 32
+#define NUMBER_OF_LIGHTS 10
 
-/*
- UNIFORM UNIFORM UNIFORM UNIFORM UNIFORM UNIFORM
-*/
+//UNIFORM
 uniform Material material;
-
-
+layout(std140) uniform Lights
+{
+	Light lights[NUMBER_OF_LIGHTS];
+};
 
 uniform vec3 cameraPosition;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
 
-/*
-FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS FUNCTIONS 
-*/
+
+//FUNCTION PROTOTYPES
+
 float CalculateAttenuation(int i);
 float CalculateDiffuse(vec3 dirToLight, vec3 normal);
 float CalculateSpecular(int i, vec3 normal);
@@ -189,7 +153,7 @@ bool ProcessLowAlphaFragment()
 	{
 		if(material.hasDiffuseMap)
 		{
-			if(texture(material.diffuseMap, inData.textureCord).a < 0.1)
+			if(texture(material.diffuseMap, inData.texCoord).a < 0.1)
 			{
 				discard;
 				return true;
@@ -229,7 +193,7 @@ bool ProcessReflectiveFragment(vec3 normal)
 vec3 GetFragmentDiffuse()
 {
 	if(material.hasDiffuseMap)
-		return texture(material.diffuseMap, inData.textureCord).xyz;
+		return texture(material.diffuseMap, inData.texCoord).xyz;
 	else
 		return material.defaultDiffuseColor;
 };
@@ -237,7 +201,7 @@ vec3 GetFragmentDiffuse()
 vec3 GetFragmentSpecular()
 {
 	if(material.hasSpecularMap)
-		return texture(material.specularMap, inData.textureCord).xyz;
+		return texture(material.specularMap, inData.texCoord).xyz;
 	else
 	{
 		if(material.hasDiffuseMap)
@@ -250,7 +214,7 @@ vec3 GetFragmentSpecular()
 vec3 GetFragmentEmission()
 {
 	if(material.hasEmissionMap)
-		return texture(material.emissionMap, inData.textureCord).xyz;
+		return texture(material.emissionMap, inData.texCoord).xyz;
 	else	
 		return vec3(0.0);
 }

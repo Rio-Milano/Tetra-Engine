@@ -1,30 +1,30 @@
 #version 330 core
 
-
+//IN
 in vec2 varying_texCoord;
 
+//OUT
 out vec4 FragColor;
 
+//STRUCTS1
 struct Material
 {
 	sampler2D diffuseMap;
 	bool hasDiffuseMap;
 	vec3 defaultDiffuseColor;
-	 
 };
 
 //basic 1 step post processing effects
 uniform bool invertFragColor;
 uniform bool greyScaleFragColor;
 
-//convolution based post processing effects
+//convolution/Kernal based post processing effects
 uniform float XsamplingOffset;
 uniform float YsamplingOffset;
 uniform bool sharpenKernel;
 uniform bool weirdKernel;
 uniform bool blurKernel;
 uniform bool edgeDetectionKernel;
-
 uniform Material material;
 
 void main()

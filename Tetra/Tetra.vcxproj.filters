@@ -269,23 +269,23 @@
     <Text Include="Data\Shaders\vertex_shader.vs.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Shaders\defaultVertexShader.vert" />
-    <None Include="Data\Shaders\defaultFragmentShader.frag" />
-    <None Include="Data\Shaders\lightCubeVertexShader.vert" />
-    <None Include="Data\Shaders\lightCubeFragmentShader.frag" />
-    <None Include="Data\Shaders\Position-Color.vert" />
-    <None Include="Data\Shaders\Position-Color.frag" />
-    <None Include="Data\Shaders\DiscardAlpha.frag" />
-    <None Include="Data\Shaders\DiscardAlpha.vert" />
-    <None Include="Data\Shaders\frameBufferQuad.vert" />
-    <None Include="Data\Shaders\frameBufferQuad.frag" />
-    <None Include="Data\Shaders\SkyBox.vert" />
-    <None Include="Data\Shaders\SkyBox.frag" />
-    <None Include="Data\Shaders\defaultGeometryShader.geom" />
-    <None Include="Data\Shaders\explodingGeometryShader.geom" />
-    <None Include="Data\Shaders\draw_normals.vert" />
-    <None Include="Data\Shaders\draw_normals.geom" />
-    <None Include="Data\Shaders\draw_normals.frag" />
+    <None Include="Data\Shaders\Main\defaultVertexShader.vert" />
+    <None Include="Data\Shaders\Main\defaultFragmentShader.frag" />
+    <None Include="Data\Shaders\Basic Position uColor\lightCubeVertexShader.vert" />
+    <None Include="Data\Shaders\Basic Position uColor\lightCubeFragmentShader.frag" />
+    <None Include="Data\Shaders\Basic Position Color\Position-Color.vert" />
+    <None Include="Data\Shaders\Basic Position Color\Position-Color.frag" />
+    <None Include="Data\Shaders\Discard Alpha\DiscardAlpha.frag" />
+    <None Include="Data\Shaders\Discard Alpha\DiscardAlpha.vert" />
+    <None Include="Data\Shaders\Post Processing\frameBufferQuad.vert" />
+    <None Include="Data\Shaders\Post Processing\frameBufferQuad.frag" />
+    <None Include="Data\Shaders\SkyBox\SkyBox.vert" />
+    <None Include="Data\Shaders\SkyBox\SkyBox.frag" />
+    <None Include="Data\Shaders\Explosion\explode_primitives.geom" />
+    <None Include="Data\Shaders\Draw Normals\draw_normals.vert" />
+    <None Include="Data\Shaders\Draw Normals\draw_normals.geom" />
+    <None Include="Data\Shaders\Draw Normals\draw_normals.frag" />
+    <None Include="Data\Shaders\Explosion\explode_primitives.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Box.png">
