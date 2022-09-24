@@ -54,7 +54,7 @@ struct Material
 	bool m_blendingEnabled{false};
 	bool m_mapToEnviroment{ false };
 	int m_reflectionType{ ReflectionType::Reflection };//reflection
-	float m_toRefractiveIndex = RefractiveIndex::Glass;
+	float m_toRefractiveIndex = RefractiveIndex::Ice;
 
 	//default values
 	float m_ambientIntensity{ 0.1f };//amount of ambient light we can reflect

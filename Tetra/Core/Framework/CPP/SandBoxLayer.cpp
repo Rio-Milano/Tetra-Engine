@@ -39,12 +39,12 @@ void SandBoxLayer::Start()
 	//must come last for optimization
 	std::shared_ptr<SkyBox> skyBox = std::make_shared<SkyBox>();
 	skyBox->SetFaceLocations({
-			"Data/Textures/SkyBox/posx.jpg",
-			"Data/Textures/SkyBox/negx.jpg",
-			"Data/Textures/SkyBox/posy.jpg",
-			"Data/Textures/SkyBox/negy.jpg",
-			"Data/Textures/SkyBox/posz.jpg",
-			"Data/Textures/SkyBox/negz.jpg"
+			"Data/Textures/SkyBox/City/posx.jpg",
+			"Data/Textures/SkyBox/City/negx.jpg",
+			"Data/Textures/SkyBox/City/posy.jpg",
+			"Data/Textures/SkyBox/City/negy.jpg",
+			"Data/Textures/SkyBox/City/posz.jpg",
+			"Data/Textures/SkyBox/City/negz.jpg"
 		});
 	m_entities.emplace_back(skyBox);
 

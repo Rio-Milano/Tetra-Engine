@@ -16,7 +16,10 @@ void BackPack::Init()
 	std::shared_ptr<ModelNode>
 		nbackPack = backPack->GetRoot();
 
-	
+	for (size_t i = 0; i < nbackPack->GetChildren().size(); i++)
+	{
+		nbackPack->GetChildren()[i]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	}
 
 	glm::mat4 TbackPack(1.0f);
 	TbackPack = glm::translate(TbackPack, glm::vec3(-10.f, 1.f, -10.0f));
@@ -34,7 +37,7 @@ void BackPack::Update(const float& dt)
 
 void BackPack::Render(Renderer& renderer)
 {
-	Shader& shader = ShaderManager.GetShader("explode");
+	Shader& shader = ShaderManager.GetShader("main");
 
 	static_cast<Model*>(this)->Render(renderer, shader);
 }

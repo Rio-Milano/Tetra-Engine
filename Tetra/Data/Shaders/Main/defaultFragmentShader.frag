@@ -62,13 +62,16 @@ struct Material
 #define NUMBER_OF_LIGHTS 10
 
 //UNIFORM
-uniform Material material;
 layout(std140) uniform Lights
 {
 	Light lights[NUMBER_OF_LIGHTS];
 };
-
-uniform vec3 cameraPosition;
+layout(std140) uniform World
+{
+	vec3 cameraPosition;
+	float time;
+};
+uniform Material material;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
 
@@ -87,7 +90,7 @@ vec3 GetFragmentDiffuse();
 vec3 GetFragmentSpecular();
 vec3 GetFragmentEmission();
 
-bool ProcessReflectiveFragment(vec3 normal);
+vec3 ProcessReflectiveFragment(vec3 normal);
 bool ProcessLowAlphaFragment();
 bool ProcessEmissionFragment();
 
@@ -97,7 +100,7 @@ void main()
 
 	vec3 normal = normalize(inData.normal);//re-normalize from scaling
 	
-	if(ProcessReflectiveFragment(normal)) return;
+	vec3 reflectionContribution = ProcessReflectiveFragment(normal);
 
 	if(ProcessEmissionFragment()) return;
 
@@ -128,7 +131,10 @@ void main()
 
 	};
 
-	FragColor = vec4(finalColor, 1.0);
+	if(material.mapToEnviroment && material.hasCubeMap)
+		FragColor = mix(vec4(finalColor, 1.0), vec4(reflectionContribution, 1.0), 0.1);
+	else
+		FragColor = vec4(finalColor, 1.0);
 }
 
 bool ProcessEmissionFragment()
@@ -163,7 +169,7 @@ bool ProcessLowAlphaFragment()
 	return false;
 }
 
-bool ProcessReflectiveFragment(vec3 normal)
+vec3 ProcessReflectiveFragment(vec3 normal)
 {
 	if(material.mapToEnviroment && material.hasCubeMap)
 	{
@@ -184,10 +190,9 @@ bool ProcessReflectiveFragment(vec3 normal)
 				break;
 				
 		};
-		FragColor = texture(material.cubeMap, R);
-		return true;
+		return texture(material.cubeMap, R).xyz;
 	};
-	return false;
+	return vec3(0);
 }
 
 vec3 GetFragmentDiffuse()

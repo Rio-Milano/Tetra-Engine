@@ -106,6 +106,13 @@ void AquaPig::Init()
 	nwing_right->GetChildren()[0]->SetDrawOutline(1);
 	nhull->GetChildren()[0]->SetDrawOutline(1);
 
+	nhull->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	ngun->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	ngun_base->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	nhull->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	npropeller->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	nwing_left->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
+	nwing_right->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;;
 	
 	SetRoot(nhull);
 }

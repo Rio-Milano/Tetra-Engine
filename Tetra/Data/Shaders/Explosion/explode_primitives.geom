@@ -28,6 +28,7 @@ layout(std140) uniform Matricies
 
 layout(std140) uniform World
 {
+	vec3 cameraPosition;
 	float time;
 };
 

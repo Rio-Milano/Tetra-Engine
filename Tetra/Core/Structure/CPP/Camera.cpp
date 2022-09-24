@@ -102,7 +102,6 @@ void Camera::Update(const float& dt)
 
 	//process controller input
 	mv3_position += (mv3_forward * controller0->GetLeftStickY() + mv3_right * controller0->GetLeftStickX()) * mf_cameraSpeed * dt;
-	mv3_position.y = 2;
 	//compute view matrix from camera directions
 	ComputeViewMatrix();
 }

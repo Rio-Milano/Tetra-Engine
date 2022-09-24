@@ -69,8 +69,6 @@ void BaseLayer::BaseUpdate(const float& dt)
 	m_renderer.GetWindow().UpdateWindow();
 	//update camera
 	m_camera.Update(dt);
-	
-	ShaderManager.UpdateAllShaders(m_camera.GetPosition());
 
 	UpdateUniformBuffers();
 	
@@ -95,6 +93,8 @@ void BaseLayer::UpdateUniformBuffers()
 	const std::shared_ptr<UniformBufferObject> World = ShaderManager.GetUniformBufferObject("World");
 	float time = static_cast<float>(glfwGetTime());
 	World->SetBufferElement("time", static_cast<void*>(&time));
+	glm::vec3 camPos = m_camera.GetPosition();
+	World->SetBufferElement("cameraPosition", &camPos);
 }
 
 void BaseLayer::CreateUniformBuffers()
@@ -103,8 +103,9 @@ void BaseLayer::CreateUniformBuffers()
 	Matricies->SetElementData("Projection_X_View", UniformBufferObject::Element{sizeof(glm::mat4), 0});
 	ShaderManager.AddUniformBufferObject("Matricies", Matricies);
 
-	std::shared_ptr<UniformBufferObject> World = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(sizeof(float)), 1, "World");
-	World->SetElementData("time", UniformBufferObject::Element{sizeof(float), 0});
+	std::shared_ptr<UniformBufferObject> World = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(16), 1, "World");
+	World->SetElementData("cameraPosition", UniformBufferObject::Element{12, 0});
+	World->SetElementData("time", UniformBufferObject::Element{ 4, 12});
 	ShaderManager.AddUniformBufferObject("World", World);
 
 	size_t ubo_size = 80 * NUMBER_OF_LIGHTS;
