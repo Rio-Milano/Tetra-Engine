@@ -21,15 +21,17 @@ struct Light
 	LIGHT TYPE : 3 = Spot
 	*/
 
-	vec3 position;
-	vec3 color;
-	vec3 direction;
+	vec3 position; 
+	float range;
+
+	vec3 color;	
+	float innerCutOffAngle;
+
+	vec3 direction;	
 	float intensity;
-	float 
-		range,
-		innerCutOffAngle,
-		outerCutOffAngle;
-	int type;
+
+	float outerCutOffAngle;	
+	int type; 
 	bool inUse;
 };
 struct Material

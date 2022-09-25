@@ -108,7 +108,7 @@ void BaseLayer::CreateUniformBuffers()
 	World->SetElementData("time", UniformBufferObject::Element{ 4, 12});
 	ShaderManager.AddUniformBufferObject("World", World);
 
-	size_t ubo_size = 80 * NUMBER_OF_LIGHTS;
+	size_t ubo_size = 76 * NUMBER_OF_LIGHTS;
 
 
 	std::shared_ptr<UniformBufferObject> ubo = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(ubo_size), 2, "Lights");
@@ -120,26 +120,26 @@ void BaseLayer::CreateUniformBuffers()
 
 		//position
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Position", UniformBufferObject::Element{ 12, offset });
-		
+
+		//Range
+		offset += 12;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Range", UniformBufferObject::Element{ 4, offset });
+
 		//Color
-		offset += 16;
+		offset += 4;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Color", UniformBufferObject::Element{ 12, offset});
 		
+		//Inner Cutoff
+		offset += 12;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":InnerCutoff", UniformBufferObject::Element{ 4, offset });
+
 		//Direction
-		offset += 16;
+		offset += 4;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Direction", UniformBufferObject::Element{ 12, offset });
 
 		//Intensity
 		offset += 12;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Intensity", UniformBufferObject::Element{ 4, offset });
-		
-		//Range
-		offset += 4;
-		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Range", UniformBufferObject::Element{ 4, offset });
-		
-		//Inner Cutoff
-		offset += 4;
-		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":InnerCutoff", UniformBufferObject::Element{ 4, offset });
 		
 		//Inner Cutoff
 		offset += 4;
@@ -153,7 +153,7 @@ void BaseLayer::CreateUniformBuffers()
 		offset += 4;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":InUse", UniformBufferObject::Element{ 4, offset });
 
-		offset += 16;
+		offset += 8;
 	}
 	ShaderManager.AddUniformBufferObject("Lights", ubo);
 }
