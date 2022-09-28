@@ -37,7 +37,6 @@ bool Window::CreateWindowGLFW(const int& renderWindowWidth, const int& renderWin
 	//if window creation was successful then set that window to the window glfw should refer to
 	glfwMakeContextCurrent(m_renderWindow);
 
-
 	return true;
 }
 
@@ -68,4 +67,7 @@ void Window::Set_GL_Context()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);//set major version to 3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//set minor version to 3
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//tell opengl to use modern standard
+	
+	// - when rendering wanting to use MSAA on the default frame buffer -glfwWindowHint(GLFW_SAMPLES, 4);
+
 }

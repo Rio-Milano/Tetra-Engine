@@ -24,7 +24,7 @@ public:
 		bool m_enableGreyScaleColorBuffer{ false };
 	};
 
-	PostProcessing(const glm::vec2& viewPortSize);
+	PostProcessing(const glm::vec2& viewPortSize, const bool& useMSAA = false);
 
 	//this switches the active frame buffer to the one we create
 	void Render_To_Off_Screen_Buffer();
@@ -36,6 +36,11 @@ public:
 	Config m_config;
 
 private:
+	const glm::vec2 m_viewPortSize;
+
+	Framebuffer m_MSAAFrameBuffer;
+	bool m_useMultiSampleAntiAliasing{false};
+
 	Framebuffer m_frameBuffer;
 	std::shared_ptr<Mesh> m_quad;
 };

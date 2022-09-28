@@ -62,7 +62,7 @@ void SandBoxLayer::Start()
 	m_lightManager.SetPointLight(glm::vec3(0.f, 0.f, -8.f), glm::vec3(0.0f, 1.0f, 0.0f), .5f);//4
 
 	//using window size as its same as view port but if view port was smaller then would need to use viewport size not window size
-	m_postProcessing = std::make_shared<PostProcessing>(m_renderer.GetWindow().GetWindowSize());
+	m_postProcessing = std::make_shared<PostProcessing>(m_renderer.GetWindow().GetWindowSize(), true);
 }
 
 
@@ -99,6 +99,8 @@ void SandBoxLayer::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	}
+
+	// - when rendering wanting to use MSAA on the default frame buffer - glEnable(GL_MULTISAMPLE);
 
 	//render cubes/oblongs for point/spot lights
 	m_lightManager.DrawLights(m_renderer);

@@ -6,8 +6,13 @@
 
 #include<vector>
 
-PostProcessing::PostProcessing(const glm::vec2& viewPortSize)
-	: m_frameBuffer(viewPortSize), m_quad(nullptr)
+PostProcessing::PostProcessing(const glm::vec2& viewPortSize, const bool& useMSAA)
+	:
+	m_frameBuffer(viewPortSize),
+	m_MSAAFrameBuffer(viewPortSize, true, 4),
+	m_useMultiSampleAntiAliasing(useMSAA),
+	m_quad(nullptr),
+	m_viewPortSize(viewPortSize)
 {
 
 	m_quad = std::make_shared<Mesh>();
@@ -46,8 +51,10 @@ PostProcessing::PostProcessing(const glm::vec2& viewPortSize)
 
 void PostProcessing::Render_To_Off_Screen_Buffer()
 {
-	//set the frame buffer as current frame buffer
-	m_frameBuffer.SetFrameBuffer();
+	if (m_useMultiSampleAntiAliasing)
+		m_MSAAFrameBuffer.SetFrameBuffer();
+	else
+		m_frameBuffer.SetFrameBuffer();
 
 
 	//any render calls made directly after this call will be rendered to the framebuffer
@@ -57,8 +64,16 @@ void PostProcessing::Render_To_Off_Screen_Buffer()
 
 void PostProcessing::Render_FrameBuffer(Renderer& renderer)
 {
-	//switch back to default frame buffer
-	m_frameBuffer.ResetFrameBuffer();
+	//coppy the MSAA framebuffer color buffer into normal framebuffer color buffer by downsampling it
+	if (m_useMultiSampleAntiAliasing)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_MSAAFrameBuffer.GetFrameBufferID());
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_frameBuffer.GetFrameBufferID());
+		glBlitFramebuffer(0, 0, m_viewPortSize.x, m_viewPortSize.y, 0, 0, m_viewPortSize.x, m_viewPortSize.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	}
+
+	//set the origional framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	Shader& frameBufferQuadShader = ShaderManager.GetShader("frameBufferQuad");
 	frameBufferQuadShader.SetUniform1b(frameBufferQuadShader.GetLocation("invertFragColor"), m_config.m_enableColorBufferInversion);

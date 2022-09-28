@@ -8,8 +8,10 @@
 class Framebuffer
 {
 public:
-	explicit Framebuffer(const glm::vec<2, int>& viewPortSize)
+	explicit Framebuffer(const glm::vec<2, int>& viewPortSize, const bool& useMSAA = false, const GLsizei& samples = 4)
 	{
+		const GLenum textureTarget = useMSAA ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+
 		//create the framebuffer
 		glGenFramebuffers(1, &m_frameBufferID);
 
@@ -18,25 +20,31 @@ public:
 
 		/*
 		*
-		<--			Color Buffer			-->
+		<-			Color Buffer
 
 		*/
-
 		//create a texture attachment for the color buffer as we want to read from the texture
 		glGenTextures(1, &m_colourBufferID);
 		//bind to default texture unit
 		glActiveTexture(GL_TEXTURE0);
 		//bind texture buffer to 2d texture target
-		glBindTexture(GL_TEXTURE_2D, m_colourBufferID);
-		//assign memory on gpu for color buffer
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewPortSize.x, viewPortSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-		//set texture sampeling
+		glBindTexture(textureTarget, m_colourBufferID);
+		
+		//Allocate memory for the color buffer
+		if (useMSAA)
+			glTexImage2DMultisample(textureTarget, samples, GL_RGB, viewPortSize.x, viewPortSize.y, GL_TRUE);
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewPortSize.x, viewPortSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		
+		//set texture sampling
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+
 		//attach the texture as a color buffer to the framebuffer object
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colourBufferID, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_colourBufferID, 0);
 		//unbind texure from target
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(textureTarget, 0);
 
 		/*
 		*
@@ -48,8 +56,13 @@ public:
 		glGenRenderbuffers(1, &m_depthStencilRenderbufferID);
 		//bind to renderbuffer object
 		glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilRenderbufferID);
-		//create memory for the render buffer
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewPortSize.x, viewPortSize.y);
+		
+		//allocate memory for the depth/stencil buffer
+		if (useMSAA)
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8,  viewPortSize.x, viewPortSize.y);
+		else
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewPortSize.x, viewPortSize.y);
+		
 		//attach the render buffer to the frame buffer
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilRenderbufferID);
 		//unbind from render buffer object
@@ -81,17 +94,16 @@ public:
 		ClearFramebuffer();
 	};
 
-	static void ResetFrameBuffer()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
 
 	const GLuint& GetColorBufferID()const
 	{
 		return m_colourBufferID;
 	}
 
-
+	const GLuint& GetFrameBufferID()const
+	{
+		return m_frameBufferID;
+	}
 
 
 private:
@@ -104,6 +116,7 @@ private:
 	GLuint m_frameBufferID{0};
 	GLuint m_colourBufferID{0};
 	GLuint m_depthStencilRenderbufferID{0};
+
 };
 
 #endif
