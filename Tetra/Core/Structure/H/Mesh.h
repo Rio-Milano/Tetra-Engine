@@ -13,7 +13,7 @@
 #define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
 #define SHADER_LAYOUT_INDEX_COLOR			1
 #define SHADER_LAYOUT_INDEX_NORMAL			2
-
+#define SHADER_LAYOUT_INDEX_OFFSET			3
 
 struct RefractiveIndex
 {
@@ -93,6 +93,7 @@ class Mesh
 	friend class Renderer;
 	friend class Plane;
 	friend class Line;
+	friend class Model;
 
 public:
 	//ctors/dtors
@@ -112,17 +113,22 @@ public:
 		const GLenum& usage = GL_STATIC_DRAW
 	);
 
+	/*
+	This is for use with a stand alone mesh. If using a model use the model variant of this function. As this will have far worse performance.
+	*/
+	void CreateInstances(std::vector<glm::mat4>* offsets);
 
 	//getters
 	const std::string& GetMeshName() const { return m_meshName; };
 	const std::shared_ptr<Material>& GetMaterial()const;
 	const bool& GetFaceCullingFlag()const;
+	const GLsizei GetNumberOfInstances()const;
 
 	//setters
 	void SetMeshName(const std::string& meshName) { m_meshName = meshName; };
 	void SetMaterial(const std::shared_ptr<Material>& material);
 	void SetFaceCullingFlag(const bool& flag);
-	
+
 	void MakeAttributes(const Attributes& attributes);
 
 	std::vector<glm::vec3>* m_colors{ nullptr };
@@ -156,7 +162,10 @@ private:
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };
 	size_t m_vertexCount{0ull};
+	
+	//Draw config
 	bool m_useCullingCCWBack{true};
+	GLsizei m_numberOfInstances{ 1 };
 
 	//general mesh data
 	GLuint

@@ -115,6 +115,18 @@ void AquaPig::Init()
 	nwing_right->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;;
 	
 	SetRoot(nhull);
+
+	const unsigned int numOfInstances = 20;
+
+	std::vector<glm::mat4> instancedTransforms;
+	instancedTransforms.resize(numOfInstances);
+
+	for (size_t i = 0; i < numOfInstances; i++)
+	{
+		instancedTransforms[i] = glm::translate(glm::mat4(1), glm::vec3(i, 0, i));
+	}
+
+	this->CreateInstances(&instancedTransforms);
 }
 
 void AquaPig::Update(const float& dt)

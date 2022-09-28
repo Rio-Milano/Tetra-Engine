@@ -35,18 +35,21 @@ public:
 	//add multiple children to current node
 	void AddChildren(const std::vector<std::shared_ptr<ModelNode>> modelNodes);
 
+
 	//Getters
 	const std::string& GetNodeName()const;
 	const glm::mat4& GetAssimpNodeTransform()const;
 	const glm::mat4& GetTransform()const;
-	const std::vector<std::shared_ptr<Mesh>>& GetMeshes()const;
-	const std::vector<std::shared_ptr<ModelNode>>& GetChildren()const;
+	std::vector<std::shared_ptr<Mesh>>& GetMeshes();
+	std::vector<std::shared_ptr<ModelNode>>& GetChildren();
 	
 	//Setters
 	void SetTransform(const glm::mat4& transform);
 	void SetAssimpNodeTransform(const glm::mat4& transform);
 	void SetDrawOutline(const bool& flag);
 	const bool& GetDrawOutline()const;
+
+
 
 	static bool DrawNormals;
 
@@ -86,7 +89,13 @@ public:
 	//Setters
 	void SetRoot(const std::shared_ptr<ModelNode>& newRoot);
 
+	void CreateInstances(std::vector<glm::mat4>* transforms);
+
+
 private:
+
+	void ProcessInstances_Sub_Meshes(const GLuint& instanceArray, const std::shared_ptr<ModelNode>& node);
+
 	//process an assimp node by pulling meshes and processing mesh children, meanwhile making a mock of the hirearchy through modelNode
 	std::shared_ptr<ModelNode> PullAssimpMeshFromNode(aiNode* node, const aiScene* scene, const std::string& localPath, std::shared_ptr<ModelNode> modelNode = nullptr);
 

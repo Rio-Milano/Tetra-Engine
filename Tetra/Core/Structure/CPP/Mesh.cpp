@@ -55,6 +55,58 @@ void Mesh::GenerateMesh
 	SendVertexDataToGPU(usage);
 }
 
+void Mesh::CreateInstances(std::vector<glm::mat4>* offsets)
+{
+	//Check that offsets is not a null ptr
+	_ASSERT(offsets != nullptr);
+
+	//Check that the number of instances is valid
+	_ASSERT(offsets->size() > 1);
+
+	//Bind to the VAO of the mesh
+	glBindVertexArray(m_VAO);
+
+	//Alocate memory for the offsets and then push the offsets into the allocated memory
+	CreateBuffer(GL_ARRAY_BUFFER, offsets->size() * sizeof(glm::mat4), offsets->data(), GL_STATIC_DRAW);
+	
+	//In the vertex shader we are taking in a mat4 which is split up into 4 vector 4's.
+
+	const size_t vector4Size = sizeof(glm::vec4);//glm::vec4s are size 4 float * 4 instances
+	const size_t mat4Size = sizeof(glm::mat4);//glm::mat4 are just sized to 4 glm::vec4s
+
+	m_numberOfInstances = offsets->size();
+
+	//ROW 1
+	size_t AttributeOffset = 0;
+	size_t MemoryOffset = 0;
+
+	//ATTRIBUTE FOR ROW 1
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET, 1);//tels gpu to grab the next attribute every instance not every vertex
+
+	//ATTRIBUTE FOR ROW 2
+		AttributeOffset++;
+		MemoryOffset += vector4Size;
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET+AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET+AttributeOffset, 1);
+
+	//ATTRIBUTE FOR ROW 3
+		AttributeOffset++;
+		MemoryOffset += vector4Size;
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 1);
+
+	//ATTRIBUTE FOR ROW 4
+		AttributeOffset++;
+		MemoryOffset += vector4Size;
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 1);
+
+	//FINISHED
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+}
+
 
 
 
@@ -111,55 +163,81 @@ void Mesh::StartMesh(const GLuint& drawType,
 
 void Mesh::SendVertexDataToGPU(const GLenum& usage)
 {
-	_ASSERT(m_positions != nullptr);
+	//VALIDATE THAT POSITIONS ARE VALID
+		_ASSERT(m_positions != nullptr);
 
 	//buffer sizes
-	const size_t positionsBufferSize = m_positions->size() * sizeof(glm::vec3);
+
+		//POSITIONS SIZE
+			//We are guaranteed to have positions
+			const size_t positionsBufferSize = m_positions->size() * sizeof(glm::vec3);
+
+		/*
+			UV / COLOURS SIZE
+			determine if using color buffer or texture cords buffer and adjust color buffer size accordingly.
+			We only use one not both
+		*/
+			size_t colorBufferSize = 0;
+			if (m_texCoords != nullptr)	colorBufferSize = m_positions->size() * sizeof(glm::vec2);
+			else
+			{
+				if (m_colors != nullptr) colorBufferSize = m_positions->size() * sizeof(glm::vec3);
+			}
+
+		//NORMALS SIZE
+			size_t normalsBufferSize = 0;
+			if(m_normals) normalsBufferSize = m_normals->size() * sizeof(glm::vec3);
+
+		//SIZE OF BUFFERS
+			const size_t vertexBufferSizeSum = positionsBufferSize + colorBufferSize + normalsBufferSize;
+
+	//ALLOCATE BUFFER MEMORY
+		CreateBuffer(GL_ARRAY_BUFFER, vertexBufferSizeSum, nullptr , usage);
+
+
+	//PASSING MEMORY TO BUFFER
+		
+		//POSITIONS
+			glBufferSubData(GL_ARRAY_BUFFER, 0, positionsBufferSize, (void*)m_positions->data());
+
+		//UV/COLOUR
+			if (m_texCoords) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, colorBufferSize, (void*)m_texCoords->data());
+			else { if (m_colors)glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, colorBufferSize, (void*)m_colors->data()); };
 	
-	//determine if using color buffer or texture cords buffer and adjust color buffer size accordingly
-	size_t colorBufferSize = 0;
-	if(m_texCoords != nullptr)
-		colorBufferSize = m_positions->size() * sizeof(glm::vec2);
-	else if (m_colors != nullptr)
-		colorBufferSize = m_positions->size() * sizeof(glm::vec3);
-
-	const size_t normalsBufferSize =  m_positions->size() * sizeof(glm::vec3);
-
-	const size_t vertexBufferSizeSum =	positionsBufferSize + colorBufferSize + normalsBufferSize;
-
-	//allocate buffer memory
-	CreateBuffer(GL_ARRAY_BUFFER, vertexBufferSizeSum, nullptr , usage);
+		//NORMALS
+			if (m_normals) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize + colorBufferSize, normalsBufferSize, (void*)m_normals->data());
 
 
-	//pass memory to buffer
+	//VERTEX ATTRIBUTES
+
+		//POSITIONS
+			CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);	
+
+		//UV/COLOUR
+			if(m_texCoords != nullptr)	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TEXTURE_CORD, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)positionsBufferSize);
+			else { if (m_colors != nullptr)	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)positionsBufferSize); };
+
+		//NORMALS
+			if(m_normals)	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(positionsBufferSize + colorBufferSize));
+
 	
-	//position buffer
-	glBufferSubData(GL_ARRAY_BUFFER, 0, positionsBufferSize, (void*)m_positions->data());
-	if (m_texCoords) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, colorBufferSize, (void*)m_texCoords->data());
-	else if (m_colors) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize, colorBufferSize, (void*)m_colors->data());
-	if (m_normals) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize + colorBufferSize, normalsBufferSize, (void*)m_normals->data());
+	//FINISHED WITH ARRAY BUFFER
+		EndBuffer(GL_ARRAY_BUFFER);
 
+	//ELEMENTS
+		if(m_elements) CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_elements->size(), m_elements->data(), GL_STATIC_DRAW);
 
-	//setup position stream
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-
-	//setup color stream
-	if(m_texCoords != nullptr)CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TEXTURE_CORD, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)positionsBufferSize);
-	else if(m_colors != nullptr)CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)positionsBufferSize);
-
-	//setup normal stream
-	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(positionsBufferSize + colorBufferSize));
-
-	//unbind buffer
-	EndBuffer(GL_ARRAY_BUFFER);
-
-	//set up elements
-	if(m_elements) CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_elements->size(), m_elements->data(), GL_STATIC_DRAW);
-
-	//unbind VAO then unbind elements
-	EndVAO();
+	//UNBIND FROM BUFFERS
+		EndVAO();
 
 }
+
+
+const GLsizei Mesh::GetNumberOfInstances()const
+{
+	return m_numberOfInstances;
+}
+
 
 
 

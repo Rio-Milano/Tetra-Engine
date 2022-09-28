@@ -45,6 +45,7 @@ const bool& ModelNode::GetDrawOutline()const
 	return m_drawOutline;
 }
 
+
 void ModelNode::Render(Renderer& renderer, Shader& shader, const glm::mat4& worldPrevious)
 {
 	//apply the user set transform then the assimp transform then the previous transform which goes back up the hirearchy
@@ -123,6 +124,7 @@ void ModelNode::AddChildren(const std::vector<std::shared_ptr<ModelNode>> modelN
 	m_children.insert(m_children.end(), modelNodes.begin(), modelNodes.end());
 }
 
+
 const std::string& ModelNode::GetNodeName()const
 {
 	//gets name of node
@@ -152,13 +154,13 @@ void ModelNode::SetAssimpNodeTransform(const glm::mat4& transform)
 }
 
 
-const std::vector<std::shared_ptr<Mesh>>& ModelNode::GetMeshes()const
+std::vector<std::shared_ptr<Mesh>>& ModelNode::GetMeshes()
 {
 	//get all meshes attached to node
 	return m_meshes;
 }
 
-const std::vector<std::shared_ptr<ModelNode>>& ModelNode::GetChildren()const
+std::vector<std::shared_ptr<ModelNode>>& ModelNode::GetChildren()
 {
 	//get all children attached to node
 	return m_children;
@@ -179,6 +181,85 @@ Model
 Model::Model(const std::shared_ptr<ModelNode>& rootNode)
 	:m_rootModelNode(rootNode)
 {
+}
+
+
+void Model::CreateInstances(std::vector<glm::mat4>* transforms)
+{
+	//Check that transforms is not nullptr
+	_ASSERT(transforms);
+
+	//Check that there will be more than 1 instance drawn
+	_ASSERT(transforms->size() > 1);
+
+
+	GLuint instanceArrayBuffer = 0;
+	glGenBuffers(1, &instanceArrayBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceArrayBuffer);
+	glBufferData(GL_ARRAY_BUFFER, transforms->size() * sizeof(glm::mat4), transforms->data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+	ProcessInstances_Sub_Meshes(instanceArrayBuffer, m_rootModelNode);
+
+}
+
+void Model::ProcessInstances_Sub_Meshes(const GLuint& instanceArray, const std::shared_ptr<ModelNode>& node)
+{
+	static constexpr size_t
+		mat4Size = sizeof(glm::mat4),
+		vec4Size = sizeof(glm::vec4);
+
+	glBindBuffer(GL_ARRAY_BUFFER, instanceArray);
+	GLint bufferSize = 0;
+	glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+	GLsizei instances = static_cast<GLsizei>(static_cast<float>(bufferSize) / static_cast<float>(mat4Size));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+	//Loop through meshes of node
+	for (const std::shared_ptr<Mesh>& meshPtr : node->GetMeshes())
+	{
+		glBindVertexArray(meshPtr->m_VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, instanceArray);
+
+		meshPtr->m_numberOfInstances = instances;
+
+		GLuint MemoryOffset = 0;
+		GLuint AttributeIndex = SHADER_LAYOUT_INDEX_OFFSET;
+
+		glEnableVertexAttribArray(AttributeIndex);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(AttributeIndex, 1);
+
+		MemoryOffset += vec4Size;
+		AttributeIndex++;
+		glEnableVertexAttribArray(AttributeIndex);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(AttributeIndex, 1);
+
+		MemoryOffset += vec4Size;
+		AttributeIndex++;
+		glEnableVertexAttribArray(AttributeIndex);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(AttributeIndex, 1);
+
+		MemoryOffset += vec4Size;
+		AttributeIndex++;
+		glEnableVertexAttribArray(AttributeIndex);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribDivisor(AttributeIndex, 1);
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
+	for (const std::shared_ptr<ModelNode>& child : node->m_children)
+	{
+		ProcessInstances_Sub_Meshes(instanceArray, child);
+	}
 }
 
 const std::shared_ptr<ModelNode>& Model::GetRoot()const

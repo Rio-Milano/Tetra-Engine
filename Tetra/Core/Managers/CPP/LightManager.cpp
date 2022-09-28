@@ -327,7 +327,7 @@ void LightManager::DrawLights(Renderer& renderer)
 				
 			}
 		}
-	}
+ 	}
 }
 
 int LightManager::GetFreeLight()

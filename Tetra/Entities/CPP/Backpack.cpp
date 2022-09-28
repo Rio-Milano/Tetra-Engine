@@ -29,6 +29,9 @@ void BackPack::Init()
 
 
 	SetRoot(nbackPack);
+
+
+
 }
 
 void BackPack::Update(const float& dt)

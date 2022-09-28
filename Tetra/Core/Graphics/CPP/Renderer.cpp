@@ -74,6 +74,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 	shader.SetUniform1f(shader.GetLocation("material.emissionRange"), meshMaterial->emissionRange);
 	shader.SetUniform1b(shader.GetLocation("material.discardLowAlphaFragment"), meshMaterial->m_discardLowAlphaFragments);
 	shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
+	shader.SetUniform1b(shader.GetLocation("useInstancedMat"), mesh.GetNumberOfInstances() > 1 ? true : false);
 
 	//get the tetxure pointer for the mesh diffuse map
 	const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;
@@ -175,20 +176,50 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 		glDisable(GL_CULL_FACE);//turn of culling, idealy used for openbox meshes
 	}
 
+
+
+
+					/*
+						NOT SURE IF ITS BEST TO USE INSTANCED DRAWING ALL THE TIME SO FOR NOW DO A QUICK CHECK TO USE THE APPR CALL
+
+						ALSO ADD A PRIMITIVE ENUM MEMBER TO THE MESH CLASS
+					*/
+
+
+	const GLsizei instances = mesh.GetNumberOfInstances();
+	const bool instanced = instances > 1 ? true : false;
+
 	//decode the draw type of the mesh
 	switch (mesh.m_drawType)
 	{
-	case 0://if drawing triangles and using indexed buffer then render using elements
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements->size()), GL_UNSIGNED_INT, 0);
-		break;
-	case 1://if drawing triangles and using raw verticies
-		glDrawArrays(GL_TRIANGLES,  0, static_cast<GLsizei>(vertexCount));
-		break;
-	case 2://if drawing lines and using raw verticies
-		glDrawArrays(GL_LINES, 0, vertexCount);
-	default:
-		break;
+		case 0://if drawing triangles and using indexed buffer then render using elements
+			if(instanced)
+				glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements->size()), GL_UNSIGNED_INT, 0, instances);
+			else
+				glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.m_elements->size()), GL_UNSIGNED_INT, 0);
+		
+			break;
+	
+		case 1://if drawing triangles and using raw verticies
+			if(instanced)
+				glDrawArraysInstanced(GL_TRIANGLES, 0, vertexCount, instances);
+			else
+				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+
+			break;
+
+		case 2://if drawing lines and using raw verticies
+			if(instanced)
+				glDrawArraysInstanced(GL_LINES, 0, vertexCount, instances);
+			else
+				glDrawArrays(GL_LINES, 0, vertexCount);
+		
+			break;
+
+		default:
+			break;
 	}
+
 	//set all texture units to 0
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);

@@ -1,2 +1,9 @@
-﻿  BaseLayer.cpp
+﻿  Mesh.cpp
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(77,39): warning C4267: '=': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(90,145): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(91,70): warning C4267: 'argument': conversion from 'size_t' to 'GLuint', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(96,147): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(97,72): warning C4267: 'argument': conversion from 'size_t' to 'GLuint', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(102,147): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Structure\CPP\Mesh.cpp(103,72): warning C4267: 'argument': conversion from 'size_t' to 'GLuint', possible loss of data
   Tetra.vcxproj -> C:\Users\riomi\source\repos\Tetra\x64\Debug\Tetra.exe
