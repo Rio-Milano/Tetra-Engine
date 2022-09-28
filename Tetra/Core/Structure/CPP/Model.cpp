@@ -230,25 +230,25 @@ void Model::ProcessInstances_Sub_Meshes(const GLuint& instanceArray, const std::
 		GLuint AttributeIndex = SHADER_LAYOUT_INDEX_OFFSET;
 
 		glEnableVertexAttribArray(AttributeIndex);
-		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(AttributeIndex, 1);
 
 		MemoryOffset += vec4Size;
 		AttributeIndex++;
 		glEnableVertexAttribArray(AttributeIndex);
-		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(AttributeIndex, 1);
 
 		MemoryOffset += vec4Size;
 		AttributeIndex++;
 		glEnableVertexAttribArray(AttributeIndex);
-		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(AttributeIndex, 1);
 
 		MemoryOffset += vec4Size;
 		AttributeIndex++;
 		glEnableVertexAttribArray(AttributeIndex);
-		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		glVertexAttribPointer(AttributeIndex, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(AttributeIndex, 1);
 
 

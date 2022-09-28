@@ -67,9 +67,10 @@ void PostProcessing::Render_FrameBuffer(Renderer& renderer)
 	//coppy the MSAA framebuffer color buffer into normal framebuffer color buffer by downsampling it
 	if (m_useMultiSampleAntiAliasing)
 	{
+		int width = static_cast<int>(m_viewPortSize.x), height = static_cast<int>(m_viewPortSize.y);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_MSAAFrameBuffer.GetFrameBufferID());
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_frameBuffer.GetFrameBufferID());
-		glBlitFramebuffer(0, 0, m_viewPortSize.x, m_viewPortSize.y, 0, 0, m_viewPortSize.x, m_viewPortSize.y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	}
 
 	//set the origional framebuffer

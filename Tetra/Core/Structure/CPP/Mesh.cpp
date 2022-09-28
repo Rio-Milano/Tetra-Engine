@@ -71,35 +71,35 @@ void Mesh::CreateInstances(std::vector<glm::mat4>* offsets)
 	
 	//In the vertex shader we are taking in a mat4 which is split up into 4 vector 4's.
 
-	const size_t vector4Size = sizeof(glm::vec4);//glm::vec4s are size 4 float * 4 instances
-	const size_t mat4Size = sizeof(glm::mat4);//glm::mat4 are just sized to 4 glm::vec4s
+	const GLsizei vector4Size = static_cast<GLsizei>(sizeof(glm::vec4));//glm::vec4s are size 4 float * 4 instances
+	const GLsizei mat4Size = static_cast<GLsizei>(sizeof(glm::mat4));//glm::mat4 are just sized to 4 glm::vec4s
 
-	m_numberOfInstances = offsets->size();
+	m_numberOfInstances = static_cast<GLsizei>(offsets->size());
 
 	//ROW 1
-	size_t AttributeOffset = 0;
-	size_t MemoryOffset = 0;
+	GLuint AttributeOffset = 0;
+	GLuint MemoryOffset = 0;
 
 	//ATTRIBUTE FOR ROW 1
-		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET, 1);//tels gpu to grab the next attribute every instance not every vertex
 
 	//ATTRIBUTE FOR ROW 2
 		AttributeOffset++;
 		MemoryOffset += vector4Size;
-		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET+AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET+AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET+AttributeOffset, 1);
 
 	//ATTRIBUTE FOR ROW 3
 		AttributeOffset++;
 		MemoryOffset += vector4Size;
-		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 1);
 
 	//ATTRIBUTE FOR ROW 4
 		AttributeOffset++;
 		MemoryOffset += vector4Size;
-		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)MemoryOffset);
+		CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 4, GL_FLOAT, GL_FALSE, mat4Size, (void*)&MemoryOffset);
 		glVertexAttribDivisor(SHADER_LAYOUT_INDEX_OFFSET + AttributeOffset, 1);
 
 	//FINISHED
