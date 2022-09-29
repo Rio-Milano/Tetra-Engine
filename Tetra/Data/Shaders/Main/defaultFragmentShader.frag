@@ -244,12 +244,20 @@ float CalculateDiffuse(vec3 dirToLight, vec3 normal)
 
 float CalculateSpecular(int i, vec3 normal)
 {
-	vec3 dirToCamera = normalize(cameraPosition - inData.position);//Surface -> Eye
-	vec3 dirToLight = normalize(lights[i].position - inData.position);//Surface -> Light
+	//Phong Specular
+//	vec3 dirToCamera = normalize(cameraPosition - inData.position);//Surface -> Eye
+//	vec3 dirToLight = normalize(lights[i].position - inData.position);//Surface -> Light
+//
+//	vec3 reflected = reflect(-dirToLight, normal);//reflect Surface->Light over surface normal
+//
+//	return material.specularIntensity * pow(max(0.0, CalculateDiffuse(dirToCamera, reflected)), SPECULAR_POWER);//specular calculation
 
-	vec3 reflected = reflect(-dirToLight, normal);//reflect Surface->Light over surface normal
+	//Blin-Phong Specular
+	vec3 dirToCamera = cameraPosition - inData.position;
+	vec3 dirToLight = lights[i].position - inData.position;
+	vec3 halfwayVector = normalize(dirToCamera + dirToLight);
+	return material.specularIntensity * pow(max(0.0, dot(normal, halfwayVector)), SPECULAR_POWER);//specular calculation
 
-	return material.specularIntensity * pow(CalculateDiffuse(dirToCamera, reflected), SPECULAR_POWER);//specular calculation
 }
 
 
@@ -325,6 +333,7 @@ vec3 CalculateSpotLight(int i, vec3 normal)
 
 		diffuse *= I;
 		specular *= I;
+
 
 		//final calculation
 		return (ambient + diffuse + specular) * lightColor;
