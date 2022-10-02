@@ -11,7 +11,7 @@ TransparentEntity::TransparentEntity(const std::string& entityName)
 	if (TextureManager.GetTexture("Window") == nullptr)
 	{
 		std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();
-		newTexture->InitializeTexture("Data/Textures/Window.png", true);
+		newTexture->InitializeTexture("Data/Textures/Window.png", true, true);
 		TextureManager.AddTexture("Window", newTexture);
 	}
 }

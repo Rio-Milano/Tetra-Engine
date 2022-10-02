@@ -22,6 +22,7 @@ public:
 		bool m_edgeDetectionKernel{ false };
 		bool m_enableColorBufferInversion{ false };
 		bool m_enableGreyScaleColorBuffer{ false };
+		float gamma{2.2f};
 	};
 
 	PostProcessing(const glm::vec2& viewPortSize, const bool& useMSAA = false);

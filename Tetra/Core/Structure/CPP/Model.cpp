@@ -555,8 +555,12 @@ std::shared_ptr<Texture> Model::LoadMaterialFromAssimpMesh(aiMaterial* material,
 		{
 			//create a new texture
 			std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+			
+			bool ls = false;
+			if (type == aiTextureType_DIFFUSE) ls = true;
+
 			//add the material map/texture to the created texture by using file loc
-			texture->InitializeTexture(localPath + std::string(fileLocation.C_Str()));
+			texture->InitializeTexture(localPath + std::string(fileLocation.C_Str()), false, ls);
 			//add the texture to storage
 			TextureManager.AddTexture(localPath + std::string(fileLocation.C_Str()), texture);
 		}

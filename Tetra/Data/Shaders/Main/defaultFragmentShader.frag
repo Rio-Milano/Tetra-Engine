@@ -101,8 +101,6 @@ void main()
 	if(ProcessLowAlphaFragment()) return;
 
 	vec3 normal = normalize(inData.normal);//re-normalize from scaling
-	
-	vec3 reflectionContribution = ProcessReflectiveFragment(normal);
 
 	if(ProcessEmissionFragment()) return;
 
@@ -132,9 +130,10 @@ void main()
 		};
 
 	};
+	vec3 reflectionContribution = ProcessReflectiveFragment(normal) + GetFragmentDiffuse()*material.ambientIntensity;
 
 	if(material.mapToEnviroment && material.hasCubeMap)
-		FragColor = mix(vec4(finalColor, 1.0), vec4(reflectionContribution, 1.0), 0.1);
+		FragColor = vec4(mix(finalColor, reflectionContribution, 0.1), 1.0);
 	else
 		FragColor = vec4(finalColor, 1.0);
 }

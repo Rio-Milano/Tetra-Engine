@@ -12,7 +12,7 @@ Grass::Grass(const std::string& entityName)
 	if (TextureManager.GetTexture("Grass") == nullptr)
 	{
 		std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();
-		newTexture->InitializeTexture("Data/Textures/Grass.png", true);
+		newTexture->InitializeTexture("Data/Textures/Grass.png", true, true);
 		TextureManager.AddTexture("Grass", newTexture);
 	}
 }

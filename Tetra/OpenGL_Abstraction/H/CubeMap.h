@@ -47,7 +47,7 @@ public:
 		{
 			textureData = stbi_load(faceLocations[i].c_str(), &width, &height, &channels, 0);
 			_ASSERT(textureData != nullptr);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + static_cast<int>(i), 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + static_cast<int>(i), 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
 			stbi_image_free(textureData);
 		}
 

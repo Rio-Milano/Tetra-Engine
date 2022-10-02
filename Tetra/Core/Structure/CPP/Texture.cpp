@@ -30,13 +30,13 @@ Texture::TextureAttributes& Texture::GetTextureAttributes()
 }
 
 //loaders
-void Texture::InitializeTexture(const std::string& textureFileLocation, const bool& flipOnLoad)
+void Texture::InitializeTexture(const std::string& textureFileLocation, const bool& flipOnLoad, const bool& linearSpace)
 {
 	LoadTexture(textureFileLocation, flipOnLoad);
-	GenerateTextureBuffer(textureFileLocation);
+	GenerateTextureBuffer(textureFileLocation, linearSpace);
 }
 
-void Texture::GenerateTextureBuffer(const std::string& textureFileLocation)
+void Texture::GenerateTextureBuffer(const std::string& textureFileLocation, const bool& linearSpace)
 {
 	//get quick access to attributes of texture
 	int&
@@ -56,15 +56,31 @@ void Texture::GenerateTextureBuffer(const std::string& textureFileLocation)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	//decode file type
-	GLint imageType_EN = 0;
+	
+	GLint imageType_EN_A = 0;
+	GLint imageType_EN_B = 0;
 	std::string extension = textureFileLocation.substr(textureFileLocation.find_last_of('.') + 1, textureFileLocation.size() - 1);
 	if (extension == "png")
-		imageType_EN = GL_RGBA;
+	{
+		if (linearSpace)
+			imageType_EN_A = GL_SRGB_ALPHA;
+		else
+			imageType_EN_A = GL_RGBA;
+
+		imageType_EN_B = GL_RGBA;
+	}
 	else if (extension == "jpg")
-		imageType_EN = GL_RGB;
+	{
+		if (linearSpace)
+			imageType_EN_A = GL_SRGB;
+		else
+			imageType_EN_A = GL_RGB;
+		
+		imageType_EN_B = GL_RGB;
+	}
 
 	//send texture to gpu texture buffer
-	glTexImage2D(GL_TEXTURE_2D, 0, imageType_EN, texWidth, texHeight, 0, imageType_EN, GL_UNSIGNED_BYTE, texturePtr);
+	glTexImage2D(GL_TEXTURE_2D, 0, imageType_EN_A, texWidth, texHeight, 0, imageType_EN_B, GL_UNSIGNED_BYTE, texturePtr);
 	//generate texture layers
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//unbind buffer target

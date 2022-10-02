@@ -6,7 +6,7 @@ Container::Container(const std::string& containerName)
 	if (TextureManager.GetTexture("Box") == nullptr)
 	{
 		std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
-		diffuseTexture->InitializeTexture("Data/Textures/Box.png");
+		diffuseTexture->InitializeTexture("Data/Textures/Box.png", false, true);
 		TextureManager.AddTexture("Box", diffuseTexture);
 	}
 
@@ -172,17 +172,17 @@ void Container::Init()
 	mesh->GetMaterial()->m_toRefractiveIndex = RefractiveIndex::Glass;
 	mesh->GetMaterial()->m_reflectionType = ReflectionType::Reflection;*/
 
-	const unsigned int numOfInstances = 20;
+	//const unsigned int numOfInstances = 20;
 
-	std::vector<glm::mat4> instancedTransforms;
-	instancedTransforms.resize(numOfInstances);
+	//std::vector<glm::mat4> instancedTransforms;
+	//instancedTransforms.resize(numOfInstances);
 
-	for (size_t i = 0; i < numOfInstances; i++)
-	{
-		instancedTransforms[i] = glm::translate(glm::mat4(1), glm::vec3(i, 0, i));
-	}
+	//for (size_t i = 0; i < numOfInstances; i++)
+	//{
+	//	instancedTransforms[i] = glm::translate(glm::mat4(1), glm::vec3(i, 0, i));
+	//}
 
-	mesh->CreateInstances(&instancedTransforms);
+	//mesh->CreateInstances(&instancedTransforms);
 
 	std::shared_ptr<ModelNode> modelNode_1 = std::make_shared<ModelNode>(glm::mat4(1.0f));
 	modelNode_1->AddMesh(mesh);

@@ -85,6 +85,8 @@ void PostProcessing::Render_FrameBuffer(Renderer& renderer)
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("weirdKernel"), m_config.m_enableWeirdKernel);
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("blurKernel"), m_config.m_enableBlurKernel);
 	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("edgeDetectionKernel"), m_config.m_edgeDetectionKernel);
+	frameBufferQuadShader.SetUniform1f(frameBufferQuadShader.GetLocation("gamma"), m_config.gamma);
+
 
 	Shader& shader = ShaderManager.GetShader("frameBufferQuad");
 	renderer.RenderMesh(*m_quad.get(), glm::mat4(1.0f), shader);

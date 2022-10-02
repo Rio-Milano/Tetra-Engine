@@ -22,7 +22,7 @@ private:
 	//Imgui flags used in layer update and rendering
 	bool m_wireframeMode{false};
 	bool m_pauseSimulation{false};
-
+	float gamma = 2.2;
 	//entity list
 	std::vector<std::shared_ptr<Entity>> m_entities;
 

@@ -6,7 +6,7 @@ AquaPig::AquaPig(const std::string& aquaPigName)
 	if (TextureManager.GetTexture("AquaPigDiffuse") == nullptr)
 	{
 		std::shared_ptr<Texture> aquaPigTexture = std::make_shared<Texture>();
-		aquaPigTexture->InitializeTexture("Data/Models/AquaPig/aqua_pig_1K.jpg");
+		aquaPigTexture->InitializeTexture("Data/Models/AquaPig/aqua_pig_1K.jpg", false, true);
 		TextureManager.AddTexture("AquaPigDiffuse", aquaPigTexture);
 	}
 
@@ -116,17 +116,17 @@ void AquaPig::Init()
 	
 	SetRoot(nhull);
 
-	const unsigned int numOfInstances = 20;
+	//const unsigned int numOfInstances = 20;
 
-	std::vector<glm::mat4> instancedTransforms;
-	instancedTransforms.resize(numOfInstances);
+	//std::vector<glm::mat4> instancedTransforms;
+	//instancedTransforms.resize(numOfInstances);
 
-	for (size_t i = 0; i < numOfInstances; i++)
-	{
-		instancedTransforms[i] = glm::translate(glm::mat4(1), glm::vec3(i, 0, i));
-	}
+	//for (size_t i = 0; i < numOfInstances; i++)
+	//{
+	//	instancedTransforms[i] = glm::translate(glm::mat4(1), glm::vec3(i, 0, i));
+	//}
 
-	this->CreateInstances(&instancedTransforms);
+	//this->CreateInstances(&instancedTransforms);
 }
 
 void AquaPig::Update(const float& dt)

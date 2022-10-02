@@ -229,6 +229,7 @@ void SandBoxLayer::ImGUI()
 
 			ImGui::SliderFloat("X Sampling Offset Magnitude", &ppConfig.m_XsampleOffsetMagnitude, 1.0f, 1.0f / 1920.0f);
 			ImGui::SliderFloat("Y Sampling Offset Magnitude", &ppConfig.m_YsampleOffsetMagnitude, 1.0f, 1.0f / 1080.0f);
+			ImGui::SliderFloat("Gamma", &ppConfig.gamma, -5.2f, 5.2f);
 
 			ImGui::Checkbox("Sharpen Kernel", &ppConfig.m_enableSharpeningKernel);
 			ImGui::Checkbox("Blur Kernel", &ppConfig.m_enableBlurKernel);

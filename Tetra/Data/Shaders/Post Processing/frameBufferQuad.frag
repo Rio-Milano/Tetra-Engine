@@ -26,6 +26,7 @@ uniform bool weirdKernel;
 uniform bool blurKernel;
 uniform bool edgeDetectionKernel;
 uniform Material material;
+uniform float gamma;
 
 void main()
 {
@@ -139,6 +140,7 @@ void main()
 	}
 
 	FragColor = vec4(fragColor, 1.0);//note that this includes the alpha value of the texture so blending is applied if enabled
-
+	
+	FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));
 
 }

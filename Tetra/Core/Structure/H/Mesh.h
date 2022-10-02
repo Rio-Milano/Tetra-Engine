@@ -33,13 +33,6 @@ struct ReflectionType
 
 
 
-//simple vertex representation
-//struct Vertex
-//{
-//	glm::vec3 position{ 0.0f, 0.0f, 0.0f };
-//	glm::vec2 textureCord{0.0f, 0.0f};
-//	glm::vec3 normal{0.0f, 0.0f, 0.0f};
-//};
 
 
 //all materials encapsulated 
@@ -57,7 +50,7 @@ struct Material
 	float m_toRefractiveIndex = RefractiveIndex::Ice;
 
 	//default values
-	float m_ambientIntensity{ 0.1f };//amount of ambient light we can reflect
+	float m_ambientIntensity{ 0.09f };//amount of ambient light we can reflect
 	float m_specularIntensity{ 3.f };//amount of specular lighting we can reflect
 
 	glm::vec3 m_defaultDiffuseColor{ 1.0f, 1.0f, 1.0f };//default colors when no texture maps are avaliable
