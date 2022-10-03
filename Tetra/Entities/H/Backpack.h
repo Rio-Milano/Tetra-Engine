@@ -18,11 +18,11 @@ public:
 	BackPack(const std::string& Name);
 	~BackPack() = default;
 
-	void Init();
+	void Init()override;
 
-	void Update(const float& dt);
+	void Update(const float& dt)override;
 
-	void Render(Renderer& renderer);
+	void Render(Renderer& renderer, Shader* overrideShader)override;
 
 
 

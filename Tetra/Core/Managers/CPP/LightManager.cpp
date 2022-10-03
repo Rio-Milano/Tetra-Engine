@@ -2,7 +2,15 @@
 
 #include"../../Core/Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
+#include"../../Framework/H/BaseLayer.h"
 
+
+LightManager::~LightManager()
+{
+	//GPU Memory Clean up
+	glDeleteFramebuffers(1, &m_depthFrameBuffer);
+	glDeleteTextures(1, &m_depthMap);
+}
 
 void LightManager::Initialize()
 {
@@ -68,7 +76,7 @@ void LightManager::Initialize()
 	m_meshForLight.GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW);
 
 	
-
+	InitializeDepthFrameBuffer();
 }
 
 void LightManager::SetShader(Shader* shader)
@@ -330,6 +338,48 @@ void LightManager::DrawLights(Renderer& renderer)
  	}
 }
 
+void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
+{
+	/*
+	Creates a depth map for light 1 if it is in use and is a directional light
+	*/
+
+	//glViewport(0, 0, 1080, 1080);
+
+	Light& light = m_lights[0];
+
+	//if (light.m_inUse && light.m_lightType == LightType::Directional)
+	//{
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_depthFrameBuffer);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
+
+		float near_plane = 1.0f, far_plane = 7.5f;
+		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f,
+			near_plane, far_plane);
+
+		glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
+		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+		shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), lightSpaceMatrix);
+
+		baseLayer->Render(&shadowMapping);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//}
+
+}
+
+const GLuint LightManager::GetDepthMap() const
+{
+	return m_depthMap;
+}
+
 int LightManager::GetFreeLight()
 {
 	for (int i = 0; i < NUMBER_OF_LIGHTS; i++)
@@ -338,4 +388,38 @@ int LightManager::GetFreeLight()
 			return i;
 	}
 	return -1;
+}
+void LightManager::InitializeDepthFrameBuffer()
+{
+	//Depth Map Resolution
+	const unsigned int WIDTH = 1080, HEIGHT = 1080;
+
+	//Generate and bind to a frame buffer
+	glGenFramebuffers(1, &m_depthFrameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_depthFrameBuffer);
+
+	//Generate a texture for the depth map
+	glGenTextures(1, &m_depthMap);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (void*)0);
+	//Texture Filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//Texture Wrapping
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//attach the depth map
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMap, 0);
+
+	//Disable the color buffer
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+
+	glBindBuffer(GL_FRAMEBUFFER, 0);
+
+	//check that the frame buffer is complete
+	_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 };

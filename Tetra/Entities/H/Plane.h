@@ -13,7 +13,7 @@ public:
 
 	void Init() override final;
 	void Update(const float& dt) override final;
-	void Render(Renderer& renderer)override final;
+	void Render(Renderer& renderer, Shader* overrideShader)override final;
 
 };
 

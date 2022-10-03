@@ -81,8 +81,8 @@ void Line::Init()
 	GetRoot()->GetMeshes()[0]->m_meshName = "Line";
 }
 
-void Line::Render(Renderer& renderer)
+void Line::Render(Renderer& renderer, Shader* overideShader)
 {
-	Shader& shader = ShaderManager.GetShader("Position-Color");
+	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("Position-Color");
 	GetRoot()->Render(renderer, shader);
 }

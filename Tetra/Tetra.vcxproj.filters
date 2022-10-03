@@ -287,6 +287,8 @@
     <None Include="Data\Shaders\Draw Normals\draw_normals.frag" />
     <None Include="Data\Shaders\Explosion\explode_primitives.vert" />
     <None Include="Data\Shaders\Learn Shader\learn.vert" />
+    <None Include="Data\Shaders\Shadow Mapping\shadowMapping.vert" />
+    <None Include="Data\Shaders\Shadow Mapping\shadowMapping.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Textures\Box.png">

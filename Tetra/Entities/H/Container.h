@@ -21,7 +21,7 @@ public:
 
 	void Update(const float& dt) override final;
 
-	void Render(Renderer& renderer) override final;
+	void Render(Renderer& renderer, Shader* overrideShader) override final;
 
 	private:
 		std::vector<glm::vec3> cubePositions = 

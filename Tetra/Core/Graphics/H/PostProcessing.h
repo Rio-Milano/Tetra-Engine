@@ -36,6 +36,7 @@ public:
 
 	Config m_config;
 
+	std::shared_ptr<Mesh> m_quad;
 private:
 	const glm::vec2 m_viewPortSize;
 
@@ -43,7 +44,6 @@ private:
 	bool m_useMultiSampleAntiAliasing{false};
 
 	Framebuffer m_frameBuffer;
-	std::shared_ptr<Mesh> m_quad;
 };
 
 #endif

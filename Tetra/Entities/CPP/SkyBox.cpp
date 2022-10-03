@@ -83,17 +83,16 @@ void SkyBox::Update(const float& dt)
 {
 }
 
-void SkyBox::Render(Renderer& renderer)
+void SkyBox::Render(Renderer& renderer, Shader* overideShader)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapForSkyBox->GetCubeMapTextureID());
 
-	Shader& skyBoxShader = ShaderManager.GetShader("SkyBox");
-	skyBoxShader.SetUniform1i(skyBoxShader.GetLocation("cubeMap"), 0);
+	Shader* skyBoxShader = overideShader ? overideShader : &ShaderManager.GetShader("SkyBox");
+	skyBoxShader->SetUniform1i(skyBoxShader->GetLocation("cubeMap"), 0);
 	
 	glDepthFunc(GL_LEQUAL);
-	Shader& shader = ShaderManager.GetShader("SkyBox");
-	renderer.RenderMesh(*m_skyBoxMesh.get(), glm::mat4(1.0f), shader);
+	renderer.RenderMesh(*m_skyBoxMesh.get(), glm::mat4(1.0f), *skyBoxShader);
 	glDepthFunc(GL_LESS);
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);

@@ -19,7 +19,7 @@ public:
 	virtual void Init() = 0;
 
 	virtual void Update(const float& dt) = 0;
-	virtual void Render(Renderer& renderer) = 0;
+	virtual void Render(Renderer& renderer, Shader* overrideShader) = 0;
 
 private:
 	std::string m_entityName{ "Default" };

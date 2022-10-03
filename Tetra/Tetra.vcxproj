@@ -247,6 +247,8 @@
     <None Include="Data\Shaders\Basic Position uColor\lightCubeVertexShader.vert" />
     <None Include="Data\Shaders\Basic Position Color\Position-Color.frag" />
     <None Include="Data\Shaders\Basic Position Color\Position-Color.vert" />
+    <None Include="Data\Shaders\Shadow Mapping\shadowMapping.frag" />
+    <None Include="Data\Shaders\Shadow Mapping\shadowMapping.vert" />
     <None Include="Data\Shaders\SkyBox\SkyBox.frag" />
     <None Include="Data\Shaders\SkyBox\SkyBox.vert" />
   </ItemGroup>

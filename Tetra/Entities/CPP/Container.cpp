@@ -197,9 +197,9 @@ void Container::Update(const float& dt)
 	m_rot += dt;
 }
 
-void Container::Render(Renderer& renderer)
+void Container::Render(Renderer& renderer, Shader* overideShader)
 {
-	Shader& shader = ShaderManager.GetShader("main");
+	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
 	for (int i = 0; i < cubePositions.size(); i++)
 	{
 		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), m_rot, glm::vec3(1.0f)));

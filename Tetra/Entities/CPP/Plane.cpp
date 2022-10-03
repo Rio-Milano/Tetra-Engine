@@ -70,8 +70,8 @@ void Plane::Update(const float& dt)
 {
 }
 
-void Plane::Render(Renderer& renderer)
+void Plane::Render(Renderer& renderer, Shader* overideShader)
 {
-	Shader& shader = ShaderManager.GetShader("Position-Color");
+	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("Position-Color");
 	GetRoot()->Render(renderer, shader);
 }

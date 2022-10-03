@@ -35,10 +35,12 @@ void BaseGrid::Init()
 	m_entities.emplace_back(originLine);
 }
 
-void BaseGrid::Render(Renderer& renderer)
+void BaseGrid::Render(Renderer& renderer, Shader* overideShader)
 {
+	Shader* shader = overideShader ? overideShader : &ShaderManager.GetShader("main");
+
 	for (const std::shared_ptr<Entity>& entity : m_entities)
 	{
-		entity->Render(renderer);
+		entity->Render(renderer, shader);
 	}
 }

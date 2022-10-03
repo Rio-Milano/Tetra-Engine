@@ -14,7 +14,7 @@ public:
 
 	void Init() override final;
 	void Update(const float& dt) override final {};
-	void Render(Renderer& renderer);
+	void Render(Renderer& renderer, Shader* overrideShader)override final;
 
 private:
 	const glm::vec3 baseMeshColor{ 1.0f };

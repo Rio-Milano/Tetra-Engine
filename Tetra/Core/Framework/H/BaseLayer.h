@@ -16,12 +16,16 @@
 class BaseLayer
 {
 	friend class Application;
+	friend class LightManager;
 
 protected:
 	virtual void Start() {};
 	virtual void Update(float dt) {};
 	virtual void ImGUI() {};
-	virtual void Render() {};
+	
+	virtual void PreRender(Shader* overrideShader) {};
+	virtual void Render(Shader* overideShader) {};
+	virtual void PostRender() {};
 	virtual void End() {};
 
 	Renderer m_renderer;

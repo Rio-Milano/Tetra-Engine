@@ -18,11 +18,11 @@ public:
 	AquaPig(const std::string& aquaPigName);
 	~AquaPig() = default;
 
-	void Init();
+	void Init() override;
 
-	void Update(const float& dt);
+	void Update(const float& dt) override;
 
-	void Render(Renderer& renderer);
+	void Render(Renderer& renderer, Shader* overrideShader) override;
 
 
 

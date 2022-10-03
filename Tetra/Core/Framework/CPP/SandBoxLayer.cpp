@@ -87,8 +87,10 @@ void SandBoxLayer::Update(float dt)
 	}
 }
 
-void SandBoxLayer::Render()
+void SandBoxLayer::PreRender(Shader* overrideShader)
 {
+	m_lightManager.DrawSceneToDepthBuffer(this);
+
 	if (!m_wireframeMode)
 	{
 		m_postProcessing->Render_To_Off_Screen_Buffer();
@@ -99,20 +101,23 @@ void SandBoxLayer::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	}
+	
 
-	// - when rendering wanting to use MSAA on the default frame buffer - glEnable(GL_MULTISAMPLE);
+}
 
-	//render cubes/oblongs for point/spot lights
-	m_lightManager.DrawLights(m_renderer);
+void SandBoxLayer::PostRender()
+{
+	if (m_drawLightingAsMeshes) m_lightManager.DrawLights(m_renderer);
+	if (!m_wireframeMode)m_postProcessing->Render_FrameBuffer(m_renderer);
+}
 
+void SandBoxLayer::Render(Shader* overideShader)
+{
 	//loop entities
 	for (const std::shared_ptr<Entity>& entity : m_entities)
-		entity->Render(m_renderer);
-	
-	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
-	
-	if(!m_wireframeMode)m_postProcessing->Render_FrameBuffer(m_renderer);
+		entity->Render(m_renderer, overideShader);
 
+	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
 }
 
 void SandBoxLayer::End()
@@ -248,6 +253,7 @@ void SandBoxLayer::ImGUI()
 		ImGui::Begin("Controll");
 		ImGui::Checkbox("Rendering", &SystemGUIOpen);
 		ImGui::Checkbox("Lighting", &LightingGUIOpen);
+		ImGui::Checkbox("Draw Lighting", &m_drawLightingAsMeshes);
 		if (ImGui::Button("Exit"))
 		{
 			glfwSetWindowShouldClose(m_renderer.GetWindow().GetWindowPtr(), true);

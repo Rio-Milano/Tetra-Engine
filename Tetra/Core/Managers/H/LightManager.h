@@ -20,8 +20,9 @@
 #include"../../OpenGL_Abstraction/H/Shader.h"
 #include"../../Requirements/glmIncludes.h"
 #include"../../Structure/H/Mesh.h"
-
 #include"../../Graphics/H/Renderer.h"
+
+class BaseLayer;
 
 //types of light
 enum class LightType
@@ -57,7 +58,7 @@ class LightManager
 public:
 	//ctors and dtors
 	LightManager() = default;
-	~LightManager() = default;
+	~LightManager();
 
 	//create a mesh for light and make light shader
 	void Initialize();
@@ -79,10 +80,14 @@ public:
 	//draw physical representations of lights
 	void DrawLights(Renderer& renderer);
 
+	void DrawSceneToDepthBuffer(BaseLayer* baseLayer);
+
+	const GLuint GetDepthMap() const;
 
 private:
 	//internal helper that gets a ligh not in use
 	int GetFreeLight();
+	void InitializeDepthFrameBuffer();
 
 	//mesh that represents the lights
 	Mesh m_meshForLight;
@@ -90,6 +95,12 @@ private:
 	Shader* m_shader{nullptr};
 	//vector of all lights
 	std::vector<Light> m_lights;
+
+	/*
+	Shadow Mapping for directional lights
+	*/
+	GLuint m_depthFrameBuffer{0};
+	GLuint m_depthMap{0};
 };
 
 #endif

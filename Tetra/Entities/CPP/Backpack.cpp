@@ -38,9 +38,9 @@ void BackPack::Update(const float& dt)
 {
 }
 
-void BackPack::Render(Renderer& renderer)
+void BackPack::Render(Renderer& renderer, Shader* overideShader)
 {
-	Shader& shader = ShaderManager.GetShader("main");
+	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
 
 	static_cast<Model*>(this)->Render(renderer, shader);
 }

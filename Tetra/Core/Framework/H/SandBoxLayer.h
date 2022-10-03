@@ -6,6 +6,7 @@ class PostProcessing;
 
 class SandBoxLayer : public BaseLayer
 {
+
 public:
 	//ctors-dtors
 	SandBoxLayer() = default;
@@ -14,7 +15,9 @@ public:
 	//BaseLayer virtual functions
 	void Start() override final;
 	void Update(float dt) override final;
-	void Render() override final;
+	void PreRender(Shader* overrideShader) override final;
+	void Render(Shader* overideShader) override final;
+	void PostRender() override final;
 	void End() override final;
 	void ImGUI() override final;
 
@@ -22,7 +25,9 @@ private:
 	//Imgui flags used in layer update and rendering
 	bool m_wireframeMode{false};
 	bool m_pauseSimulation{false};
-	float gamma = 2.2;
+	bool m_drawLightingAsMeshes{true};
+
+	float gamma = 2.2f;
 	//entity list
 	std::vector<std::shared_ptr<Entity>> m_entities;
 

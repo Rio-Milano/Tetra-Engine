@@ -57,7 +57,10 @@ void BaseLayer::DestroyLayer()
 void BaseLayer::BaseRender()
 {
 	//draw layer
-	Render();
+	PreRender(nullptr);
+	Render(nullptr);
+	PostRender();
+
 	//draw imgui when not using camera
 	if(!m_camera.GetUsingCamera())
 		BaseimGUI();
@@ -235,4 +238,10 @@ void BaseLayer::CreateShader()
 		ShaderManager.AddShader("Draw-Normals", draw_normals_shader);
 	}
 
+	//Shadow Mapping Shader
+	{
+		Shader shadowMapping;
+		shadowMapping.Create("Data/Shaders/Shadow Mapping/shadowMapping.vert", "Data/Shaders/Shadow Mapping/shadowMapping.frag");
+		ShaderManager.AddShader("Shadow-Mapping", shadowMapping);
+	}
 }

@@ -15,7 +15,7 @@ public:
 
 	void Init() override final;
 	void Update(const float& dt) override final;
-	void Render(Renderer& renderer) override final;
+	void Render(Renderer& renderer, Shader* overideShader) override final;
 
 private:
 	std::shared_ptr<Mesh> m_mesh;

@@ -56,7 +56,7 @@ void TransparentEntity::Update(const float& dt)
 {
 }
 
-void TransparentEntity::Render(Renderer& renderer)
+void TransparentEntity::Render(Renderer& renderer, Shader* overideShader)
 {
 	static const std::vector<glm::vec3> windowPositions
 	{
@@ -66,33 +66,33 @@ void TransparentEntity::Render(Renderer& renderer)
 		glm::vec3(0.0f, 0.0f, 10.0f)
 	};
 
-	Shader& shader = ShaderManager.GetShader("DiscardAlpha");
+	Shader* shader = overideShader ? overideShader : &ShaderManager.GetShader("DiscardAlpha");
 
 	for (const glm::vec3& pos : windowPositions)
 	{
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, pos);
-		renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
+		renderer.RenderMesh(*this->m_mesh.get(), transform, *shader);
 
 	}
 
 	glm::mat4 transform(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 1.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, *shader);
 	
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, -1.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, *shader);
 	
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(-1.0f, 0.0f, 0.0f));
 	transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, *shader);
 	
 	transform = glm::mat4(1.0f);
 	transform = glm::translate(transform, glm::vec3(1.0f, 0.0f, 0.0f));
 	transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	renderer.RenderMesh(*this->m_mesh.get(), transform, shader);
+	renderer.RenderMesh(*this->m_mesh.get(), transform, *shader);
 
 
 }

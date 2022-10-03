@@ -142,9 +142,9 @@ void AquaPig::Update(const float& dt)
 
 }
 
-void AquaPig::Render(Renderer& renderer)
+void AquaPig::Render(Renderer& renderer, Shader* overrideShader)
 {
-	Shader& shader = ShaderManager.GetShader("main");
+	Shader& shader = overrideShader ? *overrideShader :  ShaderManager.GetShader("main");
 
 	static_cast<Model*>(this)->Render(renderer, shader);
 }
