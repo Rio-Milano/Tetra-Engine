@@ -13,6 +13,7 @@ out Varying
 	vec3 normal;
 } oData;
 
+
 //UNIFORM
 uniform mat4 worldMat;
 uniform mat3 normalMat;

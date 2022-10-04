@@ -29,11 +29,15 @@ struct Light
 
 	vec3 direction;	
 	float intensity;
+	
+	mat4 lightSpace;
 
 	float outerCutOffAngle;	
 	int type; 
 	bool inUse;
+
 };
+
 struct Material
 {
 	sampler2D diffuseMap;
@@ -63,7 +67,7 @@ struct Material
 #define SPECULAR_POWER 32
 #define NUMBER_OF_LIGHTS 10
 
-//UNIFORM
+//UBO
 layout(std140) uniform Lights
 {
 	Light lights[NUMBER_OF_LIGHTS];
@@ -73,6 +77,8 @@ layout(std140) uniform World
 	vec3 cameraPosition;
 	float time;
 };
+
+uniform sampler2D shadowMaps[NUMBER_OF_LIGHTS];
 uniform Material material;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
@@ -260,7 +266,21 @@ float CalculateSpecular(int i, vec3 normal)
 }
 
 
-
+float ShadowCalculation(int i, vec4 fragPosLightSpace)
+{
+// perform perspective divide
+vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+// transform to [0,1] range
+projCoords = projCoords * 0.5 + 0.5;
+// get closest depth value from light’s perspective (using
+// [0,1] range fragPosLight as coords)
+float closestDepth = texture(shadowMaps[i], projCoords.xy).r;
+// get depth of current fragment from light’s perspective
+float currentDepth = projCoords.z;
+// check whether current frag pos is in shadow
+float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+return shadow;
+}
 vec3 CalculateDirectionalLight(int i, vec3 normal)
 {
 	//Light and Fragment Color
@@ -278,7 +298,10 @@ vec3 CalculateDirectionalLight(int i, vec3 normal)
 	//Specular color
 	vec3 specular = specularColor * material.specularIntensity * CalculateSpecular(i, normal);//calculate specular
 
-	return (ambient + diffuse + specular) * lightColor;//calculate the final light color
+	float shadow = ShadowCalculation(i, lights[i].lightSpace * vec4(inData.position, 1.0));
+	return (ambient + (1.0 - shadow) * (diffuse + specular)) * lightColor;
+
+	//return  (ambient + diffuse + specular) * lightColor;
 };
 
 
@@ -299,6 +322,7 @@ vec3 CalculatePointLight(int i, vec3 normal)
 	vec3 specular =  specularColor * material.specularIntensity * CalculateSpecular(i, normal) * attenuation;//calculate specular on surface and apply fall off
 
 	return (ambient + diffuse + specular) * lightColor;//final calculation
+
 };
 
 vec3 CalculateSpotLight(int i, vec3 normal)

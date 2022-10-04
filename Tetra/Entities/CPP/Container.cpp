@@ -167,7 +167,8 @@ void Container::Init()
 	//make material for container
 	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Box");
 	mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");
-	mesh->GetMaterial()->m_emission = TextureManager.GetTexture("BoxEmission");
+	//mesh->GetMaterial()->m_emission = TextureManager.GetTexture("BoxEmission");
+	
 	/*mesh->GetMaterial()->m_mapToEnviroment = true;
 	mesh->GetMaterial()->m_toRefractiveIndex = RefractiveIndex::Glass;
 	mesh->GetMaterial()->m_reflectionType = ReflectionType::Reflection;*/
@@ -194,15 +195,21 @@ void Container::Init()
 
 void Container::Update(const float& dt)
 {
-	m_rot += dt;
+	m_rot += 5;
 }
 
 void Container::Render(Renderer& renderer, Shader* overideShader)
 {
 	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
-	for (int i = 0; i < cubePositions.size(); i++)
-	{
-		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), m_rot, glm::vec3(1.0f)));
-		GetRoot()->Render(renderer, shader);
-	}
+	//for (int i = 0; i < cubePositions.size(); i++)
+	//{
+	//	GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), m_rot, glm::vec3(1.0f)));
+	//	GetRoot()->Render(renderer, shader);
+	//}
+
+	GetRoot()->SetTransform(glm::scale(glm::mat4(1.0f), glm::vec3(8, 8, 8)));
+	GetRoot()->Render(renderer, shader);
+
+	GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0, 5, 0)), glm::radians(m_rot), glm::vec3(1.0f)));
+	GetRoot()->Render(renderer, shader);
 }

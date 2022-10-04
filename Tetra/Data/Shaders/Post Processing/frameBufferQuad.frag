@@ -143,5 +143,5 @@ void main()
 	
 	FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));
 
-
+	//FragColor = vec4(texture(material.diffuseMap, varying_texCoord).rrr,1.0); 
 }

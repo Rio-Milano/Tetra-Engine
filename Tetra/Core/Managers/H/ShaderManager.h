@@ -15,6 +15,7 @@ class Shader;
 
 class ShaderManager
 {
+	friend class LightManager;
 public:
 	//singleton
 	static ShaderManager& GetInstance();

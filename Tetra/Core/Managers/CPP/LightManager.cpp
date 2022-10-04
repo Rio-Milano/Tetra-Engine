@@ -7,9 +7,6 @@
 
 LightManager::~LightManager()
 {
-	//GPU Memory Clean up
-	glDeleteFramebuffers(1, &m_depthFrameBuffer);
-	glDeleteTextures(1, &m_depthMap);
 }
 
 void LightManager::Initialize()
@@ -76,7 +73,8 @@ void LightManager::Initialize()
 	m_meshForLight.GenerateMesh(positions, {}, {}, {}, {}, 1, GL_STATIC_DRAW);
 
 	
-	InitializeDepthFrameBuffer();
+	InitializeShadowMaps();
+	SetTextureUnitsForShaderShadowMaps();
 }
 
 void LightManager::SetShader(Shader* shader)
@@ -184,7 +182,7 @@ Light& LightManager::GetLight(const int& index)
 	return m_lights[index];
 }
 
-void LightManager::UpdateShader(const float& dt)
+void LightManager::UpdateLightsUBO(const float& dt)
 {
 
 	//get the uniform buffer object
@@ -225,7 +223,8 @@ void LightManager::UpdateShader(const float& dt)
 		
 		lights_ubo->SetBufferElement(prefix + "Type", &light.m_lightType);
 		lights_ubo->SetBufferElement(prefix + "InUse", &light.m_inUse);
-														
+		
+		lights_ubo->SetBufferElement(prefix + "Light-Space", &light.m_lightSpace);
 		
 
 
@@ -252,8 +251,7 @@ void LightManager::UpdateShader(const float& dt)
 			}
 		}
 	}
-	glUnmapBuffer(GL_UNIFORM_BUFFER);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 }
 
 void LightManager::DrawLights(Renderer& renderer)
@@ -340,45 +338,38 @@ void LightManager::DrawLights(Renderer& renderer)
 
 void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 {
-	/*
-	Creates a depth map for light 1 if it is in use and is a directional light
-	*/
+	GLint viewPort[4];
+	glGetIntegerv(GL_VIEWPORT, viewPort);
 
-	//glViewport(0, 0, 1080, 1080);
+	for (size_t lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+	{
+		Light& light = m_lights[lightIndex];
 
-	Light& light = m_lights[0];
+		if (light.m_inUse && light.m_lightType == LightType::Directional)
+		{
+			glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);//resize the view port
 
-	//if (light.m_inUse && light.m_lightType == LightType::Directional)
-	//{
+			//Bind to the depth fbo and clear its depth buffer
+			glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
+			glClear(GL_DEPTH_BUFFER_BIT);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, m_depthFrameBuffer);
-		glClear(GL_DEPTH_BUFFER_BIT);
+			glm::mat4 projection = glm::ortho(-20.f, 20.f, -20.f, 20.f, 1.0f, 100.f);
 
-		Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
+			glm::mat4 view = glm::lookAt(light.m_direction * -10.0f, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-		float near_plane = 1.0f, far_plane = 7.5f;
-		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f,
-			near_plane, far_plane);
+			light.m_lightSpace = projection * view;
 
-		glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
+			Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
+			shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), light.m_lightSpace);
 
-		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+			baseLayer->Render(&shadowMapping);
 
-		shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), lightSpaceMatrix);
-
-		baseLayer->Render(&shadowMapping);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//}
-
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+	}
+	glViewport(0, 0, viewPort[2], viewPort[3]);
 }
 
-const GLuint LightManager::GetDepthMap() const
-{
-	return m_depthMap;
-}
 
 int LightManager::GetFreeLight()
 {
@@ -389,37 +380,63 @@ int LightManager::GetFreeLight()
 	}
 	return -1;
 }
-void LightManager::InitializeDepthFrameBuffer()
+void LightManager::InitializeShadowMaps()
 {
-	//Depth Map Resolution
-	const unsigned int WIDTH = 1080, HEIGHT = 1080;
+	for (size_t lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+	{
+		Light& light = m_lights[lightIndex];
 
-	//Generate and bind to a frame buffer
-	glGenFramebuffers(1, &m_depthFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_depthFrameBuffer);
+		//Generate a shadow map used as a depth map within the fbo
+		glGenTextures(1, &light.m_depthBuffer);
+		glBindTexture(GL_TEXTURE_2D, light.m_depthBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		//Texture Filtering
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	//Generate a texture for the depth map
-	glGenTextures(1, &m_depthMap);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (void*)0);
-	//Texture Filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//Texture Wrapping
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_2D, 0);
+		//Texture Wrapping
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-	//attach the depth map
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMap, 0);
+		GLfloat borderClampColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderClampColor);
 
-	//Disable the color buffer
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-	glBindBuffer(GL_FRAMEBUFFER, 0);
+		//Generate and bind to a frame buffer used for rendering the scene from the perspective of the light
+		glGenFramebuffers(1, &light.m_fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
+		//attach the depth map
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light.m_depthBuffer, 0);
 
-	//check that the frame buffer is complete
-	_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+		//Disable the color buffer so framebuffer complete without color buffer
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+
+		glBindBuffer(GL_FRAMEBUFFER, 0);
+
+		//check that the frame buffer is complete
+		_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+	}
+}
+void LightManager::SetTextureUnitsForShaderShadowMaps()
+{
+	const GLuint startTextureUnit = 20u;
+
+	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+	{
+		const GLuint textureUnit = startTextureUnit + lightIndex;
+		const Light& light = m_lights[lightIndex];
+
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(GL_TEXTURE_2D, light.m_depthBuffer);
+	}
+
+	for (std::unordered_map<std::string, Shader>::iterator i = ShaderManager.m_programNameProgramIDMap.begin(); i != ShaderManager.m_programNameProgramIDMap.end(); i++)
+	{
+		Shader& currentShader = i->second;
+	
+		for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+			currentShader.SetUniform1i(currentShader.GetLocation("shadowMaps[" + std::to_string(lightIndex) + "]"), startTextureUnit + lightIndex);
+	}
 };

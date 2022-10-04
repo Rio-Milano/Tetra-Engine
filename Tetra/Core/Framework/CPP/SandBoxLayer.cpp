@@ -52,7 +52,6 @@ void SandBoxLayer::Start()
 	for (const std::shared_ptr<Entity>& entity : m_entities)
 		entity->Init();
 
-	m_lightManager.Initialize();
 	m_lightManager.SetShader(&ShaderManager.GetShader("main"));
 	
 	m_lightManager.SetDirectionalLight(glm::vec3(0.f, -1.f, 0.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.2f);//0
@@ -77,7 +76,7 @@ void SandBoxLayer::Update(float dt)
 		m_lightManager.GetLight(9).m_drawLight = false;
 
 		//update 
-		m_lightManager.UpdateShader(dt);//update real time light attribute changes on the gpu shader
+		m_lightManager.UpdateLightsUBO(dt);//update real time light attribute changes on the gpu shader
 
 		//loop entitys
 		for (const std::shared_ptr<Entity>& entity : m_entities)
@@ -99,16 +98,13 @@ void SandBoxLayer::PreRender(Shader* overrideShader)
 	else
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	}
-	
 
 }
 
 void SandBoxLayer::PostRender()
 {
-	if (m_drawLightingAsMeshes) m_lightManager.DrawLights(m_renderer);
-	if (!m_wireframeMode)m_postProcessing->Render_FrameBuffer(m_renderer);
+	if (!m_wireframeMode) m_postProcessing->Render_FrameBuffer(m_renderer);
 }
 
 void SandBoxLayer::Render(Shader* overideShader)
@@ -118,6 +114,9 @@ void SandBoxLayer::Render(Shader* overideShader)
 		entity->Render(m_renderer, overideShader);
 
 	m_renderer.RenderTransparentMeshes(m_camera.GetPosition());
+
+	if (m_drawLightingAsMeshes) m_lightManager.DrawLights(m_renderer);
+
 }
 
 void SandBoxLayer::End()

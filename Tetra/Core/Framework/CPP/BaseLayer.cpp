@@ -24,6 +24,9 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	CreateUniformBuffers();
 	//create default shaders
 	CreateShader();
+	//
+	m_lightManager.Initialize();
+
 	//setup camera with attributes
 	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 0.0f), m_renderer.GetWindow().GetWindowPtr());
 	//output gl state
@@ -111,7 +114,7 @@ void BaseLayer::CreateUniformBuffers()
 	World->SetElementData("time", UniformBufferObject::Element{ 4, 12});
 	ShaderManager.AddUniformBufferObject("World", World);
 
-	size_t ubo_size = 76 * NUMBER_OF_LIGHTS;
+	size_t ubo_size = 128 * NUMBER_OF_LIGHTS;
 
 
 	std::shared_ptr<UniformBufferObject> ubo = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(ubo_size), 2, "Lights");
@@ -144,8 +147,12 @@ void BaseLayer::CreateUniformBuffers()
 		offset += 12;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Intensity", UniformBufferObject::Element{ 4, offset });
 		
-		//Inner Cutoff
+		//LightSpace
 		offset += 4;
+		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":Light-Space", UniformBufferObject::Element{64, offset});
+
+		//Outer Cutoff
+		offset += 64;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":OuterCutoff", UniformBufferObject::Element{ 4, offset });
 
 		//Type

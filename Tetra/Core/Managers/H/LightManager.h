@@ -35,6 +35,12 @@ enum class LightType
 //deffinition of a light
 struct Light
 {
+	~Light()
+	{
+		//GPU Memory Clean up
+		glDeleteFramebuffers(1, &m_fbo);
+		glDeleteTextures(1, &m_depthBuffer);
+	}
 	glm::vec3 m_position{};
 	glm::vec3 m_direction{};
 	glm::vec3 m_lightColor{};
@@ -51,6 +57,13 @@ struct Light
 		float rotationSpeed{ 2.0f };
 
 	bool m_drawLight{true};
+
+	//Shadows
+	glm::mat4 m_lightSpace{glm::mat4(1.0f)};
+	GLuint m_fbo;
+	GLuint m_depthBuffer{0u};
+	GLuint SHADOW_HEIGHT{1080u}, SHADOW_WIDTH{ 1080u };
+
 };
 
 class LightManager
@@ -75,19 +88,19 @@ public:
 	Light& GetLight(const int& index);
 
 	//send the lights state to the shader used for model rendering
-	void UpdateShader(const float& dt);
+	void UpdateLightsUBO(const float& dt);
 
 	//draw physical representations of lights
 	void DrawLights(Renderer& renderer);
 
 	void DrawSceneToDepthBuffer(BaseLayer* baseLayer);
 
-	const GLuint GetDepthMap() const;
 
 private:
 	//internal helper that gets a ligh not in use
 	int GetFreeLight();
-	void InitializeDepthFrameBuffer();
+	void InitializeShadowMaps();
+	void SetTextureUnitsForShaderShadowMaps();
 
 	//mesh that represents the lights
 	Mesh m_meshForLight;
@@ -96,11 +109,6 @@ private:
 	//vector of all lights
 	std::vector<Light> m_lights;
 
-	/*
-	Shadow Mapping for directional lights
-	*/
-	GLuint m_depthFrameBuffer{0};
-	GLuint m_depthMap{0};
 };
 
 #endif
