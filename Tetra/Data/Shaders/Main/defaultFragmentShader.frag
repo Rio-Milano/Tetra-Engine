@@ -271,7 +271,7 @@ Shadow calculations for directional lighting using orthographic projection
 */
 float ProcessShadow(int i, vec4 posInLightSpace, vec3 normal)
 {
-	vec3 projCoords = posInLightSpace.xyz;//use -> if using perspective projection so scaling can take effect: / posInLightSpace.w; 
+	vec3 projCoords = posInLightSpace.xyz / posInLightSpace.w; 
 
 	//Convert NDC to range of [0, 1] so that x,y is in texture space and z is in depth space
 	projCoords = projCoords * 0.5 + 0.5;
@@ -405,7 +405,12 @@ vec3 CalculateSpotLight(int i, vec3 normal)
 
 
 		//final calculation
-		return (ambient + diffuse + specular) * lightColor;
+		//return (ambient + diffuse + specular) * lightColor;
+
+		
+		float shadowContribution = 1.0 - ProcessShadow(i, lights[i].lightSpace * vec4(inData.position, 1.0), normal);
+
+		return (ambient + shadowContribution * (diffuse + specular)) * lightColor;
 	}
 
 

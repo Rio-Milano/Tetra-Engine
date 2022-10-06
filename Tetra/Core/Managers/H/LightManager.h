@@ -58,6 +58,7 @@ struct Light
 
 	bool m_drawLight{true};
 
+
 	//Shadows
 	glm::mat4 m_lightSpace{glm::mat4(1.0f)};
 	GLuint m_fbo;

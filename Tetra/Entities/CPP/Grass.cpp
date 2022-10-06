@@ -73,6 +73,8 @@ void Grass::Render(Renderer& renderer, Shader* overideShader)
 		glm::vec3(1.0f, 1.5f, 1.0f)
 	};
 
+	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
+	
 	static float theta = 0.0f;
 
 	for (size_t i = 0ull; i < grassPositions.size(); i++)
@@ -82,7 +84,6 @@ void Grass::Render(Renderer& renderer, Shader* overideShader)
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
 
-		Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("DiscardAlpha");
 
 		glm::mat4 t1 = glm::scale(transform, scale);
 		t1 = glm::rotate(t1, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));

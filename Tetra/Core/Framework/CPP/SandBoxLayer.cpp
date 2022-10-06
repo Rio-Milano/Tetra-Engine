@@ -70,6 +70,7 @@ void SandBoxLayer::Update(float dt)
 	if (!m_pauseSimulation)
 	{
 		Light& light = m_lightManager.GetLight(9);
+		
 		m_lightManager.SetSpotLight(m_camera.GetPosition(), m_camera.GetForwardVector(), light.m_lightColor, light.m_lightIntensity, 9, light.m_innerCutOffAngle, light.m_outerCutOffAngle, light.m_range);
 		m_lightManager.GetLight(9).m_drawLight = false;
 

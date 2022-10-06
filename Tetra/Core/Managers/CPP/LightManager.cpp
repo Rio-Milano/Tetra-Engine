@@ -355,7 +355,7 @@ void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 	{
 		Light& light = m_lights[lightIndex];
 
-		if (light.m_inUse && light.m_lightType == LightType::Directional)
+		if (light.m_inUse && (light.m_lightType == LightType::Directional || light.m_lightType == LightType::Spot))
 		{
 			glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);//resize the view port
 
@@ -363,9 +363,18 @@ void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 			glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
 			glClear(GL_DEPTH_BUFFER_BIT);
 
-			glm::mat4 projection = glm::ortho(left, right, top, bottom, nearPlane, farPlane);
 
-			glm::mat4 view = glm::lookAt(light.m_direction * -30.0f, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::mat4 projection(0.0f);
+			//if (light.m_lightType == LightType::Directional)
+				projection = glm::ortho(left, right, top, bottom, nearPlane, farPlane);
+			//else
+				//projection = glm::perspective(glm::radians(90.f), (float)(light.SHADOW_WIDTH / light.SHADOW_HEIGHT), nearPlane, farPlane);
+
+			glm::mat4 view(0.0f);
+			if (light.m_lightType == LightType::Directional)
+				view = glm::lookAt(light.m_direction * -30.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			else
+				view = glm::lookAt(light.m_position, light.m_position + light.m_direction, glm::vec3(0.0f, 1.0f, 0.0f));
 
 			light.m_lightSpace = projection * view;
 
