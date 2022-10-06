@@ -59,7 +59,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 	shader.SetUniformMat4f(shader.GetLocation("worldMat"), worldMat);
 	
 	//calculate the normal matrix that allows for unballanced scaling so normals arent distorted
-	glm::mat3 normalMat = glm::mat3(glm::transpose(glm::inverse(worldMat)));
+	glm::mat3 normalMat = glm::transpose(glm::inverse(worldMat));
 	//set normal matrix in shader
 	shader.SetUniformMat3f(shader.GetLocation("normalMat"), normalMat);
 
@@ -169,7 +169,10 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 	{
 		glEnable(GL_CULL_FACE);//turn on face culling
 		glFrontFace(GL_CCW);//set the front face winding order to counter clock wise as it is by default
-		glCullFace(GL_BACK);//cull any primitives defined in the clock wise order
+		if(ShaderManager.GetShader("Shadow-Mapping").GetID() == shader.GetID())
+			glCullFace(GL_FRONT);
+		else
+			glCullFace(GL_BACK);
 	}
 	else
 	{

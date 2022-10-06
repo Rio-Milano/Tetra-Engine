@@ -51,7 +51,7 @@ struct Material
 
 	//default values
 	float m_ambientIntensity{ 0.09f };//amount of ambient light we can reflect
-	float m_specularIntensity{ 3.f };//amount of specular lighting we can reflect
+	float m_specularIntensity{ 1.f };//amount of specular lighting we can reflect
 
 	glm::vec3 m_defaultDiffuseColor{ 1.0f, 1.0f, 1.0f };//default colors when no texture maps are avaliable
 	glm::vec3 m_defaultSpecularColor{ 1.0f, 1.0f, 1.0f };

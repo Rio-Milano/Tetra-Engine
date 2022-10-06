@@ -62,7 +62,7 @@ struct Light
 	glm::mat4 m_lightSpace{glm::mat4(1.0f)};
 	GLuint m_fbo;
 	GLuint m_depthBuffer{0u};
-	GLuint SHADOW_HEIGHT{1080u}, SHADOW_WIDTH{ 1080u };
+	GLuint SHADOW_HEIGHT{1080u * 4}, SHADOW_WIDTH{ 1080u * 4 };
 
 };
 

@@ -25,8 +25,6 @@ void SandBoxLayer::Start()
 	//add entities to entity vector
 	m_entities.emplace_back(std::make_shared<AquaPig>("Boat"));
 	m_entities.emplace_back(std::make_shared<Container>("Box"));
-	
-	m_entities.emplace_back(std::make_shared<BaseGrid>());
 
 	m_entities.emplace_back(std::make_shared<Plane>());
 

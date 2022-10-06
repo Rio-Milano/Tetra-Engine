@@ -28,11 +28,14 @@ void BaseLayer::CreateLayer(const glm::vec<2, int> windowSize, const std::string
 	m_lightManager.Initialize();
 
 	//setup camera with attributes
-	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 0.0f, 0.0f), m_renderer.GetWindow().GetWindowPtr());
+	m_camera.Initialize(90.0f, static_cast<glm::vec2>(windowSize), static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), 5.0f, .1f, glm::vec3(0.0f, 10.0f, 0.0f), m_renderer.GetWindow().GetWindowPtr());
 	//output gl state
 	Helper::Status::DisplayUsefulInfo();
 	//init gui lib
 	InitializeImGui();
+
+	m_grid = std::make_shared<BaseGrid>();
+	m_grid->Init();
 
 }
 
@@ -62,6 +65,7 @@ void BaseLayer::BaseRender()
 	//draw layer
 	PreRender(nullptr);
 	Render(nullptr);
+	//m_grid->Render(m_renderer, nullptr);
 	PostRender();
 
 	//draw imgui when not using camera

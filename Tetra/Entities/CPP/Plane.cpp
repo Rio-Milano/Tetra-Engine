@@ -20,48 +20,31 @@ void Plane::Init()
 		glm::vec3(1.0f, 0.0f, 1.0f)
 	};
 
-	std::vector<glm::vec3>* colors = new std::vector<glm::vec3>
-	{
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f)
-	};
-
 	std::vector<unsigned int>* elements = new std::vector<unsigned int>
 	{
 		2, 1, 0,
 		2, 3, 1
 	};
 
+	std::vector<glm::vec3>* normals = new std::vector<glm::vec3>
+	{
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	};
+
+
 	std::shared_ptr<Mesh> planeMesh = std::make_shared<Mesh>();
-
-	glGenVertexArrays(1, &planeMesh->m_VAO);
-	glBindVertexArray(planeMesh->m_VAO);
-
-	planeMesh->m_positions = positions;
-	planeMesh->CreateBuffer(GL_ARRAY_BUFFER, positions->size() * sizeof(glm::vec3), positions->data(), GL_STATIC_DRAW);
-	planeMesh->CreateVertexAttributePointer(GL_ARRAY_BUFFER, 0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-
-
-	planeMesh->m_colors = colors;
-	planeMesh->CreateBuffer(GL_ARRAY_BUFFER, colors->size() * sizeof(glm::vec3), colors->data(), GL_STATIC_DRAW);
-	planeMesh->CreateVertexAttributePointer(GL_ARRAY_BUFFER, 1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-
-	planeMesh->m_elements = elements;
-	planeMesh->CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, elements->size() * sizeof(unsigned int), elements->data(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-	planeMesh->EndBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
+	planeMesh->GenerateMesh(positions, normals, nullptr, nullptr, elements, 0);
 	//configure mesh
 	planeMesh->m_meshName = "Plane";
-	planeMesh->m_drawType = 0;
-	planeMesh->customVertex = true;
-	planeMesh->m_vertexCount = positions->size();
-
+	planeMesh->GetMaterial()->m_defaultDiffuseColor = glm::vec3(0.5f);
+	planeMesh->GetMaterial()->m_mapToEnviroment = true;
 	std::shared_ptr<ModelNode> modelNode = std::make_shared<ModelNode>(glm::mat4(1.0f));
 	modelNode->AddMesh(planeMesh);
+	modelNode->SetTransform(glm::scale(glm::mat4(1.0f), glm::vec3(50.0f, 1.0f, 50.0f)));
+	
 	SetRoot(modelNode);
 
 }
@@ -72,6 +55,6 @@ void Plane::Update(const float& dt)
 
 void Plane::Render(Renderer& renderer, Shader* overideShader)
 {
-	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("Position-Color");
+	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
 	GetRoot()->Render(renderer, shader);
 }

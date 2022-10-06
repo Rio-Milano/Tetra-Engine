@@ -114,6 +114,8 @@ void AquaPig::Init()
 	nwing_left->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;
 	nwing_right->GetChildren()[0]->GetMeshes()[0]->GetMaterial()->m_mapToEnviroment = true;;
 	
+	nhull->SetTransform(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f)));
+
 	SetRoot(nhull);
 
 	//const unsigned int numOfInstances = 20;
@@ -135,7 +137,7 @@ void AquaPig::Update(const float& dt)
 	propellerNode->SetTransform(glm::rotate(propellerNode->GetTransform(), (float)glm::radians(400.0f * dt), glm::vec3(0, 1, 0)));
 
 	std::shared_ptr<ModelNode> hullNode = FindNode("hull.obj");
-	hullNode->SetTransform(glm::rotate(hullNode->GetTransform(), (float)glm::radians(sin(glfwGetTime())) * dt * 10.0f, glm::vec3(1, 0, 1)));
+	hullNode->SetTransform(glm::rotate(hullNode->GetTransform(), (float)glm::radians(sin(glfwGetTime())) * dt * 10.0f, glm::vec3(0, 1, 0)));
 
 	std::shared_ptr<ModelNode> gunNode = FindNode("gun");
 	gunNode->SetTransform(glm::rotate(gunNode->GetTransform(), (float)glm::radians(sin(glfwGetTime())) * dt * 20.0f, glm::vec3(1, 0, 0)));

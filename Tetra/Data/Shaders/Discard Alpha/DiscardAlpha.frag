@@ -24,7 +24,8 @@ void main()
 	
 	//if alpha value is very low then discard the fragment
 	if(fragColor.a < 0.1)
+	{
 		discard;
-
+	}
 	FragColor = fragColor;
 }

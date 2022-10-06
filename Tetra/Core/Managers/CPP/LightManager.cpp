@@ -341,6 +341,16 @@ void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 	GLint viewPort[4];
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
+
+	static const float
+		size = 50.0f,
+		left = -size / 2.0f,
+		right = size / 2.0f,
+		top = -size / 2.0f,
+		bottom = size / 2.0f,
+		nearPlane = 0.1f,
+		farPlane = 60.0f;
+
 	for (size_t lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
 		Light& light = m_lights[lightIndex];
@@ -353,15 +363,14 @@ void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 			glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
 			glClear(GL_DEPTH_BUFFER_BIT);
 
-			glm::mat4 projection = glm::ortho(-20.f, 20.f, -20.f, 20.f, 1.0f, 100.f);
+			glm::mat4 projection = glm::ortho(left, right, top, bottom, nearPlane, farPlane);
 
-			glm::mat4 view = glm::lookAt(light.m_direction * -10.0f, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::mat4 view = glm::lookAt(light.m_direction * -30.0f, glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
 			light.m_lightSpace = projection * view;
 
 			Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
 			shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), light.m_lightSpace);
-
 			baseLayer->Render(&shadowMapping);
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -403,15 +412,31 @@ void LightManager::InitializeShadowMaps()
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+
+		//Using a color buffer so we can discard low alpha fragments
+		GLuint colorBuffer;
+		glGenTextures(1, &colorBuffer);
+		glBindTexture(GL_TEXTURE_2D, colorBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		//Texture Filtering
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		//Texture Wrapping
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderClampColor);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
 		//Generate and bind to a frame buffer used for rendering the scene from the perspective of the light
 		glGenFramebuffers(1, &light.m_fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
 		//attach the depth map
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light.m_depthBuffer, 0);
-
-		//Disable the color buffer so framebuffer complete without color buffer
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
+		//attach the color buffer
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
 
 		glBindBuffer(GL_FRAMEBUFFER, 0);
 

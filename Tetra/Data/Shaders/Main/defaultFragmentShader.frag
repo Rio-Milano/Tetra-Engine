@@ -64,7 +64,7 @@ struct Material
 
 
 //MACROs
-#define SPECULAR_POWER 32
+#define SPECULAR_POWER 64
 #define NUMBER_OF_LIGHTS 10
 
 //UBO
@@ -101,6 +101,7 @@ vec3 GetFragmentEmission();
 vec3 ProcessReflectiveFragment(vec3 normal);
 bool ProcessLowAlphaFragment();
 bool ProcessEmissionFragment();
+float ProcessShadow(int i, vec4 posInLightSpace);
 
 void main()
 {
@@ -110,7 +111,7 @@ void main()
 
 	if(ProcessEmissionFragment()) return;
 
-	vec3 finalColor;
+	vec3 finalColor = vec3(0.0);
 
 	for(int i = 0; i < NUMBER_OF_LIGHTS; i++)
 	{
@@ -265,22 +266,69 @@ float CalculateSpecular(int i, vec3 normal)
 
 }
 
-
-float ShadowCalculation(int i, vec4 fragPosLightSpace)
+/*
+Shadow calculations for directional lighting using orthographic projection
+*/
+float ProcessShadow(int i, vec4 posInLightSpace, vec3 normal)
 {
-// perform perspective divide
-vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-// transform to [0,1] range
-projCoords = projCoords * 0.5 + 0.5;
-// get closest depth value from light’s perspective (using
-// [0,1] range fragPosLight as coords)
-float closestDepth = texture(shadowMaps[i], projCoords.xy).r;
-// get depth of current fragment from light’s perspective
-float currentDepth = projCoords.z;
-// check whether current frag pos is in shadow
-float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
-return shadow;
-}
+	vec3 projCoords = posInLightSpace.xyz;//use -> if using perspective projection so scaling can take effect: / posInLightSpace.w; 
+
+	//Convert NDC to range of [0, 1] so that x,y is in texture space and z is in depth space
+	projCoords = projCoords * 0.5 + 0.5;
+
+	//if the depth is past the far plane then ignore any shadow
+	if(projCoords.z > 1.0)
+		return 0.0;
+
+	//get the depth of the fragment in light from the shadow map
+	float depthOfFragmentInLight = texture(shadowMaps[i], projCoords.xy).r;
+	float depthOfCurrentFragmentInLightSpace = projCoords.z;
+
+	/*
+	When we have alignment of the normal and direction to the light we use a very small bias to offset the imprecision of floating point math//When the normal 
+	is very steep to the direction to the light we use a larger bias this is because when we render fragments aligned with the light the differance between fragment
+	placement is small so floating point values are closer togeather When the fragment normal and light source has a steep angle fragments
+	placement in the world can vairy a lot resulting in large floating point imprecision
+
+	So the larger the slope the larger the bias
+	*/
+
+	float alignedBias = 0.001;
+	float steepSlopeBias = 0.01;
+
+	float bias = max(steepSlopeBias * (1.0 - dot(normal, -lights[i].direction)), alignedBias);
+
+	//Start with a shadow value of 0 meaning fragment is not in shadow
+	float shadow = 0.0;
+
+	//get the size of texles in the shadow map
+    vec2 texelSize = 1.0 / textureSize(shadowMaps[i], 0);
+    vec2 centreTexel = vec2(projCoords.x, projCoords.y);
+
+	/*
+	Here we use Percentage-Closer Filtering where we also sample from the depth of surrounding texles
+	and include them if they are in shadow. Then we average the shadow by sample count.
+	*/
+
+	//divide shadow by how many samples were taken
+	int sampleCount = 0;
+
+	//loop arround the texel in the depth map
+	for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+			vec2 texelOffset = texelSize * vec2(x, y);
+			vec2 newSampleCoord = centreTexel + texelOffset;
+			float depth = texture(shadowMaps[i], newSampleCoord).r;
+			shadow += depthOfCurrentFragmentInLightSpace - bias > depthOfFragmentInLight ? 1.0 : 0.0;
+			sampleCount+=1;
+		}    
+    }
+    shadow /= sampleCount;
+	return shadow;
+};
+
 vec3 CalculateDirectionalLight(int i, vec3 normal)
 {
 	//Light and Fragment Color
@@ -298,12 +346,10 @@ vec3 CalculateDirectionalLight(int i, vec3 normal)
 	//Specular color
 	vec3 specular = specularColor * material.specularIntensity * CalculateSpecular(i, normal);//calculate specular
 
-	float shadow = ShadowCalculation(i, lights[i].lightSpace * vec4(inData.position, 1.0));
-	return (ambient + (1.0 - shadow) * (diffuse + specular)) * lightColor;
+	float shadowContribution = 1.0 - ProcessShadow(i, lights[i].lightSpace * vec4(inData.position, 1.0), normal);
 
-	//return  (ambient + diffuse + specular) * lightColor;
+	return (ambient + shadowContribution * (diffuse + specular)) * lightColor;
 };
-
 
 
 vec3 CalculatePointLight(int i, vec3 normal)

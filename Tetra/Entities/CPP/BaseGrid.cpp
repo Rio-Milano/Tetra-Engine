@@ -31,7 +31,6 @@ void BaseGrid::Init()
 	originLine->AddVertex(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	originLine->AddVertex(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	originLine->Init();
-	originLine->GetRoot()->SetTransform(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 	m_entities.emplace_back(originLine);
 }
 

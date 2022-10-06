@@ -196,20 +196,18 @@ void Container::Init()
 void Container::Update(const float& dt)
 {
 	m_rot += 5;
+	if (m_rot > 360.0f)
+		m_rot = 0.0f;
 }
 
 void Container::Render(Renderer& renderer, Shader* overideShader)
 {
 	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
-	//for (int i = 0; i < cubePositions.size(); i++)
-	//{
-	//	GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), m_rot, glm::vec3(1.0f)));
-	//	GetRoot()->Render(renderer, shader);
-	//}
+	for (int i = 0; i < cubePositions.size(); i++)
+	{
+		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), glm::radians(m_rot), glm::vec3(1.0f)));
+		GetRoot()->Render(renderer, shader);
+	}
 
-	GetRoot()->SetTransform(glm::scale(glm::mat4(1.0f), glm::vec3(8, 8, 8)));
-	GetRoot()->Render(renderer, shader);
 
-	GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0, 5, 0)), glm::radians(m_rot), glm::vec3(1.0f)));
-	GetRoot()->Render(renderer, shader);
 }

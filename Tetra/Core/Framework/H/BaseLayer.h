@@ -8,10 +8,13 @@
 #include"../../../OpenGL_Abstraction/H/Shader.h"
 #include"../../../Entities/H/Entity.h"
 #include"../../Managers/H/LightManager.h"
+#include"../../../Entities/H/BaseGrid.h"
 
 #include<string>
 #include<vector>
 #include<memory>
+
+
 
 class BaseLayer
 {
@@ -44,6 +47,8 @@ private:
 	void InitGLAD();
 	void CreateShader();
 	void UpdateUniformBuffers();
+
+	std::shared_ptr<BaseGrid> m_grid{nullptr};
 
 };
 
