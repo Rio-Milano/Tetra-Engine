@@ -509,8 +509,10 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 
 	//finally create a mesh
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+	
 	//load vertex data into mesh
 	mesh->GenerateMesh(positionsPtr, normalsPtr, texCoordsPtr, {}, elementsPtr, 0);
+	
 	//set flag to tell mesh to delete vertex attributes on heap when deconstructor called
 	//set mesh name using assimp mesh name
 	mesh->SetMeshName(std::string(assimpMesh->mName.C_Str()));

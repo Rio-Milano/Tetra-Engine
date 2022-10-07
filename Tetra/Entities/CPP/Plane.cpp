@@ -26,17 +26,10 @@ void Plane::Init()
 		2, 3, 1
 	};
 
-	std::vector<glm::vec3>* normals = new std::vector<glm::vec3>
-	{
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	};
 
 
 	std::shared_ptr<Mesh> planeMesh = std::make_shared<Mesh>();
-	planeMesh->GenerateMesh(positions, normals, nullptr, nullptr, elements, 0);
+	planeMesh->GenerateMesh(positions, nullptr, nullptr, nullptr, elements, 0, GL_STATIC_DRAW, true);
 	//configure mesh
 	planeMesh->m_meshName = "Plane";
 	planeMesh->GetMaterial()->m_defaultDiffuseColor = glm::vec3(0.5f);

@@ -103,7 +103,8 @@ public:
 		std::vector<GLuint>* elements = nullptr,
 
 		const GLuint& drawType = 1,
-		const GLenum& usage = GL_STATIC_DRAW
+		const GLenum& usage = GL_STATIC_DRAW,
+		const bool& generateNormals = false
 	);
 
 	/*
@@ -151,6 +152,8 @@ private:
 	void CreateBuffer(const GLenum& target, const GLsizeiptr& size, void* data, const GLenum& usage);
 	void EndBuffer(const GLenum& target);
 	void CreateVertexAttributePointer(const GLenum& target, const GLuint& index, const GLint& componentSize, const GLenum& componentType, const GLenum& normalized, const GLsizei& stride, void* offset);
+	void GenerateNormalsFromPositions(std::vector<glm::vec3>* positions, std::vector<glm::vec3>*& normals);
+	void GenerateNormalsFromElements(std::vector<glm::vec3>* positions, std::vector<GLuint>* elements, std::vector<glm::vec3>*& normals);
 
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };

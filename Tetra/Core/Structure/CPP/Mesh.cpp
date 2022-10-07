@@ -39,7 +39,8 @@ void Mesh::GenerateMesh
 		std::vector<glm::vec3>* colors,
 		std::vector<GLuint>* elements,
 		const GLuint& drawType, 
-		const GLenum& usage
+		const GLenum& usage,
+		const bool& generateNormals
 	)
 {
 	//the vertex attribute vector may have been set before call so use member as passed
@@ -48,6 +49,15 @@ void Mesh::GenerateMesh
 	if (texCoords == nullptr) texCoords = m_texCoords;
 	if (colors == nullptr) colors = m_colors;
 	if (elements == nullptr) elements = m_elements;
+
+	if (!normals && generateNormals)
+	{
+		//generate normals using elements
+		if (elements && drawType == 0)
+			GenerateNormalsFromElements(positions, elements, normals);
+		else if (positions)
+			GenerateNormalsFromPositions(positions, normals);
+	}
 
 	//assign attributes to mesh
 	StartMesh(drawType, positions, normals, texCoords, colors, elements);
@@ -303,4 +313,65 @@ void Mesh::CreateVertexAttributePointer(const GLenum& target, const GLuint& inde
 	glEnableVertexAttribArray(index);
 	//configure index
 	glVertexAttribPointer(index, componentSize, componentType, normalized, stride, offset);
+}
+
+void Mesh::GenerateNormalsFromPositions(std::vector<glm::vec3>* positions, std::vector<glm::vec3>*& normals)
+{
+	//check that positions are sized to a multiple of 3
+	const double positionsOver3 = static_cast<double>(positions->size()) / 3.0;
+	_ASSERT(positionsOver3 - std::floor(positionsOver3) == 0.0);
+
+	normals = new std::vector<glm::vec3>();
+	normals->resize(positions->size());
+
+	for (size_t i = 0; i < positions->size(); i += 3)
+	{
+		const glm::vec3&
+			A = (*positions)[i],
+			B = (*positions)[i+1],
+			C = (*positions)[i+2];
+
+		glm::vec3
+			AB = B - A,
+			AC = C - A,
+			ABcrossACnormalized = glm::normalize(glm::cross(AB, AC));
+
+		(*normals)[i] = ABcrossACnormalized;
+		(*normals)[i+1] = ABcrossACnormalized;
+		(*normals)[i+2] = ABcrossACnormalized;
+	}
+	std::cout << "Generated Normals from positions!\n";
+}
+
+void Mesh::GenerateNormalsFromElements(std::vector<glm::vec3>* positions, std::vector<GLuint>* elements, std::vector<glm::vec3>*& normals)
+{
+	//check that elements are sized to a multiple of 3
+	const double elementsOver3 = static_cast<double>(elements->size()) / 3.0;
+	_ASSERT(elementsOver3 - std::floor(elementsOver3) == 0.0);
+
+	normals = new std::vector<glm::vec3>;
+	normals->resize(positions->size());
+
+	for (size_t i = 0; i < elements->size(); i += 3)
+	{
+		const glm::vec3& 
+			A = (*positions)[(*elements)[i]],
+			B = (*positions)[(*elements)[i+1]],
+			C = (*positions)[(*elements)[i+2]];
+
+		glm::vec3 
+			AB = B - A,
+			AC = C - A,
+			ABcrossAC = glm::cross(AB, AC);
+
+		(*normals)[(*elements)[i]] += ABcrossAC;
+		(*normals)[(*elements)[i+1]] += ABcrossAC;
+		(*normals)[(*elements)[i+2]] += ABcrossAC;
+
+	}
+
+	//renormalize
+	for (size_t i = 0; i < normals->size(); i++)
+		(*normals)[i] = glm::normalize((*normals)[i]);
+
 }
