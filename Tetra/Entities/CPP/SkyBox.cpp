@@ -20,6 +20,11 @@ void SkyBox::SetFaceLocations(const std::vector<std::string>& faceLocations)
 	m_faceLocations = faceLocations;
 }
 
+const std::shared_ptr<CubeMap>& SkyBox::GetActiveCubeMap() const
+{
+	return m_cubeMapForSkyBox;
+}
+
 void SkyBox::Init()
 {
 	//thease position vectors will also be used as direction vectors for sampling the cube map

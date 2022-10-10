@@ -6,7 +6,7 @@
 #include<memory>
 
 class Mesh;
-class CubeMap;
+#include"../../OpenGL_Abstraction/H/CubeMap.h"
 
 class SkyBox : public Entity
 {
@@ -22,9 +22,9 @@ public:
 	const std::shared_ptr<CubeMap>& GetActiveCubeMap()const;
 
 private:
+	std::shared_ptr<CubeMap> m_cubeMapForSkyBox;
 	std::vector<std::string> m_faceLocations{};
 	std::shared_ptr<Mesh> m_skyBoxMesh{nullptr};
-	std::shared_ptr<CubeMap> m_cubeMapForSkyBox;
 
 
 };

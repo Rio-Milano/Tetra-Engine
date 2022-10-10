@@ -32,15 +32,30 @@ enum class LightType
 	Spot
 };
 
-//deffinition of a light
-struct Light
+struct DirectionalShadows
 {
-	~Light()
+	~DirectionalShadows()
 	{
 		//GPU Memory Clean up
 		glDeleteFramebuffers(1, &m_fbo);
 		glDeleteTextures(1, &m_depthBuffer);
 	}
+
+	glm::mat4 m_lightSpace{ glm::mat4(1.0f) };
+	GLuint m_fbo;
+	GLuint m_depthBuffer{ 0u };
+};
+
+struct OmnidirectionalShadows
+{
+	GLuint framebuffer{0u};
+	GLuint depthCubeMap{0u};
+};
+
+//deffinition of a light
+struct Light
+{
+
 	glm::vec3 m_position{};
 	glm::vec3 m_direction{};
 	glm::vec3 m_lightColor{};
@@ -53,17 +68,17 @@ struct Light
 
 	bool simulateLight{ false };
 	float lightAngle{ 0.0f };
-		float radius{ 10.0f };
-		float rotationSpeed{ 2.0f };
+	float radius{ 10.0f };
+	float rotationSpeed{ 2.0f };
 
-	bool m_drawLight{true};
+	bool m_drawLight{ true };
 
-
-	//Shadows
-	glm::mat4 m_lightSpace{glm::mat4(1.0f)};
-	GLuint m_fbo;
-	GLuint m_depthBuffer{0u};
-	GLuint SHADOW_HEIGHT{1080u * 4}, SHADOW_WIDTH{ 1080u * 4 };
+	DirectionalShadows m_directionalShadows{};
+	OmnidirectionalShadows m_omnidirectionalShadows{};
+	float nearPlane{ 0.1f };
+	float farPlane{60.0f};
+	//shadow map resolution
+	GLuint SHADOW_HEIGHT{1080u}, SHADOW_WIDTH{ 1080u };
 
 };
 
@@ -100,7 +115,14 @@ public:
 private:
 	//internal helper that gets a ligh not in use
 	int GetFreeLight();
+	
 	void InitializeShadowMaps();
+	void GenerateDirectionalShadowMappingBuffers(const GLuint& lightIndex);
+	void GenerateOmnidirectionalShadowMappingBuffers(const GLuint& lightIndex);
+
+	void DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer);
+	void DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer);
+
 	void SetTextureUnitsForShaderShadowMaps();
 
 	//mesh that represents the lights

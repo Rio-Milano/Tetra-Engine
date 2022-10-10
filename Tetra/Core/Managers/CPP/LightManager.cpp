@@ -224,8 +224,12 @@ void LightManager::UpdateLightsUBO(const float& dt)
 		lights_ubo->SetBufferElement(prefix + "Type", &light.m_lightType);
 		lights_ubo->SetBufferElement(prefix + "InUse", &light.m_inUse);
 		
-		lights_ubo->SetBufferElement(prefix + "Light-Space", &light.m_lightSpace);
-		
+		lights_ubo->SetBufferElement(prefix + "Light-Space", &light.m_directionalShadows.m_lightSpace);
+
+
+		lights_ubo->SetBufferElement(prefix + "nearPlane", &light.nearPlane);
+		lights_ubo->SetBufferElement(prefix + "farPlane", &light.farPlane);
+
 
 
 
@@ -341,48 +345,16 @@ void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 	GLint viewPort[4];
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
-
-	static const float
-		size = 50.0f,
-		left = -size / 2.0f,
-		right = size / 2.0f,
-		top = -size / 2.0f,
-		bottom = size / 2.0f,
-		nearPlane = 0.1f,
-		farPlane = 60.0f;
-
-	for (size_t lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
 		Light& light = m_lights[lightIndex];
 
-		if (light.m_inUse && (light.m_lightType == LightType::Directional || light.m_lightType == LightType::Spot))
+		if (light.m_inUse)
 		{
-			glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);//resize the view port
-
-			//Bind to the depth fbo and clear its depth buffer
-			glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
-			glClear(GL_DEPTH_BUFFER_BIT);
-
-
-			glm::mat4 projection(0.0f);
-			//if (light.m_lightType == LightType::Directional)
-				projection = glm::ortho(left, right, top, bottom, nearPlane, farPlane);
-			//else
-				//projection = glm::perspective(glm::radians(90.f), (float)(light.SHADOW_WIDTH / light.SHADOW_HEIGHT), nearPlane, farPlane);
-
-			glm::mat4 view(0.0f);
-			if (light.m_lightType == LightType::Directional)
-				view = glm::lookAt(light.m_direction * -30.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			if (light.m_lightType == LightType::Directional || light.m_lightType == LightType::Spot)
+				DrawSceneToDepthBufferDirectionalShadows(lightIndex, baseLayer);
 			else
-				view = glm::lookAt(light.m_position, light.m_position + light.m_direction, glm::vec3(0.0f, 1.0f, 0.0f));
-
-			light.m_lightSpace = projection * view;
-
-			Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
-			shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), light.m_lightSpace);
-			baseLayer->Render(&shadowMapping);
-
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				DrawSceneToDepthBufferOmnidirectionalShadows(lightIndex, baseLayer);
 		}
 	}
 	glViewport(0, 0, viewPort[2], viewPort[3]);
@@ -400,13 +372,21 @@ int LightManager::GetFreeLight()
 }
 void LightManager::InitializeShadowMaps()
 {
-	for (size_t lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
-		Light& light = m_lights[lightIndex];
+		GenerateDirectionalShadowMappingBuffers(lightIndex);
+		GenerateOmnidirectionalShadowMappingBuffers(lightIndex);
+	}
+}
+void LightManager::GenerateDirectionalShadowMappingBuffers(const GLuint& lightIndex)
+{
+	Light& light = m_lights[lightIndex];
+	DirectionalShadows& directionalShadows = light.m_directionalShadows;
 
-		//Generate a shadow map used as a depth map within the fbo
-		glGenTextures(1, &light.m_depthBuffer);
-		glBindTexture(GL_TEXTURE_2D, light.m_depthBuffer);
+	//Generate a shadow map used for directional shadows
+	{
+		glGenTextures(1, &directionalShadows.m_depthBuffer);
+		glBindTexture(GL_TEXTURE_2D, directionalShadows.m_depthBuffer);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 		//Texture Filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -416,46 +396,150 @@ void LightManager::InitializeShadowMaps()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-		GLfloat borderClampColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		static const GLfloat borderClampColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderClampColor);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
-
-
-		//Using a color buffer so we can discard low alpha fragments
-		GLuint colorBuffer;
-		glGenTextures(1, &colorBuffer);
-		glBindTexture(GL_TEXTURE_2D, colorBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		//Texture Filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		//Texture Wrapping
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderClampColor);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-
-		//Generate and bind to a frame buffer used for rendering the scene from the perspective of the light
-		glGenFramebuffers(1, &light.m_fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, light.m_fbo);
-		//attach the depth map
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light.m_depthBuffer, 0);
-		//attach the color buffer
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
-
-		glBindBuffer(GL_FRAMEBUFFER, 0);
-
-		//check that the frame buffer is complete
-		_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 	}
+
+	//Generate and bind to a frame buffer used for rendering the scene from the perspective of the light
+	glGenFramebuffers(1, &directionalShadows.m_fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, directionalShadows.m_fbo);
+	//attach the depth map
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, directionalShadows.m_depthBuffer, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindBuffer(GL_FRAMEBUFFER, 0);
+
+	//check that the frame buffer is complete
+	_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+}
+void LightManager::GenerateOmnidirectionalShadowMappingBuffers(const GLuint& lightIndex)
+{
+	Light& light = m_lights[lightIndex];
+	OmnidirectionalShadows& shadows = light.m_omnidirectionalShadows;
+
+	//Generate the depth cube map
+	{
+		glGenTextures(1, &shadows.depthCubeMap);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, shadows.depthCubeMap);
+
+		for (GLuint i = 0; i < 6u; i += 1u)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+		//Filter
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		
+		//Wrapping
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	}
+
+
+
+	//Create the frame buffer
+	{
+		glGenFramebuffers(1, &shadows.framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, shadows.framebuffer);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadows.depthCubeMap, 0);
+
+		_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	}
+}
+void LightManager::DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer)
+{
+	static const float
+		size = 50.0f,
+		left = -size / 2.0f,
+		right = size / 2.0f,
+		top = -size / 2.0f,
+		bottom = size / 2.0f,
+		nearPlane = 0.1f,
+		farPlane = 60.0f;
+
+	Light& light = m_lights[lightIndex];
+
+
+	glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);//resize the view port
+
+	//Bind to the depth fbo and clear its depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, light.m_directionalShadows.m_fbo);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
+	glm::mat4 projection(0.0f);
+	projection = glm::ortho(left, right, top, bottom, nearPlane, farPlane);
+
+	glm::mat4 view(0.0f);
+	if (light.m_lightType == LightType::Directional)
+		view = glm::lookAt(light.m_direction * -30.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	else
+		view = glm::lookAt(light.m_position, light.m_position + light.m_direction, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	light.m_directionalShadows.m_lightSpace = projection * view;
+
+	Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
+	shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), light.m_directionalShadows.m_lightSpace);
+	baseLayer->Render(&shadowMapping);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+void LightManager::DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer)
+{
+	static const float
+		nearPlane = 1.0f,
+		farPlane = 60.0f;
+
+	Light& light = m_lights[lightIndex];
+
+	glm::mat4 projection = glm::perspective(glm::radians(90.0f), static_cast<float>(light.SHADOW_WIDTH) / static_cast<float>(light.SHADOW_HEIGHT), nearPlane, farPlane);
+
+	glm::mat4 viewMats[6] =
+	{
+		glm::lookAt(light.m_position, light.m_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),//LOOK RIGHT
+		glm::lookAt(light.m_position, light.m_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),//LOOK LEFT
+		glm::lookAt(light.m_position, light.m_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),//LOOK UP
+		glm::lookAt(light.m_position, light.m_position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),//LOOK DOWN
+		glm::lookAt(light.m_position, light.m_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),//look forward
+		glm::lookAt(light.m_position, light.m_position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),//LOOK BACK
+	};
+
+	Shader& shader = ShaderManager.GetShader("Point-Shadows");
+	for (size_t i = 0; i < 6; i++)
+	//loop through each side of the cube map and compute a projection view matrix from mats above then send that matrix into the shader
+	{
+		glm::mat4 projection_x_view =  projection * viewMats[i];
+		shader.SetUniformMat4f(shader.GetLocation("lightSpaceDirections[" + std::to_string(i) + "]"), projection_x_view);
+	}
+
+	shader.SetUniform1i(shader.GetLocation("lightIndex"), lightIndex);
+
+	glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, light.m_omnidirectionalShadows.framebuffer);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	baseLayer->Render(&shader);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
+
+
+
 }
 void LightManager::SetTextureUnitsForShaderShadowMaps()
 {
-	const GLuint startTextureUnit = 20u;
+	const GLuint startTextureUnit = 10u;
 
 	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
@@ -463,14 +547,24 @@ void LightManager::SetTextureUnitsForShaderShadowMaps()
 		const Light& light = m_lights[lightIndex];
 
 		glActiveTexture(GL_TEXTURE0 + textureUnit);
-		glBindTexture(GL_TEXTURE_2D, light.m_depthBuffer);
+		glBindTexture(GL_TEXTURE_2D, light.m_directionalShadows.m_depthBuffer);
+
+		glActiveTexture(GL_TEXTURE0 + textureUnit + m_lights.size());
+		glBindTexture(GL_TEXTURE_CUBE_MAP, light.m_omnidirectionalShadows.depthCubeMap);
 	}
+
+
 
 	for (std::unordered_map<std::string, Shader>::iterator i = ShaderManager.m_programNameProgramIDMap.begin(); i != ShaderManager.m_programNameProgramIDMap.end(); i++)
 	{
 		Shader& currentShader = i->second;
 	
 		for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
+		{
 			currentShader.SetUniform1i(currentShader.GetLocation("shadowMaps[" + std::to_string(lightIndex) + "]"), startTextureUnit + lightIndex);
+			currentShader.SetUniform1i(currentShader.GetLocation("pointShadows[" + std::to_string(lightIndex) + "]"), startTextureUnit + m_lights.size() +lightIndex);
+
+		}
+
 	}
 };

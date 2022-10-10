@@ -289,6 +289,9 @@
     <None Include="Data\Shaders\Learn Shader\learn.vert" />
     <None Include="Data\Shaders\Shadow Mapping\shadowMapping.vert" />
     <None Include="Data\Shaders\Shadow Mapping\shadowMapping.frag" />
+    <None Include="Data\Shaders\Point Shadows\pointShadows.vert" />
+    <None Include="Data\Shaders\Point Shadows\pointShadows.geom" />
+    <None Include="Data\Shaders\Point Shadows\pointShadows.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Textures\Box.png">

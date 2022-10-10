@@ -35,6 +35,9 @@ struct Light
 	float outerCutOffAngle;	
 	int type; 
 	bool inUse;
+	float nearPlane;
+
+	float farPlane;
 
 };
 
@@ -79,6 +82,7 @@ layout(std140) uniform World
 };
 
 uniform sampler2D shadowMaps[NUMBER_OF_LIGHTS];
+uniform samplerCube pointShadows[NUMBER_OF_LIGHTS];
 uniform Material material;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
@@ -105,6 +109,7 @@ float ProcessShadow(int i, vec4 posInLightSpace);
 
 void main()
 {
+
 	if(ProcessLowAlphaFragment()) return;
 
 	vec3 normal = normalize(inData.normal);//re-normalize from scaling
@@ -352,6 +357,25 @@ vec3 CalculateDirectionalLight(int i, vec3 normal)
 };
 
 
+
+float CalculatePointShadow(int i)
+{
+	//calculate a direction to sample the depth cube map
+	vec3 sampleDirection = inData.position - lights[i].position;
+	
+	//retrieve the depth from the depth cube map
+	float depth = texture(pointShadows[i], sampleDirection).r ;
+	
+	//return the depth from range 0->1 to actual depth
+	float closestDepth = depth * lights[i].farPlane;
+
+	float currentDepth = length(sampleDirection);
+
+
+	return currentDepth - 0.05 > closestDepth ? 1.0 : 0.0;
+
+};
+
 vec3 CalculatePointLight(int i, vec3 normal)
 {
 	vec3 lightColor = lights[i].color * lights[i].intensity;//calculate overall light color
@@ -367,7 +391,7 @@ vec3 CalculatePointLight(int i, vec3 normal)
 	
 	vec3 specular =  specularColor * material.specularIntensity * CalculateSpecular(i, normal) * attenuation;//calculate specular on surface and apply fall off
 
-	return (ambient + diffuse + specular) * lightColor;//final calculation
+	return (ambient + ((1.0 - CalculatePointShadow(i)) * (diffuse + specular))) * lightColor;//final calculation
 
 };
 

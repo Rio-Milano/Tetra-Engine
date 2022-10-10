@@ -1,2 +1,4 @@
 ﻿  LightManager.cpp
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Managers\CPP\LightManager.cpp(553,62): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
+C:\Users\riomi\source\repos\Tetra\Tetra\Core\Managers\CPP\LightManager.cpp(566,156): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
   Tetra.vcxproj -> C:\Users\riomi\source\repos\Tetra\x64\Debug\Tetra.exe

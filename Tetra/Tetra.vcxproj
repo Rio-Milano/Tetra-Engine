@@ -241,6 +241,9 @@
     <None Include="Data\Shaders\Draw Normals\draw_normals.geom" />
     <None Include="Data\Shaders\Draw Normals\draw_normals.vert" />
     <None Include="Data\Shaders\Explosion\explode_primitives.geom" />
+    <None Include="Data\Shaders\Point Shadows\pointShadows.frag" />
+    <None Include="Data\Shaders\Point Shadows\pointShadows.geom" />
+    <None Include="Data\Shaders\Point Shadows\pointShadows.vert" />
     <None Include="Data\Shaders\Post Processing\frameBufferQuad.frag" />
     <None Include="Data\Shaders\Post Processing\frameBufferQuad.vert" />
     <None Include="Data\Shaders\Basic Position uColor\lightCubeFragmentShader.frag" />
