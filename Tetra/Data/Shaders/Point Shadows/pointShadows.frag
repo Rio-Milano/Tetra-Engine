@@ -53,8 +53,6 @@ struct Light
 	float outerCutOffAngle;	
 	int type; 
 	bool inUse;
-	float nearPlane;
-
 	float farPlane;
 
 };

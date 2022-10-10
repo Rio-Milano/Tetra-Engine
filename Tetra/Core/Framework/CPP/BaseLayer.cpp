@@ -118,7 +118,7 @@ void BaseLayer::CreateUniformBuffers()
 	World->SetElementData("time", UniformBufferObject::Element{ 4, 12});
 	ShaderManager.AddUniformBufferObject("World", World);
 
-	size_t ubo_size = 144 * NUMBER_OF_LIGHTS;
+	size_t ubo_size = 128 * NUMBER_OF_LIGHTS;
 
 
 	std::shared_ptr<UniformBufferObject> ubo = std::make_shared<UniformBufferObject>(static_cast<GLsizei>(ubo_size), 2, "Lights");
@@ -167,16 +167,12 @@ void BaseLayer::CreateUniformBuffers()
 		offset += 4;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":InUse", UniformBufferObject::Element{ 4, offset });
 
-		//Near Plane
-		offset += 4;
-		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":nearPlane", UniformBufferObject::Element{ 4, offset });
-
 		//FarPlane
 		offset += 4;
 		ubo->SetElementData("Light:" + std::to_string(lightNumber) + ":farPlane", UniformBufferObject::Element{ 4, offset });
 
-
-		offset += 16;
+		offset += 4;
+		
 	}
 	ShaderManager.AddUniformBufferObject("Lights", ubo);
 }/*

@@ -3,6 +3,7 @@
 #include"../../Core/Managers/H/ShaderManager.h"
 #define ShaderManager ShaderManager::GetInstance()
 #include"../../Framework/H/BaseLayer.h"
+#define NEAR_PLANE 0.1f
 
 
 LightManager::~LightManager()
@@ -226,9 +227,7 @@ void LightManager::UpdateLightsUBO(const float& dt)
 		
 		lights_ubo->SetBufferElement(prefix + "Light-Space", &light.m_directionalShadows.m_lightSpace);
 
-
-		lights_ubo->SetBufferElement(prefix + "nearPlane", &light.nearPlane);
-		lights_ubo->SetBufferElement(prefix + "farPlane", &light.farPlane);
+		lights_ubo->SetBufferElement(prefix + "farPlane", (void*)& Light::farPlane);
 
 
 
@@ -464,9 +463,7 @@ void LightManager::DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightI
 		left = -size / 2.0f,
 		right = size / 2.0f,
 		top = -size / 2.0f,
-		bottom = size / 2.0f,
-		nearPlane = 0.1f,
-		farPlane = 60.0f;
+		bottom = size / 2.0f;
 
 	Light& light = m_lights[lightIndex];
 
@@ -479,11 +476,11 @@ void LightManager::DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightI
 
 
 	glm::mat4 projection(0.0f);
-	projection = glm::ortho(left, right, top, bottom, nearPlane, farPlane);
+	projection = glm::ortho(left, right, top, bottom, NEAR_PLANE, light.farPlane);
 
 	glm::mat4 view(0.0f);
 	if (light.m_lightType == LightType::Directional)
-		view = glm::lookAt(light.m_direction * -30.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		view = glm::lookAt(-light.m_direction * 15.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	else
 		view = glm::lookAt(light.m_position, light.m_position + light.m_direction, glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -497,13 +494,10 @@ void LightManager::DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightI
 }
 void LightManager::DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer)
 {
-	static const float
-		nearPlane = 1.0f,
-		farPlane = 60.0f;
 
 	Light& light = m_lights[lightIndex];
 
-	glm::mat4 projection = glm::perspective(glm::radians(90.0f), static_cast<float>(light.SHADOW_WIDTH) / static_cast<float>(light.SHADOW_HEIGHT), nearPlane, farPlane);
+	glm::mat4 projection = glm::perspective(glm::radians(90.0f), static_cast<float>(light.SHADOW_WIDTH) / static_cast<float>(light.SHADOW_HEIGHT), NEAR_PLANE, light.farPlane);
 
 	glm::mat4 viewMats[6] =
 	{

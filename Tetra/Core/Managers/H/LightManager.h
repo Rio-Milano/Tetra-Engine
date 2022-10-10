@@ -73,12 +73,12 @@ struct Light
 
 	bool m_drawLight{ true };
 
+	GLuint SHADOW_HEIGHT{1080u*2}, SHADOW_WIDTH{ 1080u *2};
 	DirectionalShadows m_directionalShadows{};
 	OmnidirectionalShadows m_omnidirectionalShadows{};
-	float nearPlane{ 0.1f };
-	float farPlane{60.0f};
-	//shadow map resolution
-	GLuint SHADOW_HEIGHT{1080u}, SHADOW_WIDTH{ 1080u };
+
+	static constexpr float farPlane{60.0f};
+	
 
 };
 

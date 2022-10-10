@@ -35,8 +35,6 @@ struct Light
 	float outerCutOffAngle;	
 	int type; 
 	bool inUse;
-	float nearPlane;
-
 	float farPlane;
 
 };
@@ -326,7 +324,7 @@ float ProcessShadow(int i, vec4 posInLightSpace, vec3 normal)
 			vec2 texelOffset = texelSize * vec2(x, y);
 			vec2 newSampleCoord = centreTexel + texelOffset;
 			float depth = texture(shadowMaps[i], newSampleCoord).r;
-			shadow += depthOfCurrentFragmentInLightSpace - bias > depthOfFragmentInLight ? 1.0 : 0.0;
+			shadow += depthOfCurrentFragmentInLightSpace - bias > depth ? 1.0 : 0.0;
 			sampleCount+=1;
 		}    
     }
@@ -357,22 +355,35 @@ vec3 CalculateDirectionalLight(int i, vec3 normal)
 };
 
 
+#define SAMPLES 20
+vec3 sampleOffsetDirections[SAMPLES] = vec3[]
+(
+	vec3( 1, 1, 1), vec3( 1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
+	vec3( 1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+	vec3( 1, 1, 0), vec3( 1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+	vec3( 1, 0, 1), vec3(-1, 0, 1), vec3( 1, 0, -1), vec3(-1, 0, -1),
+	vec3( 0, 1, 1), vec3( 0, -1, 1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+);
 
 float CalculatePointShadow(int i)
 {
 	//calculate a direction to sample the depth cube map
 	vec3 sampleDirection = inData.position - lights[i].position;
 	
-	//retrieve the depth from the depth cube map
-	float depth = texture(pointShadows[i], sampleDirection).r ;
-	
-	//return the depth from range 0->1 to actual depth
-	float closestDepth = depth * lights[i].farPlane;
+	float fragmentDepth = length(sampleDirection);
 
-	float currentDepth = length(sampleDirection);
+	float shadow = 0.0;
+	float bias = 0.05;
+	int samples = 20;
+	float searchRadiusFactor = (1.0 + (length(inData.position - cameraPosition) / lights[i].farPlane)) / 25.0;;
 
+	for(int j = 0; j < samples; j++)
+	{
+		float neighboringDepth = texture(pointShadows[i], sampleDirection + sampleOffsetDirections[j]*searchRadiusFactor).r *lights[i].farPlane;
 
-	return currentDepth - 0.05 > closestDepth ? 1.0 : 0.0;
+		shadow += fragmentDepth - bias > neighboringDepth ? 1.0 : 0.0;
+	}
+	return shadow / float(samples);
 
 };
 
