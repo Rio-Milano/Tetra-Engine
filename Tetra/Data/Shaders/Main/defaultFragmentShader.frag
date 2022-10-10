@@ -103,7 +103,9 @@ vec3 GetFragmentEmission();
 vec3 ProcessReflectiveFragment(vec3 normal);
 bool ProcessLowAlphaFragment();
 bool ProcessEmissionFragment();
+
 float ProcessShadow(int i, vec4 posInLightSpace);
+float CalculatePointShadow(int i);
 
 void main()
 {
@@ -367,23 +369,32 @@ vec3 sampleOffsetDirections[SAMPLES] = vec3[]
 
 float CalculatePointShadow(int i)
 {
-	//calculate a direction to sample the depth cube map
+	//get a vector from the light to the fragment
 	vec3 sampleDirection = inData.position - lights[i].position;
 	
+	//calculate the depth of the fragment
 	float fragmentDepth = length(sampleDirection);
 
+	//accumulated shadow
 	float shadow = 0.0;
-	float bias = 0.05;
-	int samples = 20;
+	//bias for aligned sampling
+	float bias = 0.15;
+	//using a fixed premade array of samples
+	int samples = int(SAMPLES);
+	//increase the sample offset bassed on how far the fragment is from the camera. The larger the distance the smoother the shadow.
+	//the closer the distance the sharper the shadow
 	float searchRadiusFactor = (1.0 + (length(inData.position - cameraPosition) / lights[i].farPlane)) / 25.0;;
 
+	//loop each saple
 	for(int j = 0; j < samples; j++)
 	{
+		//get the depth of the sample and put in from range [0, 1] to linear depth
 		float neighboringDepth = texture(pointShadows[i], sampleDirection + sampleOffsetDirections[j]*searchRadiusFactor).r *lights[i].farPlane;
 
+		//if the current fragment - bians has greater depth than the sample depth then add shadow
 		shadow += fragmentDepth - bias > neighboringDepth ? 1.0 : 0.0;
 	}
-	return shadow / float(samples);
+	return shadow / float(samples);//return PCF shadows
 
 };
 

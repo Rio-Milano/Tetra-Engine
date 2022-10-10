@@ -16,7 +16,6 @@
 #include<glad/glad.h>
 #include<iostream>
 #include<string>
-
 #include"../../OpenGL_Abstraction/H/Shader.h"
 #include"../../Requirements/glmIncludes.h"
 #include"../../Structure/H/Mesh.h"
@@ -24,10 +23,9 @@
 
 class BaseLayer;
 
-//types of light
 enum class LightType
 {
-	Directional=0,
+	Directional = 0,
 	Point,
 	Spot
 };
@@ -48,6 +46,12 @@ struct DirectionalShadows
 
 struct OmnidirectionalShadows
 {
+	~OmnidirectionalShadows()
+	{
+		glDeleteTextures(1, &depthCubeMap);
+		glDeleteFramebuffers(1, &framebuffer);
+	}
+
 	GLuint framebuffer{0u};
 	GLuint depthCubeMap{0u};
 };
@@ -55,7 +59,9 @@ struct OmnidirectionalShadows
 //deffinition of a light
 struct Light
 {
-
+	/*
+	Standard generic light data whereby any light can be set to any type
+	*/
 	glm::vec3 m_position{};
 	glm::vec3 m_direction{};
 	glm::vec3 m_lightColor{};
@@ -66,17 +72,23 @@ struct Light
 	bool m_inUse{};
 	float m_range{};
 
+	/*
+	Some data for if we want to dynamically change the light data bassed on time
+	*/
 	bool simulateLight{ false };
 	float lightAngle{ 0.0f };
 	float radius{ 10.0f };
 	float rotationSpeed{ 2.0f };
 
+	//Flag for if we draw a mesh in the place where the light is. Cube for point light. 2 cubes for spot light. No mesh exists for directional light
 	bool m_drawLight{ true };
 
+	/*
+	Shadow data
+	*/
 	GLuint SHADOW_HEIGHT{1080u*2}, SHADOW_WIDTH{ 1080u *2};
 	DirectionalShadows m_directionalShadows{};
 	OmnidirectionalShadows m_omnidirectionalShadows{};
-
 	static constexpr float farPlane{60.0f};
 	
 
@@ -109,6 +121,10 @@ public:
 	//draw physical representations of lights
 	void DrawLights(Renderer& renderer);
 
+	/*
+	Draws the scene to depth buffers of the light. Buffer dependant on light type.
+	We use shadow cubemap for point lights and shadow depth map for directional and spot lights.
+	*/
 	void DrawSceneToDepthBuffer(BaseLayer* baseLayer);
 
 
@@ -116,10 +132,19 @@ private:
 	//internal helper that gets a ligh not in use
 	int GetFreeLight();
 	
+	/*
+	Loops lights and generates depth data for point and directional shadows
+	*/
 	void InitializeShadowMaps();
+	/*
+	Generate the depth maps for lights. 
+	*/
 	void GenerateDirectionalShadowMappingBuffers(const GLuint& lightIndex);
 	void GenerateOmnidirectionalShadowMappingBuffers(const GLuint& lightIndex);
 
+	/*
+	Draw to depth maps to generate shadows
+	*/
 	void DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer);
 	void DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer);
 

@@ -70,23 +70,26 @@ uniform int lightIndex;
 
 /*
 
-Because the Omnidirectional Shadow algorithm uses perspective projection we will end up getting quadratic depth which isampler1D
-no use to us as its not accurate enough for our uses. Working arround quadratic depth makes our calculations more complex
+Because the Omnidirectional Shadow algorithm uses perspective projection we will end up getting quadratic depth. Working arround 
+quadratic depth makes our calculations more complex
 so here we override any pre depth test by calculating the linear depth ourselves
 
 */
 
 void main()
 {
-
+	//if discard low alpha values
 	if(material.discardLowAlphaFragment && material.hasDiffuseMap)
 	{
 		if(texture(material.diffuseMap, iData.texCoord).a < 0.1)
 			discard;
 	}
 
+	//get the depth of the fragment in the scene
 	float lightFragmentLength = length(iData.FragPos.xyz - lights[lightIndex].position);
+	//put the depth in range of 0->1
 	float depth = lightFragmentLength  / lights[lightIndex].farPlane;
+	//override predepth test to set our own depth
 	gl_FragDepth = depth;
 
 }

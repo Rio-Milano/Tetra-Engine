@@ -11,6 +11,8 @@ uniform mat4 worldMat;
 
 void main()
 {
+	//pass the texture cord to the geometry shader
 	oData.texCoord = TextureCoord;
+	//transform the position to world space
 	gl_Position = worldMat * vec4(Position, 1.0);
 }

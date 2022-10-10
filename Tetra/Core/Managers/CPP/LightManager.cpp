@@ -341,21 +341,28 @@ void LightManager::DrawLights(Renderer& renderer)
 
 void LightManager::DrawSceneToDepthBuffer(BaseLayer* baseLayer)
 {
+	//take a capture of the current view port size so we can set it back to the previous size once finished rendering to depth maps
 	GLint viewPort[4];
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
+	//loop through each light
 	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
+		//get current light
 		Light& light = m_lights[lightIndex];
 
+		//if light is being used to light fragments
 		if (light.m_inUse)
 		{
+			//if light has directional properties then use 2d depth map
 			if (light.m_lightType == LightType::Directional || light.m_lightType == LightType::Spot)
 				DrawSceneToDepthBufferDirectionalShadows(lightIndex, baseLayer);
+			//if light has point properties then use depth cube map
 			else
 				DrawSceneToDepthBufferOmnidirectionalShadows(lightIndex, baseLayer);
 		}
 	}
+	//set viewport to its origional size
 	glViewport(0, 0, viewPort[2], viewPort[3]);
 }
 
@@ -371,29 +378,35 @@ int LightManager::GetFreeLight()
 }
 void LightManager::InitializeShadowMaps()
 {
+	//as each light can require a depth cube map or depth map depending on type for shadows we need to generate both for each light
 	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
 		GenerateDirectionalShadowMappingBuffers(lightIndex);
 		GenerateOmnidirectionalShadowMappingBuffers(lightIndex);
 	}
 }
+
+
+
 void LightManager::GenerateDirectionalShadowMappingBuffers(const GLuint& lightIndex)
 {
+	//get current light
 	Light& light = m_lights[lightIndex];
+	//get referance to directional shadow data
 	DirectionalShadows& directionalShadows = light.m_directionalShadows;
 
 	//Generate a shadow map used for directional shadows
 	{
 		glGenTextures(1, &directionalShadows.m_depthBuffer);
 		glBindTexture(GL_TEXTURE_2D, directionalShadows.m_depthBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);//assign buffer memory
 		//Texture Filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);//nearest neighbor filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		//Texture Wrapping
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);//if we sample outside of the shadow map we dont want there to be any shadows
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);//so we clamp to border and set border color to 1 as 1 is max depth
 
 		static const GLfloat borderClampColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderClampColor);
@@ -413,16 +426,31 @@ void LightManager::GenerateDirectionalShadowMappingBuffers(const GLuint& lightIn
 	//check that the frame buffer is complete
 	_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 }
+
+
+
 void LightManager::GenerateOmnidirectionalShadowMappingBuffers(const GLuint& lightIndex)
 {
-	Light& light = m_lights[lightIndex];
-	OmnidirectionalShadows& shadows = light.m_omnidirectionalShadows;
+	Light& light = m_lights[lightIndex];//get current light
+	OmnidirectionalShadows& shadows = light.m_omnidirectionalShadows;//get referance to point shadows object
 
 	//Generate the depth cube map
 	{
 		glGenTextures(1, &shadows.depthCubeMap);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, shadows.depthCubeMap);
 
+		/*
+		The order of how cube map faces are stored is important and must keep to this order when using cube map faces
+
+		POS X
+		NEG X
+		POS Y 
+		NEG Y
+		POS Z
+		NEG Z
+		*/
+
+		//loop through each face and allocate it a texture buffer
 		for (GLuint i = 0; i < 6u; i += 1u)
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, light.SHADOW_WIDTH, light.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
@@ -430,7 +458,7 @@ void LightManager::GenerateOmnidirectionalShadowMappingBuffers(const GLuint& lig
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		
-		//Wrapping
+		//Wrapping 3d
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -445,19 +473,19 @@ void LightManager::GenerateOmnidirectionalShadowMappingBuffers(const GLuint& lig
 	{
 		glGenFramebuffers(1, &shadows.framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, shadows.framebuffer);
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadows.depthCubeMap, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
 
 		_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	}
 }
 void LightManager::DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer)
 {
+	//some variables for creating orthographic projection matrix
 	static const float
 		size = 50.0f,
 		left = -size / 2.0f,
@@ -465,40 +493,64 @@ void LightManager::DrawSceneToDepthBufferDirectionalShadows(const GLuint& lightI
 		top = -size / 2.0f,
 		bottom = size / 2.0f;
 
+	//get current light
 	Light& light = m_lights[lightIndex];
 
-
+	//size viewport to depth map resolution
 	glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);//resize the view port
 
 	//Bind to the depth fbo and clear its depth buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, light.m_directionalShadows.m_fbo);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-
+	//generate the projection matrix
 	glm::mat4 projection(0.0f);
 	projection = glm::ortho(left, right, top, bottom, NEAR_PLANE, light.farPlane);
 
+	//generate view matrix
 	glm::mat4 view(0.0f);
 	if (light.m_lightType == LightType::Directional)
+		//if directional light then invert direction and apply a magnitude to it
 		view = glm::lookAt(-light.m_direction * 15.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	else
+		//if spot light use light attributes
 		view = glm::lookAt(light.m_position, light.m_position + light.m_direction, glm::vec3(0.0f, 1.0f, 0.0f));
 
+	//compute a perspective view matrix for converting fragments to light space
 	light.m_directionalShadows.m_lightSpace = projection * view;
 
+	//get the shader for directional shadows
 	Shader& shadowMapping = ShaderManager.GetShader("Shadow-Mapping");
+	
+	//set the light space matrix uniform in the shader
 	shadowMapping.SetUniformMat4f(shadowMapping.GetLocation("Light_Projection_X_View"), light.m_directionalShadows.m_lightSpace);
+	
+	//render the scene from the perspective of the light to the light framebuffer with the depth attachment
 	baseLayer->Render(&shadowMapping);
 
+	//bind to default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void LightManager::DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& lightIndex, BaseLayer* baseLayer)
 {
-
+	//get current light
 	Light& light = m_lights[lightIndex];
 
+	//create a 90 degree fov projection matrix
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), static_cast<float>(light.SHADOW_WIDTH) / static_cast<float>(light.SHADOW_HEIGHT), NEAR_PLANE, light.farPlane);
 
+	/*
+	create a matrix to look at each cube map face. THIS MUST be in the order of cube map faces as per opengl standard
+		
+		POS X
+		NEG X
+		POS Y 
+		NEG Y
+		POS Z
+		NEG Z
+
+	this is because in the geometry shader we render primitives from different light directions to assign depth to the faces of the cube map
+	*/
 	glm::mat4 viewMats[6] =
 	{
 		glm::lookAt(light.m_position, light.m_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),//LOOK RIGHT
@@ -509,20 +561,27 @@ void LightManager::DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& li
 		glm::lookAt(light.m_position, light.m_position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),//LOOK BACK
 	};
 
+	//get the shader used to render to depth cube maps
 	Shader& shader = ShaderManager.GetShader("Point-Shadows");
+
 	for (size_t i = 0; i < 6; i++)
 	//loop through each side of the cube map and compute a projection view matrix from mats above then send that matrix into the shader
 	{
 		glm::mat4 projection_x_view =  projection * viewMats[i];
 		shader.SetUniformMat4f(shader.GetLocation("lightSpaceDirections[" + std::to_string(i) + "]"), projection_x_view);
 	}
-
+	//set the light index so the shader knows what light we are using to render the scene
 	shader.SetUniform1i(shader.GetLocation("lightIndex"), lightIndex);
 
+	//resize view port to depth cubemap face resolution
 	glViewport(0, 0, light.SHADOW_WIDTH, light.SHADOW_HEIGHT);
+	//bind to framebuffer with depth cube map attached in the light
 	glBindFramebuffer(GL_FRAMEBUFFER, light.m_omnidirectionalShadows.framebuffer);
+	//clear the depth buffer
 	glClear(GL_DEPTH_BUFFER_BIT);
+	//render the scene to the depth cube map
 	baseLayer->Render(&shader);
+	//set default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
@@ -533,30 +592,46 @@ void LightManager::DrawSceneToDepthBufferOmnidirectionalShadows(const GLuint& li
 }
 void LightManager::SetTextureUnitsForShaderShadowMaps()
 {
+	//From [x, x+9] is reserved for directional shadow maps
+	//from [x+10, x+10+9] is reserved for point shadow maps
 	const GLuint startTextureUnit = 10u;
 
 	for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 	{
+		//get the texture unit offset
 		const GLuint textureUnit = startTextureUnit + lightIndex;
+		//get current light
 		const Light& light = m_lights[lightIndex];
 
+		//activate texture unit for light depth map
 		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		//bind light depth map to texture unit
 		glBindTexture(GL_TEXTURE_2D, light.m_directionalShadows.m_depthBuffer);
 
-		glActiveTexture(GL_TEXTURE0 + textureUnit + m_lights.size());
+		//activate texture unit for depth cube map
+		glActiveTexture(static_cast<GLenum>(static_cast<unsigned long long>(GL_TEXTURE0) + static_cast<unsigned long long>(textureUnit) + m_lights.size()));
+		//bind depth cube map to texture unit
 		glBindTexture(GL_TEXTURE_CUBE_MAP, light.m_omnidirectionalShadows.depthCubeMap);
 	}
 
 
+	/*
+	Set what sampler should bind to what texture unit
+	*/
 
+	//loop stored shaders in shadoer manager
 	for (std::unordered_map<std::string, Shader>::iterator i = ShaderManager.m_programNameProgramIDMap.begin(); i != ShaderManager.m_programNameProgramIDMap.end(); i++)
 	{
+		//get current shader
 		Shader& currentShader = i->second;
 	
+		//loop lights
 		for (GLuint lightIndex = 0; lightIndex < m_lights.size(); lightIndex++)
 		{
+			//set the texture unit for the shadow map sampler for light x
 			currentShader.SetUniform1i(currentShader.GetLocation("shadowMaps[" + std::to_string(lightIndex) + "]"), startTextureUnit + lightIndex);
-			currentShader.SetUniform1i(currentShader.GetLocation("pointShadows[" + std::to_string(lightIndex) + "]"), startTextureUnit + m_lights.size() +lightIndex);
+			//set the texture unit for the shadow cube map for light x
+			currentShader.SetUniform1i(currentShader.GetLocation("pointShadows[" + std::to_string(lightIndex) + "]"), static_cast<int>(static_cast<unsigned long long>(startTextureUnit) + m_lights.size() + static_cast<unsigned long long>(lightIndex)));
 
 		}
 
