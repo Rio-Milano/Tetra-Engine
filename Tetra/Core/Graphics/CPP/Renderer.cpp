@@ -153,6 +153,21 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 
 	}
 
+	const std::shared_ptr<Texture>& normalTexture = meshMaterial->m_normal;
+	if (normalTexture)
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasNormalMap"), true);
+		
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, normalTexture->GetTextureAttributes().textureID);
+		shader.SetUniform1i(shader.GetLocation("material.normalMap"), 4);
+	}
+	else
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasNormalMap"), false);
+
+	}
+
 	//bind to the vertex array of the mesh
 	glBindVertexArray(mesh.m_VAO);
 
@@ -235,6 +250,10 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	//set default texture unit
 	glActiveTexture(GL_TEXTURE0);
 

@@ -9,11 +9,12 @@
 #include<memory>
 #include"Texture.h"
 
-#define SHADER_LAYOUT_INDEX_POSITION		0
-#define SHADER_LAYOUT_INDEX_TEXTURE_CORD	1
-#define SHADER_LAYOUT_INDEX_COLOR			1
-#define SHADER_LAYOUT_INDEX_NORMAL			2
-#define SHADER_LAYOUT_INDEX_OFFSET			3
+#define SHADER_LAYOUT_INDEX_POSITION			0
+#define SHADER_LAYOUT_INDEX_TEXTURE_CORD		1
+#define SHADER_LAYOUT_INDEX_COLOR				1
+#define SHADER_LAYOUT_INDEX_NORMAL				2
+#define SHADER_LAYOUT_INDEX_OFFSET				3 //covers 3, 4, 5, 6 as its a 4x4 matrix
+#define SHADER_LAYOUT_INDEX_TANGENT_OFFSET		7
 
 struct RefractiveIndex
 {
@@ -39,9 +40,10 @@ struct ReflectionType
 struct Material
 {
 	std::shared_ptr<Texture>
-		m_diffuse,
-		m_specular,
-		m_emission;
+		m_diffuse{nullptr},
+		m_specular{ nullptr },
+		m_emission{ nullptr },
+		m_normal{ nullptr };
 	
 	bool m_discardLowAlphaFragments{ false };
 	bool m_blendingEnabled{false};
@@ -104,7 +106,8 @@ public:
 
 		const GLuint& drawType = 1,
 		const GLenum& usage = GL_STATIC_DRAW,
-		const bool& generateNormals = false
+		const bool& generateNormals = false,
+		const bool& generateTangents = false
 	);
 
 	/*
@@ -130,6 +133,7 @@ public:
 	std::vector<glm::vec3>* m_normals{ nullptr };
 	std::vector<glm::vec2>* m_texCoords{ nullptr };
 	std::vector<GLuint>* m_elements{ nullptr };
+	std::vector<glm::vec3>* m_tangents{nullptr};
 
 private:
 	//initializes the mesh 
@@ -154,6 +158,9 @@ private:
 	void CreateVertexAttributePointer(const GLenum& target, const GLuint& index, const GLint& componentSize, const GLenum& componentType, const GLenum& normalized, const GLsizei& stride, void* offset);
 	void GenerateNormalsFromPositions(std::vector<glm::vec3>* positions, std::vector<glm::vec3>*& normals);
 	void GenerateNormalsFromElements(std::vector<glm::vec3>* positions, std::vector<GLuint>* elements, std::vector<glm::vec3>*& normals);
+	void GenerateTangentsFromElements(const std::vector<glm::vec3>* positions, const std::vector<glm::vec2>* texCoords, const std::vector<GLuint>* elements);
+	void GenerateTangentsFromPositions(const std::vector<glm::vec3>* positions, const std::vector<glm::vec2>* texCoords);
+
 
 	//used when typical vertex structure is not followed and custom data is send in to gpu
 	bool customVertex{ false };

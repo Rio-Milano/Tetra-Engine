@@ -11,6 +11,7 @@ out Varying
 	vec3 position;
 	vec2 texCoord;
 	vec3 normal;
+	mat3 TBN;
 } oData;
 
 

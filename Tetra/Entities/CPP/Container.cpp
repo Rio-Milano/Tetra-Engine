@@ -24,6 +24,21 @@ Container::Container(const std::string& containerName)
 		TextureManager.AddTexture("BoxEmission", emissionTexture);
 	}
 
+
+	if (TextureManager.GetTexture("BrickNormal") == nullptr)
+	{
+		std::shared_ptr<Texture> normalTexture = std::make_shared<Texture>();
+		normalTexture->InitializeTexture("Data/Textures/BrickNormal.jpg", true);
+		TextureManager.AddTexture("BrickNormal", normalTexture);
+	}
+
+	if (TextureManager.GetTexture("Brick") == nullptr)
+	{
+		std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
+		diffuseTexture->InitializeTexture("Data/Textures/Brick.jpg",true, true);
+		TextureManager.AddTexture("Brick", diffuseTexture);
+	}
+
 };
 
 
@@ -124,10 +139,12 @@ void Container::Init()
 
 
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-	mesh->GenerateMesh(positionsPtr, nullptr, texCordsPtr, nullptr, nullptr, 1, GL_STATIC_DRAW, true);
+	mesh->GenerateMesh(positionsPtr, nullptr, texCordsPtr, nullptr, nullptr, 1, GL_STATIC_DRAW, true, true);
+	
 	//make material for container
-	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Box");
-	mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");
+	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Brick");
+	//mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");
+	mesh->GetMaterial()->m_normal = TextureManager.GetTexture("BrickNormal");
 	//mesh->GetMaterial()->m_emission = TextureManager.GetTexture("BoxEmission");
 	
 	/*mesh->GetMaterial()->m_mapToEnviroment = true;
@@ -156,7 +173,7 @@ void Container::Init()
 
 void Container::Update(const float& dt)
 {
-	m_rot += 5;
+	m_rot += 0.5;
 	if (m_rot > 360.0f)
 		m_rot = 0.0f;
 }

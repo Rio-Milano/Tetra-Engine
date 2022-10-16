@@ -27,6 +27,7 @@ Mesh::~Mesh()
 	delete m_texCoords;
 	delete m_elements;
 	delete m_colors;
+	delete m_tangents;
 }
 
 
@@ -40,23 +41,37 @@ void Mesh::GenerateMesh
 		std::vector<GLuint>* elements,
 		const GLuint& drawType, 
 		const GLenum& usage,
-		const bool& generateNormals
+		const bool& generateNormals,
+		const bool& generateTangents
 	)
 {
 	//the vertex attribute vector may have been set before call so use member as passed
-	if (positions == nullptr) positions = m_positions;
-	if (normals == nullptr) normals = m_normals;
-	if (texCoords == nullptr) texCoords = m_texCoords;
-	if (colors == nullptr) colors = m_colors;
-	if (elements == nullptr) elements = m_elements;
+	if (!positions) positions = m_positions;
+	if (!normals) normals = m_normals;
+	if (!texCoords) texCoords = m_texCoords;
+	if (!colors) colors = m_colors;
+	if (!elements) elements = m_elements;
+
+	_ASSERT(positions);
 
 	if (!normals && generateNormals)
 	{
 		//generate normals using elements
 		if (elements && drawType == 0)
 			GenerateNormalsFromElements(positions, elements, normals);
-		else if (positions)
+		else if (positions && drawType == 1)
 			GenerateNormalsFromPositions(positions, normals);
+	}
+
+	//if normals and tex coods exist and tangents do not and we want to generate tangents
+	if (normals && texCoords && !m_tangents && generateTangents)
+	{
+		//if using draw elements
+		if (elements && drawType == 0)
+			GenerateTangentsFromElements(positions, texCoords, elements);
+		//if using draw arrays
+		else if (positions && drawType == 1)
+			GenerateTangentsFromPositions(positions, texCoords);
 	}
 
 	//assign attributes to mesh
@@ -168,6 +183,7 @@ void Mesh::StartMesh(const GLuint& drawType,
 	m_colors = colors;
 	m_elements = elements;
 
+
 }
 
 
@@ -198,8 +214,12 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 			size_t normalsBufferSize = 0;
 			if(m_normals) normalsBufferSize = m_normals->size() * sizeof(glm::vec3);
 
+		//TANGENTS SIZE
+			size_t tangentBufferSize = 0;
+			if (m_tangents) tangentBufferSize = m_tangents->size()* sizeof(glm::vec3);
+
 		//SIZE OF BUFFERS
-			const size_t vertexBufferSizeSum = positionsBufferSize + colorBufferSize + normalsBufferSize;
+			const size_t vertexBufferSizeSum = positionsBufferSize + colorBufferSize + normalsBufferSize + tangentBufferSize;
 
 	//ALLOCATE BUFFER MEMORY
 		CreateBuffer(GL_ARRAY_BUFFER, vertexBufferSizeSum, nullptr , usage);
@@ -217,6 +237,9 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 		//NORMALS
 			if (m_normals) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize + colorBufferSize, normalsBufferSize, (void*)m_normals->data());
 
+		//TANGENTS
+			if (m_tangents) glBufferSubData(GL_ARRAY_BUFFER, positionsBufferSize + colorBufferSize + normalsBufferSize, tangentBufferSize, (void*)m_tangents->data());
+
 
 	//VERTEX ATTRIBUTES
 
@@ -230,7 +253,9 @@ void Mesh::SendVertexDataToGPU(const GLenum& usage)
 		//NORMALS
 			if(m_normals)	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(positionsBufferSize + colorBufferSize));
 
-	
+		//TANGENTS
+			if (m_tangents)	CreateVertexAttributePointer(GL_ARRAY_BUFFER, SHADER_LAYOUT_INDEX_TANGENT_OFFSET, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(positionsBufferSize + colorBufferSize + normalsBufferSize));
+
 	//FINISHED WITH ARRAY BUFFER
 		EndBuffer(GL_ARRAY_BUFFER);
 
@@ -373,5 +398,116 @@ void Mesh::GenerateNormalsFromElements(std::vector<glm::vec3>* positions, std::v
 	//renormalize
 	for (size_t i = 0; i < normals->size(); i++)
 		(*normals)[i] = glm::normalize((*normals)[i]);
+
+}
+
+void Mesh::GenerateTangentsFromElements(const std::vector<glm::vec3>* positions, const std::vector<glm::vec2>* texCoords, const std::vector<GLuint>* elements)
+{
+	//check that the size of positions is a multiple of 3
+#if _DEBUG
+	float positionsOver3 = static_cast<float>(positions->size()) / 3.0f;
+	_ASSERT(positionsOver3 - std::floor(positionsOver3) == 0);
+#endif
+
+	//allocate tangents memory
+	m_tangents = new std::vector<glm::vec3>;
+	m_tangents->resize(positions->size());
+
+	//loop through triangle primitives
+	for (size_t i = 0; i < elements->size(); i+=3)
+	{
+		//get the 3 vertex positions
+		const glm::vec3&
+			Apos = positions->at(elements->at(i + 0)),
+			Bpos = positions->at(elements->at(i + 1)),
+			Cpos = positions->at(elements->at(i + 2));
+		
+		//get the 3 vertex texCoords
+		const glm::vec2&
+			Atex = texCoords->at(elements->at(i + 0)),
+			Btex = texCoords->at(elements->at(i + 1)),
+			Ctex = texCoords->at(elements->at(i + 2));
+
+		glm::vec3 
+			edge_1 = Bpos - Apos,
+			edge_2 = Cpos - Apos;
+
+		float
+			deltaU1 = Btex.x - Atex.x,
+			deltaV1 = Btex.y - Atex.y,
+
+			deltaU2 = Ctex.x - Atex.x,
+			deltaV2 = Ctex.y - Atex.y;
+
+		float UVmatrixDeterminant = deltaU1 * deltaV2 - deltaV1 * deltaU2;
+		float cofactor = 1.0f / UVmatrixDeterminant;
+
+		glm::vec3 tangent(0.0f);
+
+		tangent.x = cofactor * (deltaV2 * edge_1.x + (-deltaV1) * edge_2.x);
+		tangent.y = cofactor * (deltaV2 * edge_1.y + (-deltaV1) * edge_2.y);
+		tangent.z = cofactor * (deltaV2 * edge_1.z + (-deltaV1) * edge_2.z);
+
+		m_tangents->at(elements->at(i + 0)) += tangent;
+		m_tangents->at(elements->at(i + 1)) += tangent;
+		m_tangents->at(elements->at(i + 2)) += tangent;
+	}
+
+
+
+}
+
+void Mesh::GenerateTangentsFromPositions(const std::vector<glm::vec3>* positions, const std::vector<glm::vec2>* texCoords)
+{
+	//check that the size of positions is a multiple of 3
+#if _DEBUG
+	float positionsOver3 = static_cast<float>(positions->size()) / 3.0f;
+	_ASSERT(positionsOver3 - std::floor(positionsOver3) == 0);
+#endif
+
+	//allocate tangents memory
+	m_tangents = new std::vector<glm::vec3>;
+	m_tangents->resize(positions->size());
+
+	//loop through triangle primitives
+	for (size_t i = 0; i < positions->size(); i += 3)
+	{
+		//get the 3 vertex positions
+		const glm::vec3&
+			Apos = positions->at(i + 0),
+			Bpos = positions->at(i + 1),
+			Cpos = positions->at(i + 2);
+
+		//get the 3 vertex texCoords
+		const glm::vec2&
+			Atex = texCoords->at(i + 0),
+			Btex = texCoords->at(i + 1),
+			Ctex = texCoords->at(i + 2);
+
+		glm::vec3
+			edge_1 = Bpos - Apos,
+			edge_2 = Cpos - Apos;
+
+		float
+			deltaU1 = Btex.x - Atex.x,
+			deltaV1 = Btex.y - Atex.y,
+
+			deltaU2 = Ctex.x - Atex.x,
+			deltaV2 = Ctex.y - Atex.y;
+
+		float UVmatrixDeterminant = deltaU1 * deltaV2 - deltaU2 * deltaV1;
+		float cofactor = 1.0f / UVmatrixDeterminant;
+
+		glm::vec3 tangent(0.0f);
+
+		tangent.x = cofactor * (deltaV2 * edge_1.x  - deltaV1 * edge_2.x);
+		tangent.y = cofactor * (deltaV2 * edge_1.y - deltaV1 * edge_2.y);
+		tangent.z = cofactor * (deltaV2 * edge_1.z - deltaV1 * edge_2.z);
+
+
+		m_tangents->at(i + 0) = tangent;
+		m_tangents->at(i + 1) = tangent;
+		m_tangents->at(i + 2) = tangent;
+	}
 
 }

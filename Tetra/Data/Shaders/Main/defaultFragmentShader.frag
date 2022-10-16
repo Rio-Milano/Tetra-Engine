@@ -6,6 +6,7 @@ in Varying
 	vec3 position;
 	vec2 texCoord;
 	vec3 normal;
+	mat3 TBN;
 } inData;
 
 
@@ -61,6 +62,10 @@ struct Material
 	bool hasCubeMap;
 	samplerCube cubeMap;
 	int reflectionType;//0 = reflection, 1 = refraction
+
+	sampler2D normalMap;
+	bool hasNormalMap;
+
 };
 
 
@@ -84,7 +89,7 @@ uniform samplerCube pointShadows[NUMBER_OF_LIGHTS];
 uniform Material material;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
-
+uniform bool useNormalMapping;
 
 //FUNCTION PROTOTYPES
 
@@ -112,8 +117,21 @@ void main()
 
 	if(ProcessLowAlphaFragment()) return;
 
-	vec3 normal = normalize(inData.normal);//re-normalize from scaling
 
+	vec3 normal = vec3(0.0);
+	if(material.hasNormalMap && useNormalMapping)
+	{
+		normal = texture(material.normalMap, inData.texCoord).rgb;//get the normal from normal map
+		normal = normal * 2.0 - 1.0;//put in range of -1 -> 1
+		
+		//this requires more processiong so when optimising consider putting world space data into tangent space in the fragment shader
+		normal = inData.TBN * normal;//put normal in world space
+	}
+	else
+		normal = inData.normal;
+
+	normal = normalize(normal);
+	 
 	if(ProcessEmissionFragment()) return;
 
 	vec3 finalColor = vec3(0.0);

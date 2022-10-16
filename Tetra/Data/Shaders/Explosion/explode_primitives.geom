@@ -10,6 +10,7 @@ in Varying
 	vec3 position;
 	vec2 texCoord;
 	vec3 normal;
+	mat3 TBN;
 } iData[];
 
 //OUT
@@ -18,6 +19,7 @@ out Varying
 	vec3 position;
 	vec2 texCoord;
 	vec3 normal;
+	mat3 TBN;
 } oData;
 
 //UNIFORMS
@@ -41,7 +43,7 @@ void ExplodeVertex(int faceVertex)
 	//assign out data for current vertex
 	oData.texCoord = iData[faceVertex].texCoord;
 	oData.normal = iData[faceVertex].normal;
-	
+	oData.TBN = iData[faceVertex].TBN;
 
 	float magnitude = (sin(time)+1.0) / 8;
 

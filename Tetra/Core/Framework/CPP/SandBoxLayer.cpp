@@ -83,6 +83,12 @@ void SandBoxLayer::Update(float dt)
 			entity->Update(dt);
 		}
 	}
+	Shader& shader = ShaderManager.GetShader("main");
+	if (m_useNormalMapping)
+		shader.SetUniform1b(shader.GetLocation("useNormalMapping"), true);
+	else
+		shader.SetUniform1b(shader.GetLocation("useNormalMapping"), false);
+
 }
 
 void SandBoxLayer::PreRender(Shader* overrideShader)
@@ -227,9 +233,10 @@ void SandBoxLayer::ImGUI()
 			ImGui::Checkbox("Wireframe", &m_wireframeMode);
 			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
 			ImGui::Checkbox("Draw Normals", &ModelNode::DrawNormals);
+			ImGui::Checkbox("Normal Mapping", &m_useNormalMapping);
+
 			PostProcessing::Config& ppConfig = m_postProcessing->m_config;
 			
-
 			ImGui::SliderFloat("X Sampling Offset Magnitude", &ppConfig.m_XsampleOffsetMagnitude, 1.0f, 1.0f / 1920.0f);
 			ImGui::SliderFloat("Y Sampling Offset Magnitude", &ppConfig.m_YsampleOffsetMagnitude, 1.0f, 1.0f / 1080.0f);
 			ImGui::SliderFloat("Gamma", &ppConfig.gamma, -5.2f, 5.2f);

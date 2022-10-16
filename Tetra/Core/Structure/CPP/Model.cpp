@@ -357,7 +357,7 @@ void Model::LoadModel(const std::string& modelPath)
 	Assimp::Importer importer;
 
 	//tell importer to read path and force triangulation then hold the returned scene ptr
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate/* | aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
 
 	//if scene is empty or scene failed some point or root node of scene is empty then report error
 	if (scene == nullptr || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || scene->mRootNode == nullptr)
@@ -447,11 +447,13 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 	std::vector<glm::vec3>* positionsPtr = new std::vector<glm::vec3>;
 	std::vector<glm::vec3>* normalsPtr = new std::vector<glm::vec3>;
 	std::vector<glm::vec2>* texCoordsPtr = new std::vector<glm::vec2>;
+	std::vector<glm::vec3>* tangentsPtr = new std::vector<glm::vec3>;
 
 	//resize each vector to match assimp vertex count
 	positionsPtr->resize(assimpMesh->mNumVertices);
 	texCoordsPtr->resize(assimpMesh->mNumVertices);
 	normalsPtr->resize(assimpMesh->mNumVertices);
+	tangentsPtr->resize(assimpMesh->mNumVertices);
 
 	//define a vector of elements and resize
 	std::vector<GLuint>* elementsPtr = new std::vector<unsigned int>;
@@ -486,6 +488,14 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 			textureCord.x = assimpMesh->mTextureCoords[0][i].x;
 			textureCord.y = assimpMesh->mTextureCoords[0][i].y;
 		}
+
+		//get current tangent
+		glm::vec3& tangent = tangentsPtr->at(i);
+		//get assimp tangent
+		const aiVector3D& assimpVertexTengent = assimpMesh->mTangents[i];
+		tangent.x = assimpVertexTengent.x;
+		tangent.y = assimpVertexTengent.y;
+		tangent.y = assimpVertexTengent.z;
 	}
 
 	//process indexed vertices
@@ -511,8 +521,9 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 	
 	//load vertex data into mesh
+	mesh->m_tangents = tangentsPtr;
 	mesh->GenerateMesh(positionsPtr, normalsPtr, texCoordsPtr, {}, elementsPtr, 0);
-	
+
 	//set flag to tell mesh to delete vertex attributes on heap when deconstructor called
 	//set mesh name using assimp mesh name
 	mesh->SetMeshName(std::string(assimpMesh->mName.C_Str()));
@@ -534,6 +545,9 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 
 			//emission map
 			mesh->GetMaterial()->m_emission = LoadMaterialFromAssimpMesh(material, aiTextureType_EMISSIVE, localPath);
+
+			//normal map
+			mesh->GetMaterial()->m_normal = LoadMaterialFromAssimpMesh(material, aiTextureType_HEIGHT, localPath);
 		}
 	}
 	//return the created mesh

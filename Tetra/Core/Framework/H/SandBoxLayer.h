@@ -23,9 +23,10 @@ public:
 
 private:
 	//Imgui flags used in layer update and rendering
-	bool m_wireframeMode{false};
-	bool m_pauseSimulation{false};
-	bool m_drawLightingAsMeshes{true};
+	bool m_wireframeMode{ false };
+	bool m_pauseSimulation{ false };
+	bool m_drawLightingAsMeshes{ true };
+	bool m_useNormalMapping{true};
 
 	float gamma = 2.2f;
 	//entity list
