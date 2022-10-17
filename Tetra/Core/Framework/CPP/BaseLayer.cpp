@@ -211,7 +211,7 @@ void BaseLayer::CreateShader()
 	//Main Shader
 	{
 		Shader shader;
-		shader.Create("Data/Shaders/Main/defaultVertexShader.vert", "Data/Shaders/Main/defaultFragmentShader.frag");
+		shader.Create("Data/Shaders/Main/defaultVertexShader.vert", "Data/Shaders/Main/defaultFragmentShader.frag", "Data/Shaders/Main/defaultGeometryShader.geom");
 		ShaderManager.AddShader("main", shader);
 	}
 

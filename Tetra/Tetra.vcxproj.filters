@@ -292,6 +292,7 @@
     <None Include="Data\Shaders\Point Shadows\pointShadows.vert" />
     <None Include="Data\Shaders\Point Shadows\pointShadows.geom" />
     <None Include="Data\Shaders\Point Shadows\pointShadows.frag" />
+    <None Include="Data\Shaders\Main\defaultGeometryShader.geom" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Textures\Box.png">

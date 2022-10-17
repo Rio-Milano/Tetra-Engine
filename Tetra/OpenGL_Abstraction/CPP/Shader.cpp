@@ -31,8 +31,7 @@ void LoadStringFromFile(const std::string& fileLocation, std::string& data)
 void Shader::Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath)
 {
 	//get shader source and create shader for vertex and fragment
-	std::string vertexShaderSource;
-	LoadStringFromFile(vertexShaderPath, vertexShaderSource);
+	std::string vertexShaderSource;	LoadStringFromFile(vertexShaderPath, vertexShaderSource);
 	GLuint vertexShaderID = CreateShader(vertexShaderSource, GL_VERTEX_SHADER);
 
 	std::string fragmentShaderSource;
@@ -170,10 +169,6 @@ void Shader::LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& 
 	//link the program
 	glLinkProgram(m_programID);
 
-	//delete shaders as no longer needed
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
-	if (geometryShaderID) glDeleteShader(geometryShaderID);
 
 
 	//link success flag
@@ -185,6 +180,11 @@ void Shader::LinkShadersIntoProgram(const GLuint& vertexShaderID, const GLuint& 
 	//get link status
 	glGetProgramiv(m_programID, GL_LINK_STATUS, &linkStatus);
 	
+	//delete shaders as no longer needed
+	glDeleteShader(vertexShaderID);
+	glDeleteShader(fragmentShaderID);
+	if (geometryShaderID) glDeleteShader(geometryShaderID);
+
 	//if link failed
 	if (!linkStatus)
 	{

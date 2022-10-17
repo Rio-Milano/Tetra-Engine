@@ -75,6 +75,7 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 	shader.SetUniform1b(shader.GetLocation("material.discardLowAlphaFragment"), meshMaterial->m_discardLowAlphaFragments);
 	shader.SetUniform1i(shader.GetLocation("material.reflectionType"), meshMaterial->m_reflectionType);
 	shader.SetUniform1b(shader.GetLocation("useInstancedMat"), mesh.GetNumberOfInstances() > 1 ? true : false);
+	shader.SetUniform1b(shader.GetLocation("verticesAreDynamic"), mesh.m_dynamicVertices);
 
 	//get the tetxure pointer for the mesh diffuse map
 	const std::shared_ptr<Texture>& diffuseTexture = meshMaterial->m_diffuse;

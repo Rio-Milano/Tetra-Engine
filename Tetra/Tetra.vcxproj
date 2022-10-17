@@ -234,6 +234,7 @@
     <None Include="Data\Shaders\Explosion\explode_primitives.vert" />
     <None Include="Data\Shaders\Learn Shader\learn.vert" />
     <None Include="Data\Shaders\Main\defaultFragmentShader.frag" />
+    <None Include="Data\Shaders\Main\defaultGeometryShader.geom" />
     <None Include="Data\Shaders\Main\defaultVertexShader.vert" />
     <None Include="Data\Shaders\Discard Alpha\DiscardAlpha.frag" />
     <None Include="Data\Shaders\Discard Alpha\DiscardAlpha.vert" />

@@ -128,6 +128,7 @@ public:
 
 	void MakeAttributes(const Attributes& attributes);
 
+	bool m_dynamicVertices{false};//set this to true when wanting to use normal mapping and have vertex attributes that change values over time
 	std::vector<glm::vec3>* m_colors{ nullptr };
 	std::vector<glm::vec3>* m_positions{ nullptr };
 	std::vector<glm::vec3>* m_normals{ nullptr };

@@ -28,7 +28,7 @@ void BackPack::Init()
 	nbackPack->SetAssimpNodeTransform(TbackPack);
 
 
-	SetRoot(nbackPack);
+	SetRoot(backPack->GetRoot());
 
 
 

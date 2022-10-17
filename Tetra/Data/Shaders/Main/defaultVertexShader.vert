@@ -27,6 +27,7 @@ layout(std140) uniform Matricies
 uniform mat4 worldMat;
 uniform mat3 normalMat;//note: this is per call not per instance. Fix this later...
 uniform bool useInstancedMat;
+uniform bool verticesAreDynamic;//if vertices can change then precomputed tangents cant be valid so compute TBN matriix in the geometry shader
 
 
 void main()
@@ -44,15 +45,17 @@ void main()
 
 	oData.position = pos.xyz;
 
-	//more expensive doing it this way to make a note of it
-	//calculate tbn matrix
-	vec3 T = normalize(normalMat * inTangent);//normalize the tangent
-	vec3 N = oData.normal;//get the normal
-	// re-orthogonalize using grasm schmidt process
-	T = normalize(T - dot(T, N) * N);
-	vec3 B = normalize(cross(T, N));//calculate the bitangent
-	oData.TBN = mat3(T, B, N);//construct orthagonal rotation matrix to go from tangent space to world space
-
+	if(!verticesAreDynamic)
+	{
+		//more expensive doing it this way to make a note of it
+		//calculate tbn matrix
+		vec3 T = normalize(normalMat * inTangent);//normalize the tangent
+		vec3 N = oData.normal;//get the normal
+		// re-orthogonalize using grasm schmidt process
+		T = normalize(T - dot(T, N) * N);
+		vec3 B = normalize(cross(T, N));//calculate the bitangent
+		oData.TBN = mat3(T, B, N);//construct orthagonal rotation matrix to go from tangent space to world space
+	}
 
 
 
