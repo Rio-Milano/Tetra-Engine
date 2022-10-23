@@ -26,7 +26,8 @@ private:
 	bool m_wireframeMode{ false };
 	bool m_pauseSimulation{ false };
 	bool m_drawLightingAsMeshes{ true };
-	bool m_useNormalMapping{true};
+	bool m_useNormalMapping{ true };
+	bool m_useParallaxMapping{ true };
 
 	float gamma = 2.2f;
 	//entity list

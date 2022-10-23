@@ -548,6 +548,10 @@ std::shared_ptr<Mesh> Model::ConstructMeshFromAssimpMesh(aiMesh* assimpMesh, con
 
 			//normal map
 			mesh->GetMaterial()->m_normal = LoadMaterialFromAssimpMesh(material, aiTextureType_HEIGHT, localPath);
+			
+			//displacement map
+			mesh->GetMaterial()->m_displacement = LoadMaterialFromAssimpMesh(material, aiTextureType_DISPLACEMENT, localPath);
+
 		}
 	}
 	//return the created mesh

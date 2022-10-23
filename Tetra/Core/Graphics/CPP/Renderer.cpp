@@ -169,6 +169,22 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 
 	}
 
+	const std::shared_ptr<Texture>& displacementTexture = meshMaterial->m_displacement;
+	if (displacementTexture)
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasDepthMap"), true);
+
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, displacementTexture->GetTextureAttributes().textureID);
+		shader.SetUniform1i(shader.GetLocation("material.depthMap"), 5);
+	}
+	else
+	{
+		shader.SetUniform1b(shader.GetLocation("material.hasDepthMap"), false);
+
+	}
+
+
 	//bind to the vertex array of the mesh
 	glBindVertexArray(mesh.m_VAO);
 
@@ -253,6 +269,9 @@ void Renderer::RenderMesh(const Mesh& mesh, const glm::mat4& worldMat, Shader& s
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//set default texture unit

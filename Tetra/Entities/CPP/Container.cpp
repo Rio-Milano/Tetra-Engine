@@ -3,25 +3,32 @@
 Container::Container(const std::string& containerName)
 	:Entity(containerName)
 {
-	if (TextureManager.GetTexture("Box") == nullptr)
+	//if (TextureManager.GetTexture("Box") == nullptr)
+	//{
+	//	std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
+	//	diffuseTexture->InitializeTexture("Data/Textures/Box.png", false, true);
+	//	TextureManager.AddTexture("Box", diffuseTexture);
+	//}
+
+	//if (TextureManager.GetTexture("BoxSpec") == nullptr)
+	//{
+	//	std::shared_ptr<Texture> specularTexture = std::make_shared<Texture>();
+	//	specularTexture->InitializeTexture("Data/Textures/BoxSpec.png");
+	//	TextureManager.AddTexture("BoxSpec", specularTexture);
+	//}
+
+	//if (TextureManager.GetTexture("BoxEmission") == nullptr)
+	//{
+	//	std::shared_ptr<Texture> emissionTexture = std::make_shared<Texture>();
+	//	emissionTexture->InitializeTexture("Data/Textures/BoxEmission.png");
+	//	TextureManager.AddTexture("BoxEmission", emissionTexture);
+	//}
+
+	if (TextureManager.GetTexture("Brick") == nullptr)
 	{
 		std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
-		diffuseTexture->InitializeTexture("Data/Textures/Box.png", false, true);
-		TextureManager.AddTexture("Box", diffuseTexture);
-	}
-
-	if (TextureManager.GetTexture("BoxSpec") == nullptr)
-	{
-		std::shared_ptr<Texture> specularTexture = std::make_shared<Texture>();
-		specularTexture->InitializeTexture("Data/Textures/BoxSpec.png");
-		TextureManager.AddTexture("BoxSpec", specularTexture);
-	}
-
-	if (TextureManager.GetTexture("BoxEmission") == nullptr)
-	{
-		std::shared_ptr<Texture> emissionTexture = std::make_shared<Texture>();
-		emissionTexture->InitializeTexture("Data/Textures/BoxEmission.png");
-		TextureManager.AddTexture("BoxEmission", emissionTexture);
+		diffuseTexture->InitializeTexture("Data/Textures/Brick.jpg", true, true);
+		TextureManager.AddTexture("Brick", diffuseTexture);
 	}
 
 
@@ -32,12 +39,14 @@ Container::Container(const std::string& containerName)
 		TextureManager.AddTexture("BrickNormal", normalTexture);
 	}
 
-	if (TextureManager.GetTexture("Brick") == nullptr)
+	if (TextureManager.GetTexture("BrickDisplacement") == nullptr)
 	{
-		std::shared_ptr<Texture> diffuseTexture = std::make_shared<Texture>();
-		diffuseTexture->InitializeTexture("Data/Textures/Brick.jpg",true, true);
-		TextureManager.AddTexture("Brick", diffuseTexture);
+		std::shared_ptr<Texture> displacementTexture = std::make_shared<Texture>();
+		displacementTexture->InitializeTexture("Data/Textures/BrickDisplacement.jpg",true);
+		TextureManager.AddTexture("BrickDisplacement", displacementTexture);
 	}
+
+
 
 };
 
@@ -48,57 +57,62 @@ void Container::Init()
 	std::vector<glm::vec3>* positionsPtr = new std::vector<glm::vec3>
 	{
 		//back face
-		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
 		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
 		glm::vec3(0.5f, -0.5f, -0.5f), // bottom-right
-		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
+		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
 		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
 		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
-		// front face
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
+
+		
+		//// front face
 		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-left
 		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-right
 		glm::vec3(0.5f, 0.5f, 0.5f), // top-right
 		glm::vec3(0.5f, 0.5f, 0.5f), // top-right
 		glm::vec3(-0.5f, 0.5f, 0.5f), // top-left
 		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-left
-		// left face
-		glm::vec3(-0.5f, 0.5f, 0.5f), // top-right
-		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
-		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
+
+		//// left face
 		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
 		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-right
 		glm::vec3(-0.5f, 0.5f, 0.5f), // top-right
-		// right face
-		glm::vec3(0.5f, 0.5f, 0.5f), // top-left
+		glm::vec3(-0.5f, 0.5f, 0.5f), // top-right
+		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
+		glm::vec3(-0.5f, -0.5f, -0.5f), // bottom-left
+		//// right face
+		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
 		glm::vec3(0.5f, -0.5f, -0.5f), // bottom-right
 		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
-		glm::vec3(0.5f, -0.5f, -0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
 		glm::vec3(0.5f, 0.5f, 0.5f), // top-left
 		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
-		// bottom face
+
+		//// bottom face
+		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
+		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-right
+		glm::vec3(-0.5f, -0.5f, -0.5f), // top-right
 		glm::vec3(-0.5f, -0.5f, -0.5f), // top-right
 		glm::vec3(0.5f, -0.5f, -0.5f), // top-left
 		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
-		glm::vec3(0.5f, -0.5f, 0.5f), // bottom-left
-		glm::vec3(-0.5f, -0.5f, 0.5f), // bottom-right
-		glm::vec3(-0.5f, -0.5f, -0.5f), // top-right
-		// top face
-		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
+
+		//// top face
+		glm::vec3(-0.5f, 0.5f, 0.5f), // bottom-left
 		glm::vec3(0.5f, 0.5f, 0.5f), // bottom-right
 		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
-		glm::vec3(0.5f, 0.5f, 0.5f), // bottom-right
+		glm::vec3(0.5f, 0.5f, -0.5f), // top-right
 		glm::vec3(-0.5f, 0.5f, -0.5f), // top-left
 		glm::vec3(-0.5f, 0.5f, 0.5f), // bottom-left
 	};
 
 	std::vector<glm::vec2>* texCordsPtr = new std::vector<glm::vec2>
 	{
-		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f),
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 1.0f),
 
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
@@ -107,34 +121,34 @@ void Container::Init()
 		glm::vec2(0.0f, 1.0f),
 		glm::vec2(0.0f, 0.0f),
 
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(0.0f, 1.0f),
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
-
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(0.0f, 1.0f),
+		glm::vec2(1.0f, 1.0f),
 		glm::vec2(1.0f, 1.0f),
 		glm::vec2(0.0f, 1.0f),
-		glm::vec2(1.0f, 0.0f),
 		glm::vec2(0.0f, 0.0f),
 
-		glm::vec2(0.0f, 1.0f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(1.0f, 0.0f),
 		glm::vec2(0.0f, 0.0f),
-		glm::vec2(0.0f, 1.0f),
-
-		glm::vec2(0.0f, 1.0f),
 		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
-		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
 		glm::vec2(0.0f, 1.0f),
-		glm::vec2(0.0f, 0.0f)
+		glm::vec2(0.0f, 0.0f),
 
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f),
+
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f),
+		
 	};
 
 
@@ -145,6 +159,7 @@ void Container::Init()
 	mesh->GetMaterial()->m_diffuse = TextureManager.GetTexture("Brick");
 	//mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");
 	mesh->GetMaterial()->m_normal = TextureManager.GetTexture("BrickNormal");
+	mesh->GetMaterial()->m_displacement = TextureManager.GetTexture("BrickDisplacement");
 	//mesh->GetMaterial()->m_emission = TextureManager.GetTexture("BoxEmission");
 	
 	/*mesh->GetMaterial()->m_mapToEnviroment = true;
@@ -181,9 +196,11 @@ void Container::Update(const float& dt)
 void Container::Render(Renderer& renderer, Shader* overideShader)
 {
 	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
+	float angle = glm::radians(m_rot);
+	//angle = 0.0f;
 	for (int i = 0; i < cubePositions.size(); i++)
 	{
-		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), glm::radians(m_rot), glm::vec3(1.0f)));
+		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), angle, glm::vec3(1.0f)));
 		GetRoot()->Render(renderer, shader);
 	}
 

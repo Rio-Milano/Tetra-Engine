@@ -84,10 +84,8 @@ void SandBoxLayer::Update(float dt)
 		}
 	}
 	Shader& shader = ShaderManager.GetShader("main");
-	if (m_useNormalMapping)
-		shader.SetUniform1b(shader.GetLocation("useNormalMapping"), true);
-	else
-		shader.SetUniform1b(shader.GetLocation("useNormalMapping"), false);
+	shader.SetUniform1b(shader.GetLocation("useNormalMapping"), m_useNormalMapping);
+	shader.SetUniform1b(shader.GetLocation("useParallaxMapping"), m_useParallaxMapping);
 
 }
 
@@ -234,6 +232,7 @@ void SandBoxLayer::ImGUI()
 			ImGui::Checkbox("Pause Simulation", &m_pauseSimulation);
 			ImGui::Checkbox("Draw Normals", &ModelNode::DrawNormals);
 			ImGui::Checkbox("Normal Mapping", &m_useNormalMapping);
+			ImGui::Checkbox("Parallax Mapping", &m_useParallaxMapping);
 
 			PostProcessing::Config& ppConfig = m_postProcessing->m_config;
 			

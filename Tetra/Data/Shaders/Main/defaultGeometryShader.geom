@@ -20,8 +20,21 @@ out Varying
 	mat3 TBN;
 } outData;
 
+out VaryingTS
+{
+	vec3 position;
+	vec3 viewPosition;
+} outDataTS;
+
 //UNIFORM
 uniform bool verticesAreDynamic;//if vertices can change then precomputed tangents cant be valid so compute TBN matriix in the geometry shader
+uniform mat3 normalMat;//note: this is per call not per instance. Fix this later...
+
+layout(std140) uniform World
+{
+	vec3 cameraPosition;
+	float time;
+};
 
 //FUNCTIONS
 void ProcessVertex(int i, mat3 _TBN)
@@ -30,6 +43,12 @@ void ProcessVertex(int i, mat3 _TBN)
 	outData.texCoord = inData[i].texCoord;
 	outData.normal = inData[i].normal;
 	outData.TBN = _TBN;
+
+	//tangent space data
+	mat3 tangentSpace = transpose(_TBN);
+	outDataTS.position = tangentSpace * inData[i].position;
+	outDataTS.viewPosition = tangentSpace * cameraPosition;
+
 
 	gl_Position = gl_in[i].gl_Position;
 
@@ -45,8 +64,8 @@ void ProcessTriangle(bool overrideTBN, vec3 _tangent)
 		for(int i = 0; i < 3; i++)	
 		{
 			//use grahm shmidt process to reorthogonalize tangent in respect to normal
-			vec3 T = _tangent;
-			vec3 N = inData[i].normal;
+			vec3 T = normalize(normalMat *_tangent);
+			vec3 N = normalize(inData[i].normal);
 
 			T = normalize(T - dot(T, N) * N);
 

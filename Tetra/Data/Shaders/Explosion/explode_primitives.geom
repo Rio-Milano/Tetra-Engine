@@ -21,6 +21,11 @@ out Varying
 	vec3 normal;
 	mat3 TBN;
 } oData;
+out VaryingTS
+{
+	vec3 position;
+	vec3 viewPosition;
+} outDataTS;
 
 //UNIFORMS
 layout(std140) uniform Matricies
@@ -34,7 +39,7 @@ layout(std140) uniform World
 	float time;
 };
 
-
+//this dosent calculate tbn matrix for dynamic verticies so add this at some point
 void ExplodeVertex(int faceVertex)
 {
 	//validate face vertex
@@ -51,6 +56,10 @@ void ExplodeVertex(int faceVertex)
 
 	oData.position =  iData[faceVertex].position + direction;
 	
+	mat3 toTangentSpace = transpose(oData.TBN);
+	outDataTS.position = toTangentSpace * oData.position;
+	outDataTS.viewPosition = toTangentSpace * cameraPosition;
+
 	gl_Position = Projection_X_View * vec4(oData.position, 1.0);
 
 	EmitVertex();

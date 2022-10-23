@@ -50,12 +50,13 @@ void main()
 		//more expensive doing it this way to make a note of it
 		//calculate tbn matrix
 		vec3 T = normalize(normalMat * inTangent);//normalize the tangent
-		vec3 N = oData.normal;//get the normal
+		vec3 N = normalize(oData.normal);//get the normal
 		// re-orthogonalize using grasm schmidt process
-		T = normalize(T - dot(T, N) * N);
-		vec3 B = normalize(cross(T, N));//calculate the bitangent
+		//T = normalize(T - dot(T, N) * N);
+		vec3 B = cross(N, T);//calculate the bitangent
 		oData.TBN = mat3(T, B, N);//construct orthagonal rotation matrix to go from tangent space to world space
 	}
+
 
 
 

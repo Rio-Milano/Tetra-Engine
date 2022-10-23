@@ -9,6 +9,11 @@ in Varying
 	mat3 TBN;
 } inData;
 
+in VaryingTS
+{
+	vec3 position;
+	vec3 viewPosition;
+} inDataTS;
 
 //OUT
 out vec4 FragColor;
@@ -66,6 +71,9 @@ struct Material
 	sampler2D normalMap;
 	bool hasNormalMap;
 
+	sampler2D depthMap;
+	bool hasDepthMap;
+
 };
 
 
@@ -90,6 +98,7 @@ uniform Material material;
 uniform float fromRefractiveIndex;
 uniform float toRefractiveIndex;
 uniform bool useNormalMapping;
+uniform bool useParallaxMapping;
 
 //FUNCTION PROTOTYPES
 
@@ -112,8 +121,14 @@ bool ProcessEmissionFragment();
 float ProcessShadow(int i, vec4 posInLightSpace);
 float CalculatePointShadow(int i);
 
+void ParallaxMapping();
+vec2 texCoord=vec2(0);
+
 void main()
 {
+	//apply offset to texture coord bassed on view position in tangent space
+	ParallaxMapping();
+
 
 	if(ProcessLowAlphaFragment()) return;
 
@@ -121,7 +136,7 @@ void main()
 	vec3 normal = vec3(0.0);
 	if(material.hasNormalMap && useNormalMapping)
 	{
-		normal = texture(material.normalMap, inData.texCoord).rgb;//get the normal from normal map
+		normal = texture(material.normalMap, texCoord).rgb;//get the normal from normal map
 		normal = normal * 2.0 - 1.0;//put in range of -1 -> 1
 		
 		//this requires more processiong so when optimising consider putting world space data into tangent space in the fragment shader
@@ -168,6 +183,52 @@ void main()
 		FragColor = vec4(finalColor, 1.0);
 }
 
+/*
+
+Current implementation is using steep parallax mapping with an inverted height map
+
+*/
+void ParallaxMapping()
+{
+	texCoord = inData.texCoord;
+
+	if(material.hasDepthMap && useParallaxMapping)
+	{
+		//get the vector from the frag pos to view pos in tangent space
+		vec3 V = normalize(inDataTS.viewPosition - inDataTS.position);
+		//sample the depth of the current fragment
+		float depthOfFragment = texture(material.depthMap, inData.texCoord).r;
+		//calculate the offsett vector in tangent space
+		bool angularCompression = false;
+		vec2 P = V.xy / (angularCompression ? V.z : 1.0) * (depthOfFragment * 0.1);
+
+		float current_depth_layer = 0.0f;
+		float minSamples = 5.0;
+		float maxSamples = 30.0f;
+		//the greater the angle between tangent plane and V the more samples we take
+		float number_of_depth_layers = mix(maxSamples, minSamples, max(dot(vec3(0.0, 0.0, 1.0), V), 0.0));
+		float depth_layer_magnitude = 1.0 / number_of_depth_layers;
+
+		float current_depth = depthOfFragment;
+
+		while(current_depth_layer < current_depth)
+		{
+			current_depth_layer += depth_layer_magnitude;
+			current_depth = texture(material.depthMap, inData.texCoord - P*current_depth_layer).r;
+		}
+
+		texCoord = inData.texCoord - P * current_depth_layer;
+
+		float minV = -0.1;
+		float maxV = 1.1;
+		
+		//once offset applied the coord may no longer be valid so discard it if it isnt
+		if(texCoord.x > maxV|| texCoord.y > maxV || texCoord.x < minV || texCoord.y < minV)
+			discard;
+	}
+
+}
+
 bool ProcessEmissionFragment()
 {
 	//emission calculations
@@ -190,7 +251,7 @@ bool ProcessLowAlphaFragment()
 	{
 		if(material.hasDiffuseMap)
 		{
-			if(texture(material.diffuseMap, inData.texCoord).a < 0.1)
+			if(texture(material.diffuseMap, texCoord).a < 0.1)
 			{
 				discard;
 				return true;
@@ -228,8 +289,9 @@ vec3 ProcessReflectiveFragment(vec3 normal)
 
 vec3 GetFragmentDiffuse()
 {
+
 	if(material.hasDiffuseMap)
-		return texture(material.diffuseMap, inData.texCoord).xyz;
+		return texture(material.diffuseMap, texCoord).xyz;
 	else
 		return material.defaultDiffuseColor;
 };
@@ -237,7 +299,7 @@ vec3 GetFragmentDiffuse()
 vec3 GetFragmentSpecular()
 {
 	if(material.hasSpecularMap)
-		return texture(material.specularMap, inData.texCoord).xyz;
+		return texture(material.specularMap, texCoord).xyz;
 	else
 	{
 		if(material.hasDiffuseMap)
@@ -250,7 +312,7 @@ vec3 GetFragmentSpecular()
 vec3 GetFragmentEmission()
 {
 	if(material.hasEmissionMap)
-		return texture(material.emissionMap, inData.texCoord).xyz;
+		return texture(material.emissionMap, texCoord).xyz;
 	else	
 		return vec3(0.0);
 }

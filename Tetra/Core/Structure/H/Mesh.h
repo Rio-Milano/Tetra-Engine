@@ -43,7 +43,8 @@ struct Material
 		m_diffuse{nullptr},
 		m_specular{ nullptr },
 		m_emission{ nullptr },
-		m_normal{ nullptr };
+		m_normal{ nullptr },
+		m_displacement{nullptr};
 	
 	bool m_discardLowAlphaFragments{ false };
 	bool m_blendingEnabled{false};
