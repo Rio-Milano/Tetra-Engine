@@ -48,6 +48,8 @@ Container::Container(const std::string& containerName)
 
 
 
+
+
 };
 
 
@@ -161,6 +163,7 @@ void Container::Init()
 	//mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BoxSpec");
 	mesh->GetMaterial()->m_normal = TextureManager.GetTexture("BrickNormal");
 	mesh->GetMaterial()->m_displacement = TextureManager.GetTexture("BrickDisplacement");
+	mesh->GetMaterial()->m_specular = TextureManager.GetTexture("BrickDisplacement");
 	//mesh->GetMaterial()->m_emission = TextureManager.GetTexture("BoxEmission");
 	
 	/*mesh->GetMaterial()->m_mapToEnviroment = true;
@@ -198,9 +201,9 @@ void Container::Render(Renderer& renderer, Shader* overideShader)
 {
 	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
 	float angle = glm::radians(m_rot);
-	//for (int i = 0; i < cubePositions.size(); i++)
+	for (int i = 0; i < cubePositions.size(); i++)
 	{
-		GetRoot()->SetTransform(glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[0] * 2.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(8.0f)));
+		GetRoot()->SetTransform(glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i	] * 2.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.0f)));
 		GetRoot()->Render(renderer, shader);
 	}
 

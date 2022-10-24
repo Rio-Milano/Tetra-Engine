@@ -199,7 +199,7 @@ uniform bool angularCompression = true;
 as the view direction is length 1 we would have an offset much to large and would give undesirable results
 so we define a fractal coefficient to reduce its magnitude
 */
-uniform float depth_scale = 0.15;
+uniform float depth_scale = 0.2;
 
 void ParallaxMapping()
 {
@@ -260,17 +260,18 @@ void ParallaxMapping()
 	
 		// interpolation of texture coordinates
 		float weight = afterDepth / (afterDepth - beforeDepth);
-		texCoord = prevTexCoords * weight + texCoord * (1.0 - weight);
-
-
 
 		//when appling an offset texture coords can go out of bounds so discard any that do within a certan range
 		float minV = 0.0;
 		float maxV = 1.0;
 		
+		
+		texCoord = prevTexCoords * weight + (1.0 - weight) * texCoord;
+
 		//once offset applied the coord may no longer be valid so discard it if it isnt
 		if(texCoord.x > maxV|| texCoord.y > maxV || texCoord.x < minV || texCoord.y < minV)
 			discard;
+
 
 
 

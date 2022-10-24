@@ -53,8 +53,8 @@ void Texture::GenerateTextureBuffer(const std::string& textureFileLocation, cons
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	//set filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);//PARALLAX MAPPING DOSENT WORK WITH MIPMAPPING SO ACCOUNT FOR THIS
 	//decode file type
 	
 	GLint imageType_EN_A = 0;
@@ -82,7 +82,7 @@ void Texture::GenerateTextureBuffer(const std::string& textureFileLocation, cons
 	//send texture to gpu texture buffer
 	glTexImage2D(GL_TEXTURE_2D, 0, imageType_EN_A, texWidth, texHeight, 0, imageType_EN_B, GL_UNSIGNED_BYTE, texturePtr);
 	//generate texture layers
-	glGenerateMipmap(GL_TEXTURE_2D);
+	//glGenerateMipmap(GL_TEXTURE_2D);
 	//unbind buffer target
 	glBindTexture(GL_TEXTURE_2D, 0);
 	//delete texture from primary memory
