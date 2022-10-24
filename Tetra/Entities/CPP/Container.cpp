@@ -107,12 +107,13 @@ void Container::Init()
 
 	std::vector<glm::vec2>* texCordsPtr = new std::vector<glm::vec2>
 	{
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(1.0f, 0.0f),
-		glm::vec2(0.0f, 0.0f),
-		glm::vec2(0.0f, 0.0f),
 		glm::vec2(0.0f, 1.0f),
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
 		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 1.0f),
+
 
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
@@ -197,10 +198,9 @@ void Container::Render(Renderer& renderer, Shader* overideShader)
 {
 	Shader& shader = overideShader ? *overideShader : ShaderManager.GetShader("main");
 	float angle = glm::radians(m_rot);
-	//angle = 0.0f;
-	for (int i = 0; i < cubePositions.size(); i++)
+	//for (int i = 0; i < cubePositions.size(); i++)
 	{
-		GetRoot()->SetTransform(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[i] * 2.0f), angle, glm::vec3(1.0f)));
+		GetRoot()->SetTransform(glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), cubePositions[0] * 2.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(8.0f)));
 		GetRoot()->Render(renderer, shader);
 	}
 

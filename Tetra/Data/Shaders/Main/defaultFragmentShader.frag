@@ -188,44 +188,95 @@ void main()
 Current implementation is using steep parallax mapping with an inverted height map
 
 */
+
+
+/*
+dividing the xy values of viewdir by its z component can give better results when viewing from
+angles but can also give undisirable effects
+*/
+uniform bool angularCompression = true;
+/*
+as the view direction is length 1 we would have an offset much to large and would give undesirable results
+so we define a fractal coefficient to reduce its magnitude
+*/
+uniform float depth_scale = 0.15;
+
 void ParallaxMapping()
 {
 	texCoord = inData.texCoord;
 
 	if(material.hasDepthMap && useParallaxMapping)
 	{
-		//get the vector from the frag pos to view pos in tangent space
+		//get viewDir vector of length 1
 		vec3 V = normalize(inDataTS.viewPosition - inDataTS.position);
-		//sample the depth of the current fragment
+		
+		//get depth of current fragment
 		float depthOfFragment = texture(material.depthMap, inData.texCoord).r;
-		//calculate the offsett vector in tangent space
-		bool angularCompression = false;
-		vec2 P = V.xy / (angularCompression ? V.z : 1.0) * (depthOfFragment * 0.1);
+		
+		//deffine offset vector
+		vec2 P = V.xy;
+		P /= angularCompression ? V.z : 1.0;
+		P *= depth_scale;
 
-		float current_depth_layer = 0.0f;
-		float minSamples = 5.0;
-		float maxSamples = 30.0f;
 		//the greater the angle between tangent plane and V the more samples we take
+		const float minSamples = 64.0;
+		const float maxSamples = 8.0;
+
+		//a higher angle between the normal and V means we use more samples to get more accurate results
 		float number_of_depth_layers = mix(maxSamples, minSamples, max(dot(vec3(0.0, 0.0, 1.0), V), 0.0));
+		
+		//depth of each depth layer
 		float depth_layer_magnitude = 1.0 / number_of_depth_layers;
 
+		/*
+		Go through an arbitary number of depth values from 0 and increase the magnitude of P until the current depth is greater than the depth at P meaning P has 
+		collided with the "surface"
+		*/
+		float current_depth_layer = 0.0;
+
+		//current depth starts at A then move along P to approximate B
 		float current_depth = depthOfFragment;
 
+		//while Depth(P scaled by depth layer) is greater than depth layer then P scaled has not collided with surface
 		while(current_depth_layer < current_depth)
 		{
+			//increase depth layer
 			current_depth_layer += depth_layer_magnitude;
+			//using P scaled as current offset get the current depth at P scaled
 			current_depth = texture(material.depthMap, inData.texCoord - P*current_depth_layer).r;
 		}
 
+		//at this point the depth layer is an approximate value of B's depth so scale P full by it
 		texCoord = inData.texCoord - P * current_depth_layer;
+		
 
-		float minV = -0.1;
-		float maxV = 1.1;
+		//get the previous texture cord at the depth layer above current depth layer
+		vec2 prevTexCoords = texCoord + P * depth_layer_magnitude;
+
+		// get depth after and before collision for linear interpolation
+		float afterDepth = current_depth - current_depth_layer;
+		float beforeDepth = texture(material.depthMap, prevTexCoords).r - current_depth_layer + depth_layer_magnitude;
+
+	
+		// interpolation of texture coordinates
+		float weight = afterDepth / (afterDepth - beforeDepth);
+		texCoord = prevTexCoords * weight + texCoord * (1.0 - weight);
+
+
+
+		//when appling an offset texture coords can go out of bounds so discard any that do within a certan range
+		float minV = 0.0;
+		float maxV = 1.0;
 		
 		//once offset applied the coord may no longer be valid so discard it if it isnt
 		if(texCoord.x > maxV|| texCoord.y > maxV || texCoord.x < minV || texCoord.y < minV)
 			discard;
+
+
+
 	}
+
+
 
 }
 
