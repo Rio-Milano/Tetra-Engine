@@ -240,6 +240,8 @@ void SandBoxLayer::ImGUI()
 			ImGui::SliderFloat("Y Sampling Offset Magnitude", &ppConfig.m_YsampleOffsetMagnitude, 1.0f, 1.0f / 1080.0f);
 			ImGui::SliderFloat("Gamma", &ppConfig.gamma, -5.2f, 5.2f);
 
+			ImGui::Checkbox("HDR", &ppConfig.m_HDR);
+			ImGui::SliderFloat("Exposure", &ppConfig.m_exposure, 0.0f, 3.0f);
 			ImGui::Checkbox("Sharpen Kernel", &ppConfig.m_enableSharpeningKernel);
 			ImGui::Checkbox("Blur Kernel", &ppConfig.m_enableBlurKernel);
 			ImGui::Checkbox("Edge Highlight Kernel", &ppConfig.m_edgeDetectionKernel);

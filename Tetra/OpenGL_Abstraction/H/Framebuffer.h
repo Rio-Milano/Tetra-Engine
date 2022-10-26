@@ -31,10 +31,11 @@ public:
 		glBindTexture(textureTarget, m_colourBufferID);
 		
 		//Allocate memory for the color buffer
+		//using floating point framebuffer for color buffers so values dont get clamped to Low Dynamic Range
 		if (useMSAA)
-			glTexImage2DMultisample(textureTarget, samples, GL_RGB, viewPortSize.x, viewPortSize.y, GL_TRUE);
+			glTexImage2DMultisample(textureTarget, samples, GL_RGBA16F, viewPortSize.x, viewPortSize.y, GL_TRUE);
 		else
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewPortSize.x, viewPortSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, viewPortSize.x, viewPortSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 		
 		//set texture sampling
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -36,7 +36,7 @@
     <ClCompile Include="Requirements\glmIncludes.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Misc\CPP\Helper.cpp">
+    <ClCompile Include="external_libaries\Misc\CPP\Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Structure\CPP\Camera.cpp">
@@ -149,7 +149,7 @@
     <ClInclude Include="Core\Managers\H\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Misc\H\Helper.h">
+    <ClInclude Include="external_libaries\Misc\H\Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entities\H\Entity.h">

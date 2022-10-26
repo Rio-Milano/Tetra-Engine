@@ -160,7 +160,7 @@
     <ClCompile Include="Requirements\glad.c" />
     <ClCompile Include="Requirements\glmIncludes.h" />
     <ClCompile Include="Entities\CPP\Grass.cpp" />
-    <ClCompile Include="Misc\CPP\Helper.cpp" />
+    <ClCompile Include="external_libaries\Misc\CPP\Helper.cpp" />
     <ClCompile Include="Core\Managers\CPP\InputManager.cpp" />
     <ClCompile Include="Core\Managers\CPP\LightManager.cpp" />
     <ClCompile Include="Entities\CPP\Line.cpp" />
@@ -204,7 +204,7 @@
     <ClInclude Include="external_libaries\include\STB_ImageLoader\stb_image.h" />
     <ClInclude Include="OpenGL_Abstraction\H\Framebuffer.h" />
     <ClInclude Include="Entities\H\Grass.h" />
-    <ClInclude Include="Misc\H\Helper.h" />
+    <ClInclude Include="external_libaries\Misc\H\Helper.h" />
     <ClInclude Include="Core\Managers\H\InputManager.h" />
     <ClInclude Include="Core\Managers\H\LightManager.h" />
     <ClInclude Include="Entities\H\Line.h" />

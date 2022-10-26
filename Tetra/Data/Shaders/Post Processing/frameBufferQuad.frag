@@ -28,6 +28,9 @@ uniform bool edgeDetectionKernel;
 uniform Material material;
 uniform float gamma;
 
+uniform bool HDR = true;
+uniform float exposure = 0.1;
+
 void main()
 {
 	vec3 fragColor = texture(material.diffuseMap, varying_texCoord).xyz;
@@ -138,10 +141,15 @@ void main()
 		}
 
 	}
+	//apply tone mapping with exposure
+	if(HDR)	fragColor =  vec3(1.0) - exp(-fragColor * exposure);//fragColor / (vec3(1.0) + fragColor);
+
+	//apply gamma correction
+	fragColor = pow(fragColor, vec3(1.0/gamma));
+
+	
 
 	FragColor = vec4(fragColor, 1.0);//note that this includes the alpha value of the texture so blending is applied if enabled
 	
-	FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));
 
-	//FragColor = vec4(texture(material.diffuseMap, varying_texCoord).rrr,1.0); 
 }

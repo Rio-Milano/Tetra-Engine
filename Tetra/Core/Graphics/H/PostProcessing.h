@@ -23,6 +23,9 @@ public:
 		bool m_enableColorBufferInversion{ false };
 		bool m_enableGreyScaleColorBuffer{ false };
 		float gamma{2.2f};
+
+		bool m_HDR{true};
+		float m_exposure{1.0f};
 	};
 
 	PostProcessing(const glm::vec2& viewPortSize, const bool& useMSAA = false);
